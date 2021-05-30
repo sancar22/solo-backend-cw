@@ -9,7 +9,8 @@ app.use(cors());
 app.use(express.json());
 
 
-app.use('/', require('./routes/user'))
+app.use('/user', require('./routes/user'))
+app.use('/auth', require('./routes/auth'))
 
 connectDB();
 app.listen(PORT, () => console.log('Server running!'));
