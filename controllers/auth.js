@@ -50,12 +50,11 @@ exports.login = async (req, res) => {
 
 exports.register = async (req, res) => {
   try {
-    const {
-      email = email.trim().toLowerCase(),
-      password,
-      passwordRepeat,
-    } = req.body
+    const { name, email, password, passwordRepeat } = req.body
     // Backend validation just in case
+    if (name.length === 0) {
+      return res.status(400).send('You should insert a name!')
+    }
     if (!validateEmail(email)) {
       return res.status(400).send('Email is not valid!')
     }
@@ -75,7 +74,8 @@ exports.register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt)
     const customer = await stripe.customers.create({ name: email })
     const newUser = await User.create({
-      email,
+      name: name.trim(),
+      email: email.trim().toLowerCase(),
       password: hashedPassword,
       stripeID: customer.id,
     })
