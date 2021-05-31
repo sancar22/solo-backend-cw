@@ -40,7 +40,6 @@ exports.login = async (req, res) => {
       { expiresIn: 3600 },
       (err, token) => {
         if (err) throw err
-        console.log(token, 'token here')
         res.status(200).json({ token })
       },
     )
@@ -214,7 +213,7 @@ exports.verifyPWCodeChange = async (req, res) => {
 
 exports.changePassword = async (req, res) => {
   try {
-    const { jwt: jwtToken, password, passwordRepeat } = req.body
+    const { password, passwordRepeat } = req.body
     if (password.length < 6) {
       return res
         .status(400)
@@ -223,8 +222,7 @@ exports.changePassword = async (req, res) => {
     if (password !== passwordRepeat) {
       return res.status(400).send("Passwords don't match!")
     }
-    const decodedJWT = jwt.verify(jwtToken, defaultConfig.jwtSecret)
-    const userID = decodedJWT.user.id
+    const userID = req.user.id
     const salt = await bcrypt.genSalt(10)
     const newPassword = await bcrypt.hash(password, salt)
     await User.updateOne(
@@ -235,12 +233,6 @@ exports.changePassword = async (req, res) => {
     )
     return res.status(200).send('Password changed succesfully!')
   } catch (e) {
-    if (e.name) {
-      console.log(e)
-      return res
-        .status(401)
-        .send({ msg: 'Time to change password expired!', statusCode: 401 })
-    }
     res.status(500).send({ msg: 'Internal server error!', statusCode: 500 })
   }
 }

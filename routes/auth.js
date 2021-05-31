@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 
 const authController = require('../controllers/auth')
+const authMiddleware = require('../middleware/auth')
 
 router.post('/login', authController.login)
 
@@ -13,6 +14,6 @@ router.post('/forgotPW', authController.forgotPW)
 
 router.post('/verifyEmailCode', authController.verifyPWCodeChange)
 
-router.post('/changePW', authController.changePassword)
+router.post('/changePW', authMiddleware, authController.changePassword)
 
 module.exports = router
