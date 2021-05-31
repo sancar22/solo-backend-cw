@@ -12,11 +12,15 @@ const UserSchema = new mongoose.Schema(
     },
     verified: {
       type: Boolean,
-      default: false
+      default: false,
     },
     stripeID: {
       type: String,
-    }
+    },
+    forgotPWToken: {
+      type: String,
+      default: '',
+    },
   },
   {
     versionKey: false,

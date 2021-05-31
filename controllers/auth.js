@@ -9,6 +9,14 @@ const stripe = new Stripe(defaultConfig.secretAPITestStripe, {
   apiVersion: '2020-08-27',
 })
 
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: defaultConfig.emailProvider,
+    pass: defaultConfig.emailPW,
+  },
+})
+
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body
@@ -32,6 +40,7 @@ exports.login = async (req, res) => {
       { expiresIn: 3600 },
       (err, token) => {
         if (err) throw err
+        console.log(token, 'token here')
         res.status(200).json({ token })
       },
     )
@@ -78,18 +87,10 @@ exports.register = async (req, res) => {
       },
     }
 
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: defaultConfig.emailProvider,
-        pass: defaultConfig.emailPW,
-      },
-    })
-
     jwt.sign(
       payload,
       defaultConfig.jwtSecret,
-      { expiresIn: 3600 },
+      { expiresIn: '9999 years' },
       async (err, token) => {
         if (err) throw err
         res.send('User created successfully!')
@@ -115,14 +116,84 @@ exports.verifyEmail = async (req, res) => {
   try {
     const decodedJWT = jwt.verify(req.params.token, defaultConfig.jwtSecret)
     const userID = decodedJWT.user.id
-    await User.updateOne(
-      { _id: userID },
-      {
-        $set: { verified: true },
+    const user = await User.findById(userID)
+    if (!user.verified) {
+      await User.updateOne(
+        { _id: userID },
+        {
+          $set: { verified: true },
+        },
+      )
+      return res.status(200).send('Verified successfully!')
+    }
+    return res.status(200).send('User is already verified!')
+  } catch (e) {
+    res.status(500).send('Internal Server Error!')
+  }
+}
+
+exports.forgotPW = async (req, res) => {
+  try {
+    const { email } = req.body
+    const user = await User.findOne({ email })
+    if (!user)
+      res.status(200).send('Email was sent (if it exists) with a code!')
+
+    const randomNumber = Math.floor(100000 + Math.random() * 900000)
+    const payload = {
+      user: {
+        id: user._id,
+        code: randomNumber,
+      },
+    }
+    jwt.sign(
+      payload,
+      defaultConfig.jwtSecret,
+      { expiresIn: 60 },
+      async (err, token) => {
+        if (err) throw err
+        await User.updateOne(
+          { _id: user._id },
+          {
+            $set: { forgotPWToken: token },
+          },
+        )
+        res.send('Email was sent (if it exists) with a code!')
+        const output = `
+        <h2>Your code to reset your password is the following: ${randomNumber}</h2>
+        <p><b>NOTE: </b> The code will expire in 1 (one) minute.</p>
+        `
+        await transporter.sendMail({
+          to: email,
+          subject: 'Change password code - Brand X',
+          html: output,
+        })
       },
     )
-    res.status(200).send('Verified successfully!')
   } catch (e) {
-    res.status(500).send(e)
+    console.log(e)
+    res.status(500).send('Internal Server Error!')
+  }
+}
+
+exports.verifyPWCodeChange = async (req, res) => {
+  try {
+    const { email, code } = req.body
+    const user = await User.findOne({ email })
+    if (!user) return res.status(401).send('Invalid code!')
+    const decodedJWTCode = jwt.verify(
+      user.forgotPWToken,
+      defaultConfig.jwtSecret,
+    )
+    if (decodedJWTCode.user.code !== code)
+      return res.status(401).send('Invalid code!')
+
+    return res.status(200).send('Correct code!')
+  } catch (e) {
+    if (e.name) {
+      console.log(e)
+      return res.status(401).send('Token expired!')
+    }
+    res.status(500).send('Internal Server Error!')
   }
 }
