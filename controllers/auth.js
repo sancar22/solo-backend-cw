@@ -53,8 +53,8 @@ exports.register = async (req, res) => {
   try {
     const {
       email = email.trim().toLowerCase(),
-      password = password.trim(),
-      passwordRepeat = passwordRepeat.trim(),
+      password,
+      passwordRepeat,
     } = req.body
     // Backend validation just in case
     if (!validateEmail(email)) {
@@ -188,12 +188,59 @@ exports.verifyPWCodeChange = async (req, res) => {
     if (decodedJWTCode.user.code !== code)
       return res.status(401).send('Invalid code!')
 
-    return res.status(200).send('Correct code!')
+    const payload = {
+      user: {
+        id: user._id,
+      },
+    }
+    // 2 minutes to change pw
+    jwt.sign(
+      payload,
+      defaultConfig.jwtSecret,
+      { expiresIn: 120 },
+      async (err, token) => {
+        if (err) throw err
+        res.status(200).send({ token })
+      },
+    )
   } catch (e) {
     if (e.name) {
       console.log(e)
       return res.status(401).send('Token expired!')
     }
     res.status(500).send('Internal Server Error!')
+  }
+}
+
+exports.changePassword = async (req, res) => {
+  try {
+    const { jwt: jwtToken, password, passwordRepeat } = req.body
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .send('Password should be at least 6 characters long!')
+    }
+    if (password !== passwordRepeat) {
+      return res.status(400).send("Passwords don't match!")
+    }
+    const decodedJWT = jwt.verify(jwtToken, defaultConfig.jwtSecret)
+    const userID = decodedJWT.user.id
+    const salt = await bcrypt.genSalt(10)
+    const newPassword = await bcrypt.hash(password, salt)
+    await User.updateOne(
+      { _id: userID },
+      {
+        $set: { password: newPassword },
+      },
+    )
+    return res.status(200).send('Password changed succesfully!')
+  } catch (e) {
+    if (e.name) {
+      console.log(e)
+      return res
+        .status(401)
+        .send({ msg: 'Time to change password expired!', statusCode: 401 })
+    }
+    res.status(500).send({ msg: 'Internal server error!', statusCode: 500 })
   }
 }

@@ -13,4 +13,6 @@ router.post('/forgotPW', authController.forgotPW)
 
 router.post('/verifyEmailCode', authController.verifyPWCodeChange)
 
+router.post('/changePW', authController.changePassword)
+
 module.exports = router
