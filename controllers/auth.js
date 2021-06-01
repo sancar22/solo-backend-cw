@@ -1,4 +1,5 @@
 const User = require('../models/user')
+const Admin = require('../models/admin')
 const bcrypt = require('bcryptjs')
 const defaultConfig = require('../db/default.json')
 const { validateEmail } = require('../utils/index')
@@ -17,32 +18,47 @@ const transporter = nodemailer.createTransport({
   },
 })
 
+const loginFunction = async (email, password, res, admin) => {
+  const user = !admin
+    ? await User.findOne({ email })
+    : await Admin.findOne({ email })
+  if (!user) return res.status(401).send('Invalid username or password!')
+  const hashedUserPW = user.password
+  const isMatch = await bcrypt.compare(password, hashedUserPW)
+  if (!isMatch) return res.status(401).send('Invalid username or password!')
+  if (!user.verified && !admin)
+    return res.status(401).send('You need to verify your account!')
+
+  const userPayload = {
+    user: {
+      id: user._id,
+    },
+  }
+
+  jwt.sign(
+    userPayload,
+    defaultConfig.jwtSecret,
+    { expiresIn: 3600 },
+    (err, token) => {
+      if (err) throw err
+      res.status(200).json({ token })
+    },
+  )
+}
+
 exports.login = async (req, res) => {
+  const { email, password } = req.body
   try {
-    const { email, password } = req.body
-    const user = await User.findOne({ email })
-    if (!user) return res.status(401).send('Invalid username or password!')
-    const hashedUserPW = user.password
-    const isMatch = await bcrypt.compare(password, hashedUserPW)
-    if (!isMatch) return res.status(401).send('Invalid username or password!')
-    if (!user.verified)
-      return res.status(401).send('You need to verify your account!')
+    await loginFunction(email, password, res, false)
+  } catch (e) {
+    res.status(500).send('Internal Server Error!')
+  }
+}
 
-    const userPayload = {
-      user: {
-        id: user._id,
-      },
-    }
-
-    jwt.sign(
-      userPayload,
-      defaultConfig.jwtSecret,
-      { expiresIn: 3600 },
-      (err, token) => {
-        if (err) throw err
-        res.status(200).json({ token })
-      },
-    )
+exports.loginAdmin = async (req, res) => {
+  const { email, password } = req.body
+  try {
+    await loginFunction(email, password, res, true)
   } catch (e) {
     res.status(500).send('Internal Server Error!')
   }

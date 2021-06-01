@@ -1,6 +1,9 @@
 const express = require('express')
 const router = express.Router()
 
+const Admin = require('../models/admin')
+const bcrypt = require('bcryptjs')
+
 const authController = require('../controllers/auth')
 const authMiddleware = require('../middleware/auth')
 
@@ -15,5 +18,7 @@ router.post('/forgotPW', authController.forgotPW)
 router.post('/verifyEmailCode', authController.verifyPWCodeChange)
 
 router.post('/changePW', authMiddleware, authController.changePassword)
+
+router.post('/admin/login', authController.loginAdmin)
 
 module.exports = router
