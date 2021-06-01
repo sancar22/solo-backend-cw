@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const { ObjectID } = require('mongodb')
+const mongoose = require('mongoose');
+const { ObjectID } = require('mongodb');
 
 const UserCourseSchema = new mongoose.Schema(
   {
@@ -19,8 +19,8 @@ const UserCourseSchema = new mongoose.Schema(
   {
     versionKey: false,
     timestamps: true,
-  },
-)
+  }
+);
 
-const UserCourse = mongoose.model('usercourse', UserCourseSchema)
-module.exports = UserCourse
+const UserCourse = mongoose.model('usercourse', UserCourseSchema);
+module.exports = UserCourse;

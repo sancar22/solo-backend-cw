@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const { Decimal128 } = require('bson')
+const mongoose = require('mongoose');
+const { Decimal128 } = require('bson');
 
 const CourseSchema = new mongoose.Schema(
   {
@@ -23,12 +23,16 @@ const CourseSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    priceStripeID: {
+      type: String,
+      required: true,
+    },
   },
   {
     versionKey: false,
     timestamps: true,
-  },
-)
+  }
+);
 
-const Course = mongoose.model('course', CourseSchema)
-module.exports = Course
+const Course = mongoose.model('course', CourseSchema);
+module.exports = Course;

@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const { ObjectID } = require('mongodb')
+const mongoose = require('mongoose');
+const { ObjectID } = require('mongodb');
 
 const TopicSchema = new mongoose.Schema(
   {
@@ -31,8 +31,8 @@ const TopicSchema = new mongoose.Schema(
   {
     versionKey: false,
     timestamps: true,
-  },
-)
+  }
+);
 
-const Topic = mongoose.model('topic', TopicSchema)
-module.exports = Topic
+const Topic = mongoose.model('topic', TopicSchema);
+module.exports = Topic;
