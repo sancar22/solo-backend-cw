@@ -11,14 +11,57 @@ const stripe = new Stripe(defaultConfig.secretAPITestStripe, {
 });
 
 // This will give information in a way that can be read by the tables in the admin page
-exports.getAllCourses = async (req, res) => {
+exports.getAllTopics = async (req, res) => {
   try {
-    const courses = await Course.find({ enabled: true });
-    if (!courses) return res.send('No courses are available!');
+    const topics = await Topic.aggregate([
+      {
+        $match: {
+          enabled: true,
+        },
+      },
+      {
+        $lookup: {
+          from: 'courses',
+          let: { courseID: '$courseID' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ['$_id', '$$courseID'],
+                },
+              },
+            },
+            {
+              $project: {
+                name: 1,
+              },
+            },
+          ],
+          as: 'courseInfo',
+        },
+      },
+      {
+        $addFields: {
+          courseName: { $arrayElemAt: ['$courseInfo', 0] },
+        },
+      },
+      {
+        $addFields: {
+          courseName: '$courseName.name',
+        },
+      },
+    ]);
+    if (!topics) return res.send('No topics are available!');
     const filteredKeys = [
       {
+        field: 'courseName',
+        headerName: 'Course Name',
+        type: 'string',
+        required: true,
+      },
+      {
         field: 'name',
-        headerName: 'Name',
+        headerName: 'Topic Name',
         type: 'string',
         required: true,
       },
@@ -28,32 +71,24 @@ exports.getAllCourses = async (req, res) => {
         type: 'string',
         required: true,
       },
-      { field: 'price', headerName: 'Price', type: 'currency', required: true },
       {
-        field: 'coverImageURL',
-        headerName: 'Cover Image',
-        type: 'image',
+        field: 'videoURL',
+        headerName: 'Video',
+        type: 'string',
         required: true,
       },
       { field: 'options', headerName: 'Options' },
     ];
-    // this is for dropdown in admin when chosing a grade for the creation of a topic
-    const modifiedCourse = [];
-    for (let i = 0; i < courses.length; i++) {
-      const { name, _id } = courses[i];
-      modifiedCourse.push({ title: name, value: _id });
-    }
     const tableOptions = { show: true, edit: true, delete: true };
-    const entityName = 'course';
-    const categoryName = 'Course';
+    const entityName = 'topic';
+    const categoryName = 'Topic';
 
     res.status(200).send({
       keysLabel: filteredKeys,
-      allInfo: courses,
+      allInfo: topics,
       tableOptions,
       entityName,
       categoryName,
-      modifiedCourse,
     });
   } catch (e) {
     console.log(e);
@@ -61,19 +96,26 @@ exports.getAllCourses = async (req, res) => {
   }
 };
 
-exports.getCoursesById = async (req, res) => {
+exports.getTopicsById = async (req, res) => {
   try {
-    const course = await Course.findOne({
+    const topic = await Topic.findOne({
       _id: req.params.id,
       enabled: true,
     }).lean();
+    const course = await Course.findById(topic.courseID);
+    topic.courseName = course.name;
 
-    if (!course) return res.send('Course does not exist!');
-    course.price = parseFloat(course.price.toString());
+    if (!topic) return res.send('Topic does not exist!');
     const filteredKeys = [
       {
+        field: 'courseName',
+        headerName: 'Course Name',
+        type: 'string',
+        required: true,
+      },
+      {
         field: 'name',
-        headerName: 'Name',
+        headerName: 'Topic Name',
         type: 'string',
         required: true,
       },
@@ -83,22 +125,27 @@ exports.getCoursesById = async (req, res) => {
         type: 'string',
         required: true,
       },
-      { field: 'price', headerName: 'Price', type: 'currency', required: true },
       {
-        field: 'coverImageURL',
-        headerName: 'Cover Image',
-        type: 'image',
+        field: 'videoURL',
+        headerName: 'Video',
+        type: 'string',
+        required: true,
+      },
+      {
+        field: 'questions',
+        headerName: 'Questions',
+        type: 'array',
         required: true,
       },
       { field: 'options', headerName: 'Options' },
     ];
     const tableOptions = { show: true, edit: true, delete: true };
-    const entityName = 'course';
-    const categoryName = 'Course';
+    const entityName = 'topic';
+    const categoryName = 'Topic';
 
     res.status(200).send({
       keysLabel: filteredKeys,
-      allInfo: course,
+      allInfo: topic,
       tableOptions,
       entityName,
       categoryName,
@@ -109,40 +156,17 @@ exports.getCoursesById = async (req, res) => {
   }
 };
 
-exports.addCourse = async (req, res) => {
+exports.addTopic = async (req, res) => {
   try {
-    let { price } = req.body;
-    const { coverImageURL, name, description } = req.body;
-    if (!coverImageURL)
-      return res.status(400).send('You have to insert a cover image!');
-    if (!price) price = 0;
-
-    const { data, mime } = coverImageURL;
-    const URLfromS3 = await uploadFile(data, mime);
-    const product = await stripe.products.create({
-      name: name.trim(),
-    });
-    const priceStripe = await stripe.prices.create({
-      unit_amount: parseInt(price * 100, 10),
-      currency: 'usd',
-      product: product.id,
-    });
-    const course = new Course({
-      name: name.trim(),
-      description: description.trim(),
-      price,
-      coverImageURL: URLfromS3,
-      priceStripeID: priceStripe.id,
-    });
-    await course.save();
-    res.status(200).send('Course added successfully!');
+    await Topic.create(req.body);
+    res.status(200).send('Topic added succesfully!');
   } catch (e) {
     console.log(e);
     res.status(500).send('Internal Server Error!');
   }
 };
 
-exports.editCourse = async (req, res) => {
+exports.editTopic = async (req, res) => {
   try {
     let { price } = req.body;
     const { coverImageURL, name, description } = req.body;
@@ -191,7 +215,7 @@ exports.editCourse = async (req, res) => {
 };
 
 // Logical delete
-exports.deleteCourse = async (req, res) => {
+exports.deleteTopic = async (req, res) => {
   const courseID = req.params.id;
   try {
     await Course.updateOne(

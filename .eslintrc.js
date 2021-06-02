@@ -23,5 +23,7 @@ module.exports = {
     camelcase: 'off',
     'no-unused-vars': ['error', { argsIgnorePattern: 'next' }],
     'new-cap': 'off',
+    'no-plusplus': 'off',
+    'no-dupe-keys': 'off',
   },
 };

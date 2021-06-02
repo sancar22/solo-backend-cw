@@ -15,6 +15,7 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use('/user', require('./routes/user'));
 app.use('/auth', require('./routes/auth'));
 app.use('/course', require('./routes/course'));
+app.use('/topic', require('./routes/topic'));
 
 connectDB();
 app.listen(PORT, () => console.log('Server running!'));
