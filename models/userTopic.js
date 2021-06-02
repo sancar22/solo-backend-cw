@@ -15,6 +15,10 @@ const UserTopicSchema = new mongoose.Schema(
       type: ObjectID,
       required: true,
     },
+    topicID: {
+      type: ObjectID,
+      required: true,
+    },
     score: {
       type: Number,
       required: true,
