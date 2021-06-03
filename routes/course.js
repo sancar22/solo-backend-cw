@@ -50,5 +50,10 @@ router.get(
 );
 
 router.post('/enroll/free', authMiddleware, courseController.enrollFreeCourse);
+router.post(
+  '/enroll/premium',
+  authMiddleware,
+  courseController.enrollPremiumCourse
+);
 
 module.exports = router;

@@ -229,6 +229,22 @@ exports.enrollFreeCourse = async (req, res) => {
   }
 };
 
+exports.enrollPremiumCourse = async (req, res) => {
+  try {
+    const { course } = req.body;
+    const userID = req.user.id;
+    await UserCourse.create({
+      userID,
+      courseID: course._id,
+      coursePricePaid: 0,
+    });
+    res.status(200).send('Enrolled succesfully!');
+  } catch (e) {
+    console.log(e);
+    res.status(500).send('Internal Server Error!');
+  }
+};
+
 exports.getActivitiesClientSide = async (req, res) => {
   try {
     const userID = req.user.id;
@@ -244,10 +260,13 @@ exports.getActivitiesClientSide = async (req, res) => {
       const currentCourse = allAvailableCourses[i];
       currentCourse.enrolled = false;
       currentCourse.free = false;
+      currentCourse.formattedPrice = parseFloat(
+        parseFloat(currentCourse.price.toString()).toFixed(2)
+      );
       if (isMyCourse(currentCourse._id)) {
         currentCourse.enrolled = true;
       }
-      if (parseFloat(currentCourse.price.toString()) === 0) {
+      if (currentCourse.formattedPrice === 0) {
         currentCourse.free = true;
       }
     }
