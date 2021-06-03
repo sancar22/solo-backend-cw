@@ -43,4 +43,12 @@ router.delete(
   courseController.deleteCourse
 );
 
+router.get(
+  '/client-side/allCourses',
+  authMiddleware,
+  courseController.getActivitiesClientSide
+);
+
+router.post('/enroll/free', authMiddleware, courseController.enrollFreeCourse);
+
 module.exports = router;

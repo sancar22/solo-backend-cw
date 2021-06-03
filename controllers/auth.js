@@ -151,9 +151,9 @@ exports.verifyEmail = async (req, res) => {
 exports.forgotPW = async (req, res) => {
   try {
     const { email } = req.body;
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: email.toLowerCase() });
     if (!user)
-      res.status(200).send('Email was sent (if it exists) with a code!');
+      return res.status(200).send('Email was sent (if it exists) with a code!');
 
     const randomNumber = Math.floor(100000 + Math.random() * 900000);
     const payload = {
@@ -195,7 +195,7 @@ exports.forgotPW = async (req, res) => {
 exports.verifyPWCodeChange = async (req, res) => {
   try {
     const { email, code } = req.body;
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) return res.status(401).send('Invalid code!');
     const decodedJWTCode = jwt.verify(
       user.forgotPWToken,

@@ -25,5 +25,6 @@ module.exports = {
     'new-cap': 'off',
     'no-plusplus': 'off',
     'no-dupe-keys': 'off',
+    'no-underscore-dangle': 'off',
   },
 };

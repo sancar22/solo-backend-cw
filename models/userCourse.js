@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { Decimal128 } = require('bson');
 const { ObjectID } = require('mongodb');
 
 const UserCourseSchema = new mongoose.Schema(
@@ -13,6 +14,10 @@ const UserCourseSchema = new mongoose.Schema(
     },
     courseID: {
       type: ObjectID,
+      required: true,
+    },
+    coursePricePaid: {
+      type: Decimal128,
       required: true,
     },
   },

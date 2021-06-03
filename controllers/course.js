@@ -212,3 +212,51 @@ exports.deleteCourse = async (req, res) => {
     res.status(500).send('Internal Server Error!');
   }
 };
+
+exports.enrollFreeCourse = async (req, res) => {
+  try {
+    const { course } = req.body;
+    const userID = req.user.id;
+    await UserCourse.create({
+      userID,
+      courseID: course._id,
+      coursePricePaid: 0,
+    });
+    res.status(200).send('Enrolled succesfully!');
+  } catch (e) {
+    console.log(e);
+    res.status(500).send('Internal Server Error!');
+  }
+};
+
+exports.getActivitiesClientSide = async (req, res) => {
+  try {
+    const userID = req.user.id;
+    const userActiveCourses = await UserCourse.find({ userID, enabled: true });
+    const allAvailableCourses = await Course.find({ enabled: true }).lean();
+
+    const isMyCourse = (courseID) =>
+      userActiveCourses.filter(
+        (course) => course.courseID.toString() === courseID.toString()
+      ).length === 1;
+
+    for (let i = 0; i < allAvailableCourses.length; i++) {
+      const currentCourse = allAvailableCourses[i];
+      currentCourse.enrolled = false;
+      currentCourse.free = false;
+      if (isMyCourse(currentCourse._id)) {
+        currentCourse.enrolled = true;
+      }
+      if (parseFloat(currentCourse.price.toString()) === 0) {
+        currentCourse.free = true;
+      }
+    }
+
+    allAvailableCourses.sort((course) => (course.enrolled ? -1 : 1));
+
+    res.status(200).send(allAvailableCourses);
+  } catch (e) {
+    console.log(e);
+    res.status(500).send('Internal Server Error!');
+  }
+};

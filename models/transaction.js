@@ -1,6 +1,6 @@
-const mongoose = require('mongoose')
-const { Decimal128 } = require('bson')
-const { ObjectID } = require('mongodb')
+const mongoose = require('mongoose');
+const { Decimal128 } = require('bson');
+const { ObjectID } = require('mongodb');
 
 const TransactionSchema = new mongoose.Schema(
   {
@@ -24,8 +24,8 @@ const TransactionSchema = new mongoose.Schema(
   {
     versionKey: false,
     timestamps: true,
-  },
-)
+  }
+);
 
-const Transaction = mongoose.model('transaction', TransactionSchema)
-module.exports = Transaction
+const Transaction = mongoose.model('transaction', TransactionSchema);
+module.exports = Transaction;
