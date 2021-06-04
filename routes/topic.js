@@ -43,4 +43,10 @@ router.delete(
   topicController.deleteTopic
 );
 
+router.get(
+  '/client-side/allTopics/:courseID',
+  authMiddleware,
+  topicController.getTopicsClientSide
+);
+
 module.exports = router;

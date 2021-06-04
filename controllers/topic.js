@@ -198,3 +198,24 @@ exports.deleteTopic = async (req, res) => {
     res.status(500).send('Internal Server Error!');
   }
 };
+
+exports.getTopicsClientSide = async (req, res) => {
+  try {
+    const { courseID } = req.params;
+    const allTopics = await Topic.find({ courseID, enabled: true }).lean();
+
+    for (let i = 0; i < allTopics.length; i++) {
+      const currentTopic = allTopics[i];
+      currentTopic.completed = false;
+      const userTopic = await UserTopic.findOne({ topicID: currentTopic._id });
+      if (userTopic) {
+        currentTopic.completed = true;
+      }
+    }
+
+    res.status(200).send(allTopics);
+  } catch (e) {
+    console.log(e);
+    res.status(500).send('Internal Server Error!');
+  }
+};

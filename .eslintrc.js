@@ -26,5 +26,6 @@ module.exports = {
     'no-plusplus': 'off',
     'no-dupe-keys': 'off',
     'no-underscore-dangle': 'off',
+    'no-await-in-loop': 'off',
   },
 };

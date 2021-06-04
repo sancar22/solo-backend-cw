@@ -37,17 +37,9 @@ exports.payPremiumCourse = async (req, res) => {
       },
     });
 
-    // const invoiceItem = await stripe.invoiceItems.create({
-    //   customer: userStripeID,
-    //   price: course.priceStripeID,
-    // });
-
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: course.formattedPrice * 100,
-      currency: 'usd',
-      payment_method_types: ['card'],
-      payment_method: paymentMethod.id,
+    await stripe.invoiceItems.create({
       customer: userStripeID,
+      price: course.priceStripeID,
     });
 
     await UserCourse.create({
