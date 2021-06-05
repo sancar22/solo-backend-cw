@@ -279,3 +279,37 @@ exports.getActivitiesClientSide = async (req, res) => {
     res.status(500).send('Internal Server Error!');
   }
 };
+
+exports.getMyCourses = async (req, res) => {
+  try {
+    const userID = req.user.id;
+    const userActiveCourses = await UserCourse.find({
+      userID,
+      enabled: true,
+    }).lean();
+
+    for (let i = 0; i < userActiveCourses.length; i++) {
+      const currentCourse = userActiveCourses[i];
+      const topicsFromCourse = await Topic.find({
+        courseID: currentCourse.courseID,
+        enabled: true,
+      });
+      const topicsCompleted = await UserTopic.find({
+        courseID: currentCourse.courseID,
+        enabled: true,
+        userID,
+      });
+      const course = await Course.findById(currentCourse.courseID);
+      currentCourse.topicsCompleted = topicsCompleted.length;
+      currentCourse.numberOfTopics = topicsFromCourse.length;
+      currentCourse.name = course.name;
+      currentCourse.ratioFinished = parseFloat(
+        (topicsCompleted.length / topicsFromCourse.length).toFixed(2)
+      );
+    }
+    res.status(200).send(userActiveCourses);
+  } catch (e) {
+    console.log(e);
+    res.status(500).send('Internal Server Error!');
+  }
+};

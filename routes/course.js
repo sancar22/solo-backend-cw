@@ -49,6 +49,12 @@ router.get(
   courseController.getActivitiesClientSide
 );
 
+router.get(
+  '/client-side/myCourses',
+  authMiddleware,
+  courseController.getMyCourses
+);
+
 router.post('/enroll/free', authMiddleware, courseController.enrollFreeCourse);
 router.post(
   '/enroll/premium',
