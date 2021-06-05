@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { ObjectID } = require('mongodb');
+const { Decimal128 } = require('bson');
 
 const UserTopicSchema = new mongoose.Schema(
   {
@@ -20,11 +21,19 @@ const UserTopicSchema = new mongoose.Schema(
       required: true,
     },
     score: {
+      type: Decimal128,
+      required: true,
+    },
+    responses: {
+      type: Array,
+      required: true,
+    },
+    totalQuestions: {
       type: Number,
       required: true,
     },
-    question: {
-      type: Array,
+    correctQuestions: {
+      type: Number,
       required: true,
     },
   },

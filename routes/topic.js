@@ -49,4 +49,12 @@ router.get(
   topicController.getTopicsClientSide
 );
 
+router.get(
+  '/client-side/getTopicById/:topicID',
+  authMiddleware,
+  topicController.getTopicById
+);
+
+router.post('/submitTest', authMiddleware, topicController.submitTest);
+
 module.exports = router;

@@ -212,8 +212,75 @@ exports.getTopicsClientSide = async (req, res) => {
         currentTopic.completed = true;
       }
     }
-
     res.status(200).send(allTopics);
+  } catch (e) {
+    console.log(e);
+    res.status(500).send('Internal Server Error!');
+  }
+};
+
+exports.getTopicById = async (req, res) => {
+  try {
+    const { topicID } = req.params;
+    console.log(topicID);
+    const topic = await Topic.findOne({ _id: topicID, enabled: true }).lean();
+    for (let i = 0; i < topic.questions.length; i++) {
+      topic.questions[i].userAnswer = 0;
+      topic.questions[i].userRespondedCorrectly = false;
+      if (topic.questions[i].choices[0].correct) {
+        topic.questions[i].userRespondedCorrectly = true;
+      }
+    }
+    console.log(topic);
+    res.status(200).send(topic);
+  } catch (e) {
+    console.log(e);
+    res.status(500).send('Internal Server Error!');
+  }
+};
+
+exports.submitTest = async (req, res) => {
+  try {
+    const userID = req.user.id;
+    const { responses, courseID, topicID } = req.body;
+    const totalQuestions = responses.length;
+    let numberOfCorrectQuestions = 0;
+    for (let i = 0; i < responses.length; i++) {
+      if (responses[i].userRespondedCorrectly) {
+        numberOfCorrectQuestions++;
+      }
+    }
+    const score = parseFloat(
+      ((numberOfCorrectQuestions / totalQuestions) * 100).toFixed(2)
+    );
+    await UserTopic.create({
+      userID,
+      courseID,
+      topicID,
+      score,
+      responses,
+      totalQuestions,
+      correctQuestions: numberOfCorrectQuestions,
+    });
+    let message = '';
+    let passed = false;
+    if (totalQuestions === numberOfCorrectQuestions) {
+      message = 'Congratulations, you got a perfect score!';
+      passed = true;
+    } else if (score >= 50) {
+      message = 'Congratulations, you passed the test!';
+      passed = true;
+    } else if (score < 50) {
+      message =
+        'Too bad, you failed the test. You can see what you answered wrong in the course progress!';
+    }
+    res.send({
+      score,
+      totalQuestions,
+      numberOfCorrectQuestions,
+      message,
+      passed,
+    });
   } catch (e) {
     console.log(e);
     res.status(500).send('Internal Server Error!');
