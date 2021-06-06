@@ -222,7 +222,6 @@ exports.getTopicsClientSide = async (req, res) => {
 exports.getTopicById = async (req, res) => {
   try {
     const { topicID } = req.params;
-    console.log(topicID);
     const topic = await Topic.findOne({ _id: topicID, enabled: true }).lean();
     for (let i = 0; i < topic.questions.length; i++) {
       topic.questions[i].userAnswer = 0;
@@ -231,7 +230,6 @@ exports.getTopicById = async (req, res) => {
         topic.questions[i].userRespondedCorrectly = true;
       }
     }
-    console.log(topic);
     res.status(200).send(topic);
   } catch (e) {
     console.log(e);
@@ -281,6 +279,32 @@ exports.submitTest = async (req, res) => {
       message,
       passed,
     });
+  } catch (e) {
+    console.log(e);
+    res.status(500).send('Internal Server Error!');
+  }
+};
+
+exports.getCompletedTopicsForCourse = async (req, res) => {
+  try {
+    const userID = req.user.id;
+    const { courseID } = req.params;
+    const completedTopicsForCourse = await UserTopic.find({
+      courseID,
+      userID,
+      enabled: true,
+    }).lean();
+
+    for (let i = 0; i < completedTopicsForCourse.length; i++) {
+      const currentTopicUser = completedTopicsForCourse[i];
+      const topic = await Topic.findOne({
+        _id: currentTopicUser.topicID,
+        enabled: true,
+      });
+      currentTopicUser.name = topic.name;
+      currentTopicUser.description = topic.description;
+    }
+    res.status(200).send(completedTopicsForCourse);
   } catch (e) {
     console.log(e);
     res.status(500).send('Internal Server Error!');

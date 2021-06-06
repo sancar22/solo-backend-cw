@@ -55,6 +55,12 @@ router.get(
   topicController.getTopicById
 );
 
+router.get(
+  '/client-side/completedTopics/:courseID',
+  authMiddleware,
+  topicController.getCompletedTopicsForCourse
+);
+
 router.post('/submitTest', authMiddleware, topicController.submitTest);
 
 module.exports = router;
