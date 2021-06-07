@@ -2,7 +2,7 @@ const cors = require('cors');
 const express = require('express');
 const connectDB = require('./db/db');
 
-const PORT = process.env.PORT || 5000;
+const port = process.env.PORT || 5000;
 
 const app = express();
 
@@ -19,4 +19,4 @@ app.use('/topic', require('./routes/topic'));
 app.use('/payment', require('./routes/payment'));
 
 connectDB();
-app.listen(PORT, () => console.log('Server running!'));
+app.listen(port, () => console.log('Server running!'));

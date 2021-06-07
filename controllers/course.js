@@ -303,6 +303,7 @@ exports.getMyCourses = async (req, res) => {
       currentCourse.topicsCompleted = topicsCompleted.length;
       currentCourse.numberOfTopics = topicsFromCourse.length;
       currentCourse.name = course.name;
+      currentCourse.coverImageURL = course.coverImageURL;
       currentCourse.ratioFinished = parseFloat(
         (topicsCompleted.length / topicsFromCourse.length).toFixed(2)
       );
