@@ -201,13 +201,18 @@ exports.deleteTopic = async (req, res) => {
 
 exports.getTopicsClientSide = async (req, res) => {
   try {
+    const userID = req.user.id;
     const { courseID } = req.params;
     const allTopics = await Topic.find({ courseID, enabled: true }).lean();
 
     for (let i = 0; i < allTopics.length; i++) {
       const currentTopic = allTopics[i];
       currentTopic.completed = false;
-      const userTopic = await UserTopic.findOne({ topicID: currentTopic._id });
+      const userTopic = await UserTopic.findOne({
+        topicID: currentTopic._id,
+        userID,
+        enabled: true,
+      });
       if (userTopic) {
         currentTopic.completed = true;
       }

@@ -113,7 +113,6 @@ exports.register = async (req, res) => {
         const output = `
         <h2>Please click on the following link to verify your account.</h2>
         <p>${defaultConfig.serverURL}/auth/confirmation/${token}</p>
-        <p><b>NOTE: </b> Link will expire in one (1) hour.</p>
         `;
         await transporter.sendMail({
           to: email,
@@ -240,6 +239,43 @@ exports.changePassword = async (req, res) => {
       return res.status(400).send("Passwords don't match!");
     }
     const userID = req.user.id;
+    const salt = await bcrypt.genSalt(10);
+    const newPassword = await bcrypt.hash(password, salt);
+    await User.updateOne(
+      { _id: userID },
+      {
+        $set: { password: newPassword },
+      }
+    );
+    return res.status(200).send('Password changed succesfully!');
+  } catch (e) {
+    res.status(500).send({ msg: 'Internal server error!', statusCode: 500 });
+  }
+};
+
+exports.changePasswordInApp = async (req, res) => {
+  try {
+    const userID = req.user.id;
+    const user = await User.findById(userID);
+    const { oldPassword, password, passwordRepeat } = req.body;
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).send('Current password is not correct!');
+    }
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .send('Password should be at least 6 characters long!');
+    }
+    if (password !== passwordRepeat) {
+      return res.status(400).send("Passwords don't match!");
+    }
+    const isMatchOldAndNew = await bcrypt.compare(password, user.password);
+    if (isMatchOldAndNew) {
+      return res
+        .status(400)
+        .send('New password cannot be the same as current one!');
+    }
     const salt = await bcrypt.genSalt(10);
     const newPassword = await bcrypt.hash(password, salt);
     await User.updateOne(
