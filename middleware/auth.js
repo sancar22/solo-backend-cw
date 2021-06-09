@@ -1,27 +1,27 @@
-const jwt = require('jsonwebtoken')
-const defaultConfig = require('../db/default.json')
+const jwt = require('jsonwebtoken');
+const defaultConfig = require('../db/default.json');
 
 module.exports = function (req, res, next) {
   // Get token from header (protected route)
-  const authHeader = req.header('Authorization')
+  const authHeader = req.header('Authorization');
 
   // Check if no token
   if (!authHeader) {
-    return res.status(401).json({ msg: 'No token, authorization denied' })
+    return res.status(401).json({ msg: 'No token, authorization denied' });
   }
 
   // Verify token
 
   try {
-    const token = authHeader.split(' ')[1]
-    const decoded = jwt.verify(token, defaultConfig.jwtSecret)
-    req.user = decoded.user
-    next()
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, defaultConfig.jwtSecret);
+    req.user = decoded.user;
+    next();
   } catch (err) {
     if (err.name) {
-      console.log(err)
-      return res.status(401).send({ msg: 'Token expired!', statusCode: 401 })
+      console.log(err);
+      return res.status(401).send({ msg: 'Token expired!', statusCode: 401 });
     }
-    res.status(401).json({ msg: 'Token is not valid' })
+    res.status(401).json({ msg: 'Token is not valid' });
   }
-}
+};

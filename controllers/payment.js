@@ -2,6 +2,7 @@ const Stripe = require('stripe');
 const User = require('../models/user');
 const Transaction = require('../models/transaction');
 const UserCourse = require('../models/userCourse');
+const Course = require('../models/course');
 const defaultConfig = require('../db/default.json');
 
 const stripe = new Stripe(defaultConfig.secretAPITestStripe, {
@@ -61,8 +62,93 @@ exports.payPremiumCourse = async (req, res) => {
   }
 };
 
-// await UserCourse.create({
-//   userID,
-//   courseID: course._id,
-//   coursePricePaid: 0,
-// });
+exports.getPurchases = async (req, res) => {
+  try {
+    const transactions = await Transaction.find().lean();
+    if (!transactions) return res.send('No transactions are available!');
+    for (let i = 0; i < transactions.length; i++) {
+      const course = await Course.findById(transactions[i].courseID);
+      transactions[i].courseName = course.name;
+    }
+    const filteredKeys = [
+      {
+        field: 'courseName',
+        headerName: 'Course',
+        type: 'string',
+        required: true,
+      },
+      {
+        field: 'userEmail',
+        headerName: 'Email',
+        type: 'string',
+        required: true,
+      },
+      {
+        field: 'price',
+        headerName: 'Price Paid',
+        type: 'string',
+        required: true,
+      },
+      { field: 'options', headerName: 'Options' },
+    ];
+    const tableOptions = { show: true, edit: false, delete: false };
+    const entityName = 'purchase';
+    const categoryName = 'Purchase';
+
+    res.status(200).send({
+      keysLabel: filteredKeys,
+      allInfo: transactions,
+      tableOptions,
+      entityName,
+      categoryName,
+    });
+  } catch (e) {
+    res.status(500).json({ errors: e });
+  }
+};
+
+exports.getPurchaseById = async (req, res) => {
+  try {
+    console.log('entering');
+    const transaction = await Transaction.findById(req.params.id).lean();
+
+    if (!transaction) return res.send('Transaction not available.');
+    const course = await Course.findById(transaction.courseID);
+    transaction.courseName = course.name;
+    transaction.price = parseFloat(transaction.price.toString());
+    const filteredKeys = [
+      {
+        field: 'courseName',
+        headerName: 'Course',
+        type: 'string',
+        required: true,
+      },
+      {
+        field: 'userEmail',
+        headerName: 'Email',
+        type: 'string',
+        required: true,
+      },
+      {
+        field: 'price',
+        headerName: 'Price Paid',
+        type: 'currency',
+        required: true,
+      },
+      { field: 'options', headerName: 'Options' },
+    ];
+    const tableOptions = { show: true, edit: false, delete: false };
+    const entityName = 'purchase';
+    const categoryName = 'Purchase';
+
+    res.status(200).send({
+      keysLabel: filteredKeys,
+      allInfo: transaction,
+      tableOptions,
+      entityName,
+      categoryName,
+    });
+  } catch (e) {
+    res.status(500).json({ errors: e });
+  }
+};
