@@ -19,6 +19,7 @@
     "moment": "^2.29.1",
     "mongoose": "^5.12.11",
     "nodemailer": "^6.6.1",
+    "pdfkit": "^0.12.1",
     "shortid": "^2.2.16",
     "stripe": "^8.150.0"
   },

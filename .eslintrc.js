@@ -27,5 +27,6 @@ module.exports = {
     'no-dupe-keys': 'off',
     'no-underscore-dangle': 'off',
     'no-await-in-loop': 'off',
+    'prefer-const': 'off',
   },
 };

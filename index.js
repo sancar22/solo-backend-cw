@@ -17,6 +17,7 @@ app.use('/auth', require('./routes/auth'));
 app.use('/course', require('./routes/course'));
 app.use('/topic', require('./routes/topic'));
 app.use('/payment', require('./routes/payment'));
+app.use('/stats', require('./routes/stats'));
 
 connectDB();
 app.listen(port, () => console.log('Server running!'));
