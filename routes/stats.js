@@ -8,8 +8,8 @@ const authAdminMiddleware = require('../middleware/admin');
 
 router.get(
   '/admin/global',
-  // authMiddleware,
-  // authAdminMiddleware,
+  authMiddleware,
+  authAdminMiddleware,
   statsController.getGlobalStats
 );
 

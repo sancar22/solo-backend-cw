@@ -4,9 +4,10 @@ const Topic = require('../models/topic');
 const UserCourse = require('../models/userCourse');
 const UserTopic = require('../models/userTopic');
 const uploadFile = require('../functions/uploadFile');
-const defaultConfig = require('../db/default.json');
 
-const stripe = new Stripe(defaultConfig.secretAPITestStripe, {
+require('dotenv').config();
+
+const stripe = new Stripe(process.env.secretAPITestStripe, {
   apiVersion: '2020-08-27',
 });
 

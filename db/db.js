@@ -1,14 +1,14 @@
-const mongoose = require("mongoose");
-const defaultConfig = require("./default.json");
+const mongoose = require('mongoose');
+require('dotenv').config();
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(defaultConfig.mongoURI, {
+    await mongoose.connect(process.env.mongoURI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      useCreateIndex: true
+      useCreateIndex: true,
     });
-    console.log("MongoDB Connected!");
+    console.log('MongoDB Connected!');
   } catch (err) {
     console.error(err.message);
     process.exit(1);

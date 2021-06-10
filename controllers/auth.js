@@ -4,18 +4,19 @@ const nodemailer = require('nodemailer');
 const Stripe = require('stripe');
 const User = require('../models/user');
 const Admin = require('../models/admin');
-const defaultConfig = require('../db/default.json');
 const { validateEmail } = require('../utils/index');
 
-const stripe = new Stripe(defaultConfig.secretAPITestStripe, {
+require('dotenv').config();
+
+const stripe = new Stripe(process.env.secretAPITestStripe, {
   apiVersion: '2020-08-27',
 });
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: defaultConfig.emailProvider,
-    pass: defaultConfig.emailPW,
+    user: process.env.emailProvider,
+    pass: process.env.emailPW,
   },
 });
 
@@ -38,7 +39,7 @@ const loginFunction = async (email, password, res, admin) => {
 
   jwt.sign(
     userPayload,
-    defaultConfig.jwtSecret,
+    process.env.jwtSecret,
     { expiresIn: 3600 },
     (err, token) => {
       if (err) throw err;
@@ -105,14 +106,14 @@ exports.register = async (req, res) => {
 
     jwt.sign(
       payload,
-      defaultConfig.jwtSecret,
+      process.env.jwtSecret,
       { expiresIn: '9999 years' },
       async (err, token) => {
         if (err) throw err;
         res.send('User created successfully!');
         const output = `
-        <h2>Please click on the following link to verify your account.</h2>
-        <p>${defaultConfig.serverURL}/auth/confirmation/${token}</p>
+        <h2>Please click on the following link to verify your account!</h2>
+        <p>${process.env.serverURL}/auth/confirmation/${token}</p>
         `;
         await transporter.sendMail({
           to: email,
@@ -129,7 +130,7 @@ exports.register = async (req, res) => {
 
 exports.verifyEmail = async (req, res) => {
   try {
-    const decodedJWT = jwt.verify(req.params.token, defaultConfig.jwtSecret);
+    const decodedJWT = jwt.verify(req.params.token, process.env.jwtSecret);
     const userID = decodedJWT.user.id;
     const user = await User.findById(userID);
     if (!user.verified) {
@@ -163,7 +164,7 @@ exports.forgotPW = async (req, res) => {
     };
     jwt.sign(
       payload,
-      defaultConfig.jwtSecret,
+      process.env.jwtSecret,
       { expiresIn: 60 },
       async (err, token) => {
         if (err) throw err;
@@ -198,7 +199,7 @@ exports.verifyPWCodeChange = async (req, res) => {
     if (!user) return res.status(401).send('Invalid code!');
     const decodedJWTCode = jwt.verify(
       user.forgotPWToken,
-      defaultConfig.jwtSecret
+      process.env.jwtSecret
     );
     if (decodedJWTCode.user.code !== code)
       return res.status(401).send('Invalid code!');
@@ -211,7 +212,7 @@ exports.verifyPWCodeChange = async (req, res) => {
     // 2 minutes to change pw
     jwt.sign(
       payload,
-      defaultConfig.jwtSecret,
+      process.env.jwtSecret,
       { expiresIn: 120 },
       async (err, token) => {
         if (err) throw err;

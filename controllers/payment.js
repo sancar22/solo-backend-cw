@@ -3,9 +3,10 @@ const User = require('../models/user');
 const Transaction = require('../models/transaction');
 const UserCourse = require('../models/userCourse');
 const Course = require('../models/course');
-const defaultConfig = require('../db/default.json');
 
-const stripe = new Stripe(defaultConfig.secretAPITestStripe, {
+require('dotenv').config();
+
+const stripe = new Stripe(process.env.secretAPITestStripe, {
   apiVersion: '2020-08-27',
 });
 

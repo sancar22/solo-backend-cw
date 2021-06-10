@@ -1,11 +1,11 @@
 const AWS = require('aws-sdk');
 const shortid = require('shortid');
 const moment = require('moment');
-const defaultConfig = require('../db/default.json');
+require('dotenv').config();
 
 const s3 = new AWS.S3({
-  accessKeyId: defaultConfig.AWS_S3_ID,
-  secretAccessKey: defaultConfig.AWS_S3_SECRET,
+  accessKeyId: process.env.AWS_S3_ID,
+  secretAccessKey: process.env.AWS_S3_SECRET,
 });
 
 module.exports = async function uploadFile(file, type) {
@@ -17,7 +17,7 @@ module.exports = async function uploadFile(file, type) {
   const key = shortid.generate() + moment().valueOf();
 
   const params = {
-    Bucket: defaultConfig.AWS_S3_BUCKET_NAME,
+    Bucket: process.env.AWS_S3_BUCKET_NAME,
     Key: `${key}.jpeg`, // File name you want to save as in S3
     Body: base64Data,
     ContentEncoding: 'base64', // required
