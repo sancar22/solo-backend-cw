@@ -1,5 +1,6 @@
 const PDFDocument = require('pdfkit');
 const { ObjectID } = require('mongodb');
+const moment = require('moment');
 const Course = require('../models/course');
 const UserTopic = require('../models/userTopic');
 const {
@@ -71,10 +72,37 @@ exports.getGlobalStats = async (req, res) => {
         },
       },
     ]);
+    let totalMoneyGenerated = 0;
+    let totalPeopleEnrolled = 0;
+    for (let i = 0; i < globalMoneyQuery.length; i++) {
+      totalMoneyGenerated += parseFloat(globalMoneyQuery[i].moneyGenerated);
+      totalPeopleEnrolled += globalMoneyQuery[i].peopleEnrolled;
+    }
     const doc = new PDFDocument({ margin: 50 });
-    generateHeader(doc, 'DevCademy - Global Report');
+    generateHeader(doc, 'Global Report');
     doc.font('Helvetica-Bold');
-    generateInvoiceTable(doc, globalMoneyQuery);
+    const currentHeight = generateInvoiceTable(doc, globalMoneyQuery);
+    doc.moveDown();
+    doc
+      .fontSize(10)
+      .text(
+        `The profit generated  from ${moment(startDate).format(
+          'MMMM Do YYYY, h:mm:ss a'
+        )} to  ${moment(endDate).format(
+          'MMMM Do YYYY, h:mm:ss a'
+        )} was ${totalMoneyGenerated} USD. `,
+        50,
+        currentHeight + 30
+      )
+      .moveDown();
+    doc
+      .fontSize(10)
+      .text(
+        `Total number of people enrolled in courses during these dates: ${totalPeopleEnrolled}.`,
+        50,
+        currentHeight + 50
+      )
+      .moveDown();
     generateFooter(doc, startDate, endDate);
     doc.pipe(res);
     doc.end();

@@ -2,10 +2,10 @@ const moment = require('moment');
 
 function generateHeader(doc, name) {
   doc
-    // .image('Fuzz.png', 50, 45, { width: 100 })
+    .image('assets/images/DEVcademy.png', 50, 45, { width: 200 })
     .fillColor('#444444')
     .fontSize(20)
-    .text(name, 200, 87)
+    .text(name, 250, 120)
     .fontSize(10)
     .moveDown();
 }
