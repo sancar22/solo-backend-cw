@@ -1,5 +1,7 @@
 const PDFDocument = require('pdfkit');
+const { ObjectID } = require('mongodb');
 const Course = require('../models/course');
+const UserTopic = require('../models/userTopic');
 const {
   generateFooter,
   generateHeader,
@@ -76,6 +78,338 @@ exports.getGlobalStats = async (req, res) => {
     generateFooter(doc, startDate, endDate);
     doc.pipe(res);
     doc.end();
+  } catch (e) {
+    console.log(e);
+    res.status(500).send('Internal Server Error!');
+  }
+};
+
+exports.getAllTestResults = async (req, res) => {
+  try {
+    const userTests = await UserTopic.aggregate([
+      {
+        $match: {
+          enabled: true,
+        },
+      },
+      {
+        $lookup: {
+          from: 'courses',
+          let: { courseID: '$courseID' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ['$_id', '$$courseID'],
+                },
+              },
+            },
+            {
+              $project: {
+                name: 1,
+              },
+            },
+          ],
+          as: 'courseInfo',
+        },
+      },
+      {
+        $lookup: {
+          from: 'topics',
+          let: { topicID: '$topicID' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ['$_id', '$$topicID'],
+                },
+              },
+            },
+            {
+              $project: {
+                name: 1,
+              },
+            },
+          ],
+          as: 'topicInfo',
+        },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          let: { userID: '$userID' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ['$_id', '$$userID'],
+                },
+              },
+            },
+            {
+              $project: {
+                name: 1,
+                email: 1,
+              },
+            },
+          ],
+          as: 'userInfo',
+        },
+      },
+      {
+        $addFields: {
+          courseName: { $arrayElemAt: ['$courseInfo', 0] },
+          topicName: { $arrayElemAt: ['$topicInfo', 0] },
+          userNameEmail: { $arrayElemAt: ['$userInfo', 0] },
+          scoreString: { $concat: [{ $toString: '$score' }, '%'] },
+        },
+      },
+      {
+        $addFields: {
+          courseName: '$courseName.name',
+          topicName: '$topicName.name',
+          userName: '$userNameEmail.name',
+          userEmail: '$userNameEmail.email',
+        },
+      },
+      {
+        $project: {
+          totalQuestions: 1,
+          correctQuestions: 1,
+          courseName: 1,
+          topicName: 1,
+          userName: 1,
+          userEmail: 1,
+          scoreString: 1,
+        },
+      },
+    ]);
+    const filteredKeys = [
+      {
+        field: 'courseName',
+        headerName: 'Course Name',
+        type: 'string',
+        required: true,
+      },
+      {
+        field: 'topicName',
+        headerName: 'Topic Name',
+        type: 'string',
+        required: true,
+      },
+      {
+        field: 'userName',
+        headerName: 'User Name',
+        type: 'string',
+        required: true,
+      },
+      {
+        field: 'userEmail',
+        headerName: 'User Email',
+        type: 'string',
+        required: true,
+      },
+      {
+        field: 'correctQuestions',
+        headerName: 'Correct Questions',
+        type: 'string',
+        required: true,
+      },
+      {
+        field: 'totalQuestions',
+        headerName: 'Total Questions',
+        type: 'string',
+        required: true,
+      },
+      {
+        field: 'scoreString',
+        headerName: 'Score',
+        type: 'string',
+        required: true,
+      },
+      { field: 'options', headerName: 'Options' },
+    ];
+    const tableOptions = { show: true, edit: false, delete: false };
+    const entityName = 'testResults';
+    const categoryName = 'TestResults';
+
+    res.status(200).send({
+      keysLabel: filteredKeys,
+      allInfo: userTests,
+      tableOptions,
+      entityName,
+      categoryName,
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).send('Internal Server Error!');
+  }
+};
+
+exports.getTestResultById = async (req, res) => {
+  try {
+    const userTests = await UserTopic.aggregate([
+      {
+        $match: {
+          enabled: true,
+          _id: ObjectID(req.params.id),
+        },
+      },
+      {
+        $lookup: {
+          from: 'courses',
+          let: { courseID: '$courseID' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ['$_id', '$$courseID'],
+                },
+              },
+            },
+            {
+              $project: {
+                name: 1,
+              },
+            },
+          ],
+          as: 'courseInfo',
+        },
+      },
+      {
+        $lookup: {
+          from: 'topics',
+          let: { topicID: '$topicID' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ['$_id', '$$topicID'],
+                },
+              },
+            },
+            {
+              $project: {
+                name: 1,
+              },
+            },
+          ],
+          as: 'topicInfo',
+        },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          let: { userID: '$userID' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ['$_id', '$$userID'],
+                },
+              },
+            },
+            {
+              $project: {
+                name: 1,
+                email: 1,
+              },
+            },
+          ],
+          as: 'userInfo',
+        },
+      },
+      {
+        $addFields: {
+          courseName: { $arrayElemAt: ['$courseInfo', 0] },
+          topicName: { $arrayElemAt: ['$topicInfo', 0] },
+          userNameEmail: { $arrayElemAt: ['$userInfo', 0] },
+          scoreString: { $concat: [{ $toString: '$score' }, '%'] },
+        },
+      },
+      {
+        $addFields: {
+          courseName: '$courseName.name',
+          topicName: '$topicName.name',
+          userName: '$userNameEmail.name',
+          userEmail: '$userNameEmail.email',
+        },
+      },
+      {
+        $project: {
+          totalQuestions: 1,
+          correctQuestions: 1,
+          courseName: 1,
+          topicName: 1,
+          userName: 1,
+          userEmail: 1,
+          scoreString: 1,
+          responses: 1,
+        },
+      },
+    ]);
+    const filteredKeys = [
+      {
+        field: 'courseName',
+        headerName: 'Course Name',
+        type: 'string',
+        required: true,
+      },
+      {
+        field: 'topicName',
+        headerName: 'Topic Name',
+        type: 'string',
+        required: true,
+      },
+      {
+        field: 'userName',
+        headerName: 'User Name',
+        type: 'string',
+        required: true,
+      },
+      {
+        field: 'userEmail',
+        headerName: 'User Email',
+        type: 'string',
+        required: true,
+      },
+      {
+        field: 'correctQuestions',
+        headerName: 'Correct Questions',
+        type: 'string',
+        required: true,
+      },
+      {
+        field: 'totalQuestions',
+        headerName: 'Total Questions',
+        type: 'string',
+        required: true,
+      },
+      {
+        field: 'scoreString',
+        headerName: 'Score',
+        type: 'string',
+        required: true,
+      },
+      {
+        field: 'responses',
+        headerName: 'User response',
+        type: 'array',
+        required: true,
+      },
+      { field: 'options', headerName: 'Options' },
+    ];
+    const tableOptions = { show: true, edit: false, delete: false };
+    const entityName = 'testResults';
+    const categoryName = 'TestResults';
+
+    res.status(200).send({
+      keysLabel: filteredKeys,
+      allInfo: userTests[0],
+      tableOptions,
+      entityName,
+      categoryName,
+    });
   } catch (e) {
     console.log(e);
     res.status(500).send('Internal Server Error!');

@@ -13,4 +13,18 @@ router.get(
   statsController.getGlobalStats
 );
 
+router.get(
+  '/admin/getAllTestResults',
+  authMiddleware,
+  authAdminMiddleware,
+  statsController.getAllTestResults
+);
+
+router.get(
+  '/admin/getTestResults/:id',
+  authMiddleware,
+  authAdminMiddleware,
+  statsController.getTestResultById
+);
+
 module.exports = router;
