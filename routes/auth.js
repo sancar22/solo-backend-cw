@@ -19,6 +19,10 @@ router.post('/changePW', authMiddleware, authController.changePassword);
 
 router.post('/admin/login', authController.loginAdmin);
 
-router.post('/changePWInApp', authController.changePasswordInApp);
+router.post(
+  '/changePWInApp',
+  authMiddleware,
+  authController.changePasswordInApp
+);
 
 module.exports = router;

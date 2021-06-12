@@ -287,6 +287,7 @@ exports.changePasswordInApp = async (req, res) => {
     );
     return res.status(200).send('Password changed succesfully!');
   } catch (e) {
+    console.log(e);
     res.status(500).send({ msg: 'Internal server error!', statusCode: 500 });
   }
 };
