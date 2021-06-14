@@ -117,7 +117,7 @@ exports.register = async (req, res) => {
         `;
         await transporter.sendMail({
           to: email,
-          subject: 'Account Verfication - Brand X',
+          subject: 'Account Verfication - Devcademy',
           html: output,
         });
       }
@@ -181,7 +181,7 @@ exports.forgotPW = async (req, res) => {
         `;
         await transporter.sendMail({
           to: email,
-          subject: 'Change password code - Brand X',
+          subject: 'Change password code - Devcademy',
           html: output,
         });
       }
