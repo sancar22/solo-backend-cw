@@ -1,4 +1,5 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+
 const AdminSchema = new mongoose.Schema(
   {
     email: {
@@ -17,8 +18,8 @@ const AdminSchema = new mongoose.Schema(
   {
     versionKey: false,
     timestamps: true,
-  },
-)
+  }
+);
 
-const Admin = mongoose.model('admin', AdminSchema)
-module.exports = Admin
+const Admin = mongoose.model('admin', AdminSchema);
+module.exports = Admin;
