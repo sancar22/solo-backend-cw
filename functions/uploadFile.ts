@@ -1,14 +1,12 @@
-const AWS = require('aws-sdk');
-const shortid = require('shortid');
-const moment = require('moment');
-require('dotenv').config();
-
+import AWS from'aws-sdk';
+import shortid from'shortid';
+import moment from'moment';
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_S3_ID,
   secretAccessKey: process.env.AWS_S3_SECRET,
 });
 
-module.exports = async function uploadFile(file, type) {
+export default async function uploadFile(file, type) {
   // Setting up S3 upload parameters
   const base64Data = new Buffer.from(
     file.replace(/^data:image\/\w+;base64,/, ''),

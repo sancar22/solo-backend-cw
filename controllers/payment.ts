@@ -1,12 +1,13 @@
-const Stripe = require('stripe');
-const User = require('../models/user');
-const Transaction = require('../models/transaction');
-const UserCourse = require('../models/userCourse');
-const Course = require('../models/course');
+import Stripe from 'stripe';
+import User from '../models/user';
+import Transaction from '../models/transaction';
+import UserCourse from '../models/userCourse';
+import Course from '../models/course';
 
-require('dotenv').config();
+const { secretAPITestStripe } = process.env;
+const secret = `${secretAPITestStripe}`;
 
-const stripe = new Stripe(process.env.secretAPITestStripe, {
+const stripe = new Stripe(secret, {
   apiVersion: '2020-08-27',
 });
 

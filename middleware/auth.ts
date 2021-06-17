@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-module.exports = function (req, res, next) {
+export default function (req, res, next) {
   // Get token from header (protected route)
   const authHeader = req.header('Authorization');
 

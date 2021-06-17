@@ -1,6 +1,6 @@
-const User = require('../models/user');
+import User from '../models/user';
 
-exports.getInfo = async (req, res) => {
+export const getInfo = async (req, res) => {
   try {
     const userID = req.user.id;
     const user = await User.findById(userID)
@@ -14,7 +14,7 @@ exports.getInfo = async (req, res) => {
 };
 
 // This will give information in a way that can be read by the tables in the admin page
-exports.getAllUsers = async (req, res) => {
+export const getAllUsers = async (req, res) => {
   try {
     const users = await User.find();
     if (!users) return res.send('No users are available!');
@@ -45,7 +45,7 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
-exports.getUserById = async (req, res) => {
+export const getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) return res.send('User does not exist!');

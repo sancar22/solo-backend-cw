@@ -5,4 +5,4 @@ const validateEmail = (email = "") => {
   return Boolean(isEmail);
 }
 
-module.exports = {validateEmail}
+export default validateEmail;

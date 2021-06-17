@@ -1,13 +1,15 @@
-const Stripe = require('stripe');
-const Course = require('../models/course');
-const Topic = require('../models/topic');
-const UserCourse = require('../models/userCourse');
-const UserTopic = require('../models/userTopic');
-const uploadFile = require('../functions/uploadFile');
+import Stripe from 'stripe'
+import Course from '../models/course'
+import Topic from '../models/topic'
+import UserCourse from '../models/userCourse'
+import UserTopic from '../models/userTopic'
+import uploadFile from '../functions/uploadFile'
 
-require('dotenv').config();
+const { secretAPITestStripe } = process.env;
+const secret = `${secretAPITestStripe}`
 
-const stripe = new Stripe(process.env.secretAPITestStripe, {
+
+const stripe = new Stripe(secret, {
   apiVersion: '2020-08-27',
 });
 

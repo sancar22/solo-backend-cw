@@ -1,13 +1,13 @@
-const PDFDocument = require('pdfkit');
-const { ObjectID } = require('mongodb');
-const moment = require('moment');
-const Course = require('../models/course');
-const UserTopic = require('../models/userTopic');
-const {
+import PDFDocument from'pdfkit';
+import { ObjectID } from'mongodb';
+import moment from'moment';
+import Course from'../models/course';
+import UserTopic from'../models/userTopic';
+import {
   generateFooter,
   generateHeader,
   generateInvoiceTable,
-} = require('../functions/pdf');
+} from '../functions/pdf';
 
 exports.getGlobalStats = async (req, res) => {
   try {

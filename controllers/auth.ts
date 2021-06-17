@@ -1,14 +1,16 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
-const Stripe = require('stripe');
-const User = require('../models/user');
-const Admin = require('../models/admin');
-const { validateEmail } = require('../utils/index');
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import nodemailer from 'nodemailer';
+import Stripe from 'stripe';
+import User from '../models/user';
+import Admin from '../models/admin';
+import validateEmail from '../utils/index';
 
-require('dotenv').config();
+const { secretAPITestStripe } = process.env;
+const secret = `${secretAPITestStripe}`;
 
-const stripe = new Stripe(process.env.secretAPITestStripe, {
+
+const stripe = new Stripe(secret, {
   apiVersion: '2020-08-27',
 });
 
@@ -48,7 +50,8 @@ const loginFunction = async (email, password, res, admin) => {
   );
 };
 
-exports.login = async (req, res) => {
+
+export const login = async (req, res) => {
   const { email, password } = req.body;
   try {
     await loginFunction(email, password, res, false);
@@ -57,7 +60,7 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.loginAdmin = async (req, res) => {
+export const loginAdmin = async (req, res) => {
   const { email, password } = req.body;
   try {
     await loginFunction(email, password, res, true);
@@ -66,7 +69,7 @@ exports.loginAdmin = async (req, res) => {
   }
 };
 
-exports.register = async (req, res) => {
+export const register = async (req, res) => {
   try {
     const { name, email, password, passwordRepeat } = req.body;
     // Backend validation just in case
@@ -128,7 +131,7 @@ exports.register = async (req, res) => {
   }
 };
 
-exports.verifyEmail = async (req, res) => {
+export const verifyEmail = async (req, res) => {
   try {
     const decodedJWT = jwt.verify(req.params.token, process.env.jwtSecret);
     const userID = decodedJWT.user.id;
@@ -148,7 +151,7 @@ exports.verifyEmail = async (req, res) => {
   }
 };
 
-exports.forgotPW = async (req, res) => {
+export const forgotPW = async (req, res) => {
   try {
     const { email } = req.body;
     const user = await User.findOne({ email: email.toLowerCase() });
@@ -192,7 +195,7 @@ exports.forgotPW = async (req, res) => {
   }
 };
 
-exports.verifyPWCodeChange = async (req, res) => {
+export const verifyPWCodeChange = async (req, res) => {
   try {
     const { email, code } = req.body;
     const user = await User.findOne({ email: email.toLowerCase() });
@@ -228,7 +231,7 @@ exports.verifyPWCodeChange = async (req, res) => {
   }
 };
 
-exports.changePassword = async (req, res) => {
+export const changePassword = async (req, res) => {
   try {
     const { password, passwordRepeat } = req.body;
     if (password.length < 6) {
@@ -254,7 +257,7 @@ exports.changePassword = async (req, res) => {
   }
 };
 
-exports.changePasswordInApp = async (req, res) => {
+export const changePasswordInApp = async (req, res) => {
   try {
     const userID = req.user.id;
     const user = await User.findById(userID);
@@ -291,3 +294,4 @@ exports.changePasswordInApp = async (req, res) => {
     res.status(500).send({ msg: 'Internal server error!', statusCode: 500 });
   }
 };
+

@@ -1,9 +1,9 @@
-const Course = require('../models/course');
-const Topic = require('../models/topic');
-const UserTopic = require('../models/userTopic');
+import Course from '../models/course';
+import Topic from '../models/topic';
+import UserTopic from '../models/userTopic';
 
 // This will give information in a way that can be read by the tables in the admin page
-exports.getAllTopics = async (req, res) => {
+export const getAllTopics = async (req, res) => {
   try {
     const topics = await Topic.aggregate([
       {
@@ -88,7 +88,7 @@ exports.getAllTopics = async (req, res) => {
   }
 };
 
-exports.getTopicsById = async (req, res) => {
+export const getTopicsById = async (req, res) => {
   try {
     const topic = await Topic.findOne({
       _id: req.params.id,
@@ -148,7 +148,7 @@ exports.getTopicsById = async (req, res) => {
   }
 };
 
-exports.addTopic = async (req, res) => {
+export const addTopic = async (req, res) => {
   try {
     await Topic.create(req.body);
     res.status(200).send('Topic added succesfully!');
@@ -158,7 +158,7 @@ exports.addTopic = async (req, res) => {
   }
 };
 
-exports.editTopic = async (req, res) => {
+export const editTopic = async (req, res) => {
   try {
     const { questions, videoURL, name, description } = req.body;
     await Topic.updateOne(
@@ -180,7 +180,7 @@ exports.editTopic = async (req, res) => {
 };
 
 // Logical delete
-exports.deleteTopic = async (req, res) => {
+export const deleteTopic = async (req, res) => {
   const topicID = req.params.id;
   try {
     await Topic.updateOne(
@@ -199,7 +199,7 @@ exports.deleteTopic = async (req, res) => {
   }
 };
 
-exports.getTopicsClientSide = async (req, res) => {
+export const getTopicsClientSide = async (req, res) => {
   try {
     const userID = req.user.id;
     const { courseID } = req.params;
@@ -224,7 +224,7 @@ exports.getTopicsClientSide = async (req, res) => {
   }
 };
 
-exports.getTopicById = async (req, res) => {
+export const getTopicById = async (req, res) => {
   try {
     const { topicID } = req.params;
     const topic = await Topic.findOne({ _id: topicID, enabled: true }).lean();
@@ -242,7 +242,7 @@ exports.getTopicById = async (req, res) => {
   }
 };
 
-exports.submitTest = async (req, res) => {
+export const submitTest = async (req, res) => {
   try {
     const userID = req.user.id;
     const { responses, courseID, topicID } = req.body;
@@ -290,7 +290,7 @@ exports.submitTest = async (req, res) => {
   }
 };
 
-exports.getCompletedTopicsForCourse = async (req, res) => {
+export const getCompletedTopicsForCourse = async (req, res) => {
   try {
     const userID = req.user.id;
     const { courseID } = req.params;

@@ -1,6 +1,6 @@
-const moment = require('moment');
+import moment from 'moment';
 
-function generateHeader(doc, name) {
+export const generateHeader = (doc, name) => {
   doc
     .image('assets/images/DEVcademy.png', 50, 45, { width: 200 })
     .fillColor('#444444')
@@ -10,11 +10,11 @@ function generateHeader(doc, name) {
     .moveDown();
 }
 
-function generateHr(doc, y) {
+export const generateHr = (doc, y) => {
   doc.strokeColor('#aaaaaa').lineWidth(1).moveTo(50, y).lineTo(570, y).stroke();
 }
 
-function generateTableRow(doc, y, c1, c2, c3, c4, c5) {
+export const generateTableRow = (doc, y, c1, c2, c3, c4, c5) => {
   doc
     .fontSize(10)
     .text(c1, 50, y)
@@ -25,7 +25,7 @@ function generateTableRow(doc, y, c1, c2, c3, c4, c5) {
   generateHr(doc, y + 20);
 }
 
-function generateTableRowTitles(doc, y, c1, c2, c3, c4, c5) {
+export const generateTableRowTitles = (doc, y, c1, c2, c3, c4, c5) => {
   doc
     .fontSize(10)
     .text(c1, 50, y)
@@ -36,7 +36,7 @@ function generateTableRowTitles(doc, y, c1, c2, c3, c4, c5) {
   generateHr(doc, y + 20);
 }
 
-function generateFooter(doc, startDate, endDate) {
+export const generateFooter = (doc, startDate, endDate) => {
   doc
     .fontSize(10)
     .text(
@@ -51,7 +51,7 @@ function generateFooter(doc, startDate, endDate) {
     );
 }
 
-function generateInvoiceTable(doc, invoice) {
+export const generateInvoiceTable = (doc, invoice) => {
   let i;
   let invoiceTableTop = 230;
   doc.font('Helvetica-Bold');
@@ -80,7 +80,7 @@ function generateInvoiceTable(doc, invoice) {
   return positionTracker;
 }
 
-module.exports = {
+export default {
   generateFooter,
   generateHeader,
   generateHr,
