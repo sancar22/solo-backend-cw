@@ -1,6 +1,6 @@
 import Admin from '../models/admin';
 
-export default = async function (req, res, next) {
+export default  async (req, res, next) => {
   // Get user id attached by jwt middleware in the request and verify if it's an id of an admin
   const userID = req.user.id;
   const isAdmin = await Admin.findById(userID);
