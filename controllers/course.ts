@@ -14,7 +14,7 @@ const stripe = new Stripe(secret, {
 });
 
 // This will give information in a way that can be read by the tables in the admin page
-exports.getAllCourses = async (req, res) => {
+export const getAllCourses = async (req, res) => {
   try {
     const courses = await Course.find({ enabled: true });
     if (!courses) return res.send('No courses are available!');
@@ -64,7 +64,7 @@ exports.getAllCourses = async (req, res) => {
   }
 };
 
-exports.getCoursesById = async (req, res) => {
+export const getCoursesById = async (req, res) => {
   try {
     const course = await Course.findOne({
       _id: req.params.id,
@@ -112,7 +112,7 @@ exports.getCoursesById = async (req, res) => {
   }
 };
 
-exports.addCourse = async (req, res) => {
+export const addCourse = async (req, res) => {
   try {
     let { price } = req.body;
     const { coverImageURL, name, description } = req.body;
@@ -145,7 +145,7 @@ exports.addCourse = async (req, res) => {
   }
 };
 
-exports.editCourse = async (req, res) => {
+export const editCourse = async (req, res) => {
   try {
     let { price } = req.body;
     const { coverImageURL, name, description } = req.body;
@@ -194,7 +194,7 @@ exports.editCourse = async (req, res) => {
 };
 
 // Logical delete
-exports.deleteCourse = async (req, res) => {
+export const deleteCourse = async (req, res) => {
   const courseID = req.params.id;
   try {
     await Course.updateOne(
@@ -216,7 +216,7 @@ exports.deleteCourse = async (req, res) => {
   }
 };
 
-exports.enrollFreeCourse = async (req, res) => {
+export const enrollFreeCourse = async (req, res) => {
   try {
     const { course } = req.body;
     const userID = req.user.id;
@@ -232,7 +232,7 @@ exports.enrollFreeCourse = async (req, res) => {
   }
 };
 
-exports.enrollPremiumCourse = async (req, res) => {
+export const enrollPremiumCourse = async (req, res) => {
   try {
     const { course } = req.body;
     const userID = req.user.id;
@@ -248,7 +248,7 @@ exports.enrollPremiumCourse = async (req, res) => {
   }
 };
 
-exports.getActivitiesClientSide = async (req, res) => {
+export const getActivitiesClientSide = async (req, res) => {
   try {
     const userID = req.user.id;
     const userActiveCourses = await UserCourse.find({ userID, enabled: true });
@@ -283,7 +283,7 @@ exports.getActivitiesClientSide = async (req, res) => {
   }
 };
 
-exports.getMyCourses = async (req, res) => {
+export const getMyCourses = async (req, res) => {
   try {
     const userID = req.user.id;
     const userActiveCourses = await UserCourse.find({
