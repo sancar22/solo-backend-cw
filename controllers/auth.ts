@@ -2,8 +2,8 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import Stripe from 'stripe';
-import User from '../models/user';
-import {Admin} from '../models/admin';
+import UserModel from '../models/user';
+import {User} from '../models/user';
 import AdminModel from '../models/admin';
 import validateEmail from '../utils/index';
 
@@ -15,8 +15,22 @@ const secret = `${secretAPITestStripe}`;
 const { jwtSecret } = process.env;
 const jwtsecret = `${jwtSecret}`;
 
+interface MyToken {
+  name: string;
+  user: {
+    id: string;
+  };
+  // whatever else is in the JWT.
+}
 
-
+interface MyIForgotToken {
+  name: string;
+  user: {
+    id: string;
+    code: number;
+  };
+  // whatever else is in the JWT.
+}
 
 const stripe = new Stripe(secret, {
   apiVersion: '2020-08-27',
@@ -30,15 +44,16 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const loginFunction = async (email: string, password: string, res: Response, admin: Admin) => {
+const loginFunction = async (email: string, password: string, res: Response, admin: boolean) => {
   const user = !admin
-    ? await User.findOne({ email })
+    ? await UserModel.findOne({ email })
     : await AdminModel.findOne({ email });
   if (!user) return res.status(401).send('Invalid username or password!');
   const hashedUserPW = user.password;
   const isMatch = await bcrypt.compare(password, hashedUserPW);
   if (!isMatch) return res.status(401).send('Invalid username or password!');
-  if (!user.verified && !admin)
+  const isUser = (input: any): input is User => 'verified' in input;
+  if (isUser(user) && !user.verified)
     return res.status(401).send('You need to verify your account!');
 
   const userPayload = {
@@ -59,7 +74,7 @@ const loginFunction = async (email: string, password: string, res: Response, adm
 };
 
 
-export const login = async (req, res) => {
+export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
   try {
     await loginFunction(email, password, res, false);
@@ -68,7 +83,7 @@ export const login = async (req, res) => {
   }
 };
 
-export const loginAdmin = async (req, res) => {
+export const loginAdmin = async (req: Request, res: Response) => {
   const { email, password } = req.body;
   try {
     await loginFunction(email, password, res, true);
@@ -77,7 +92,7 @@ export const loginAdmin = async (req, res) => {
   }
 };
 
-export const register = async (req, res) => {
+export const register = async (req: Request, res: Response) => {
   try {
     const { name, email, password, passwordRepeat } = req.body;
     // Backend validation just in case
@@ -87,7 +102,7 @@ export const register = async (req, res) => {
     if (!validateEmail(email)) {
       return res.status(400).send('Email is not valid!');
     }
-    const user = await User.findOne({ email });
+    const user = await UserModel.findOne({ email });
     if (user) {
       return res.status(409).send('User already exists!');
     }
@@ -102,7 +117,7 @@ export const register = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     const customer = await stripe.customers.create({ name: email });
-    const newUser = await User.create({
+    const newUser = await UserModel.create({
       name: name.trim(),
       email: email.trim().toLowerCase(),
       password: hashedPassword,
@@ -139,13 +154,14 @@ export const register = async (req, res) => {
   }
 };
 
-export const verifyEmail = async (req, res) => {
+export const verifyEmail = async (req: Request, res: Response) => {
   try {
     const decodedJWT = jwt.verify(req.params.token, jwtsecret);
-    const userID = decodedJWT.user.id;
-    const user = await User.findById(userID);
-    if (!user.verified) {
-      await User.updateOne(
+    const userID = (decodedJWT as MyToken).user.id;
+    const user = await UserModel.findById(userID);
+    const isUser = (input: any): input is User => 'verified' in input;
+    if (isUser(user) && !user.verified) {
+      await UserModel.updateOne(
         { _id: userID },
         {
           $set: { verified: true },
@@ -159,10 +175,10 @@ export const verifyEmail = async (req, res) => {
   }
 };
 
-export const forgotPW = async (req, res) => {
+export const forgotPW = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
-    const user = await User.findOne({ email: email.toLowerCase() });
+    const user = await UserModel.findOne({ email: email.toLowerCase() });
     if (!user)
       return res.status(200).send('Email was sent (if it exists) with a code!');
 
@@ -179,7 +195,7 @@ export const forgotPW = async (req, res) => {
       { expiresIn: 60 },
       async (err, token) => {
         if (err) throw err;
-        await User.updateOne(
+        await UserModel.updateOne(
           { _id: user._id },
           {
             $set: { forgotPWToken: token },
@@ -203,16 +219,16 @@ export const forgotPW = async (req, res) => {
   }
 };
 
-export const verifyPWCodeChange = async (req, res) => {
+export const verifyPWCodeChange = async (req: Request, res: Response) => {
   try {
     const { email, code } = req.body;
-    const user = await User.findOne({ email: email.toLowerCase() });
+    const user = await UserModel.findOne({ email: email.toLowerCase() });
     if (!user) return res.status(401).send('Invalid code!');
     const decodedJWTCode = jwt.verify(
       user.forgotPWToken,
       jwtsecret
     );
-    if (decodedJWTCode.user.code !== code)
+    if ((decodedJWTCode as MyIForgotToken).user.code !== code)
       return res.status(401).send('Invalid code!');
 
     const payload = {
@@ -239,7 +255,7 @@ export const verifyPWCodeChange = async (req, res) => {
   }
 };
 
-export const changePassword = async (req, res) => {
+export const changePassword = async (req: Request, res: Response) => {
   try {
     const { password, passwordRepeat } = req.body;
     if (password.length < 6) {
@@ -250,10 +266,10 @@ export const changePassword = async (req, res) => {
     if (password !== passwordRepeat) {
       return res.status(400).send("Passwords don't match!");
     }
-    const userID = req.user.id;
+    const userID = res.locals.user.id;
     const salt = await bcrypt.genSalt(10);
     const newPassword = await bcrypt.hash(password, salt);
-    await User.updateOne(
+    await UserModel.updateOne(
       { _id: userID },
       {
         $set: { password: newPassword },
@@ -265,38 +281,41 @@ export const changePassword = async (req, res) => {
   }
 };
 
-export const changePasswordInApp = async (req, res) => {
+export const changePasswordInApp = async (req: Request, res: Response) => {
   try {
-    const userID = req.user.id;
-    const user = await User.findById(userID);
+    const userID = res.locals.user.id;
+    const user = await UserModel.findById(userID);
     const { oldPassword, password, passwordRepeat } = req.body;
-    const isMatch = await bcrypt.compare(oldPassword, user.password);
-    if (!isMatch) {
-      return res.status(400).send('Current password is not correct!');
-    }
-    if (password.length < 6) {
-      return res
-        .status(400)
-        .send('Password should be at least 6 characters long!');
-    }
-    if (password !== passwordRepeat) {
-      return res.status(400).send("Passwords don't match!");
-    }
-    const isMatchOldAndNew = await bcrypt.compare(password, user.password);
-    if (isMatchOldAndNew) {
-      return res
-        .status(400)
-        .send('New password cannot be the same as current one!');
-    }
-    const salt = await bcrypt.genSalt(10);
-    const newPassword = await bcrypt.hash(password, salt);
-    await User.updateOne(
-      { _id: userID },
-      {
-        $set: { password: newPassword },
+    if (user) {
+      const isMatch = await bcrypt.compare(oldPassword, user.password);
+      if (!isMatch) {
+        return res.status(401).send('Current password is not correct!');
       }
-    );
-    return res.status(200).send('Password changed succesfully!');
+      if (password.length < 6) {
+        return res
+          .status(400)
+          .send('Password should be at least 6 characters long!');
+      }
+      if (password !== passwordRepeat) {
+        return res.status(400).send("Passwords don't match!");
+      }
+      const isMatchOldAndNew = await bcrypt.compare(password, user.password);
+      if (isMatchOldAndNew) {
+        return res
+          .status(401)
+          .send('New password cannot be the same as current one!');
+      }
+      const salt = await bcrypt.genSalt(10);
+      const newPassword = await bcrypt.hash(password, salt);
+      await UserModel.updateOne(
+        { _id: userID },
+        {
+          $set: { password: newPassword },
+        }
+      );
+      return res.status(204).send('Password changed succesfully!');
+    }
+    return res.status(404).send('User not found!');
   } catch (e) {
     console.log(e);
     res.status(500).send({ msg: 'Internal server error!', statusCode: 500 });
