@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-export const generateHeader = (doc, name) => {
+export const generateHeader = (doc: any, name: string) => {
   doc
     .image('assets/images/DEVcademy.png', 50, 45, { width: 200 })
     .fillColor('#444444')
@@ -10,33 +10,33 @@ export const generateHeader = (doc, name) => {
     .moveDown();
 }
 
-export const generateHr = (doc, y) => {
+export const generateHr = (doc: any, y: number) => {
   doc.strokeColor('#aaaaaa').lineWidth(1).moveTo(50, y).lineTo(570, y).stroke();
 }
 
-export const generateTableRow = (doc, y, c1, c2, c3, c4, c5) => {
+export const generateTableRow = (doc: any, y: number, c1: string, c2: string, c3: string) => {
   doc
     .fontSize(10)
     .text(c1, 50, y)
     .text(c2, 220, y)
     .text(c3, 270, y, { width: 90, align: 'right' })
-    .text(c4, 330, y, { width: 90, align: 'right' })
-    .text(c5, 500, y);
+    // .text(c4, 330, y, { width: 90, align: 'right' })
+    // .text(c5, 500, y);
   generateHr(doc, y + 20);
 }
 
-export const generateTableRowTitles = (doc, y, c1, c2, c3, c4, c5) => {
+export const generateTableRowTitles = (doc: any, y: number, c1: string, c2: string, c3: string) => {
   doc
     .fontSize(10)
     .text(c1, 50, y)
     .text(c2, 180, y)
     .text(c3, 290, y, { width: 90, align: 'right' })
-    .text(c4, 350, y, { width: 90, align: 'right' })
-    .text(c5, 0, y, { align: 'right' });
+    // .text(c4, 350, y, { width: 90, align: 'right' })
+    // .text(c5, 0, y, { align: 'right' });
   generateHr(doc, y + 20);
 }
 
-export const generateFooter = (doc, startDate, endDate) => {
+export const generateFooter = (doc: any, startDate: Date, endDate: Date) => {
   doc
     .fontSize(10)
     .text(
@@ -51,9 +51,9 @@ export const generateFooter = (doc, startDate, endDate) => {
     );
 }
 
-export const generateInvoiceTable = (doc, invoice) => {
+export const generateInvoiceTable = (doc: any, invoice: any) => {
   let i;
-  let invoiceTableTop = 230;
+  const invoiceTableTop = 230;
   doc.font('Helvetica-Bold');
   generateTableRowTitles(
     doc,
