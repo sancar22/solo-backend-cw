@@ -2,7 +2,9 @@ import AWS from 'aws-sdk';
 import shortid from 'shortid';
 import moment from 'moment';
 
-import {AWS_S3_BUCKET_NAME} = process.env;
+declare const Buffer: any;
+
+const {AWS_S3_BUCKET_NAME} = process.env;
 const bucket_name = `${AWS_S3_BUCKET_NAME}`
 
 const s3 = new AWS.S3({

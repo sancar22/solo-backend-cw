@@ -3,11 +3,19 @@ import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import Stripe from 'stripe';
 import User from '../models/user';
-import Admin from '../models/admin';
+import {Admin} from '../models/admin';
+import AdminModel from '../models/admin';
 import validateEmail from '../utils/index';
+
+import {Request, Response} from 'express';
 
 const { secretAPITestStripe } = process.env;
 const secret = `${secretAPITestStripe}`;
+
+const { jwtSecret } = process.env;
+const jwtsecret = `${jwtSecret}`;
+
+
 
 
 const stripe = new Stripe(secret, {
@@ -22,10 +30,10 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const loginFunction = async (email, password, res, admin) => {
+const loginFunction = async (email: string, password: string, res: Response, admin: Admin) => {
   const user = !admin
     ? await User.findOne({ email })
-    : await Admin.findOne({ email });
+    : await AdminModel.findOne({ email });
   if (!user) return res.status(401).send('Invalid username or password!');
   const hashedUserPW = user.password;
   const isMatch = await bcrypt.compare(password, hashedUserPW);
@@ -41,7 +49,7 @@ const loginFunction = async (email, password, res, admin) => {
 
   jwt.sign(
     userPayload,
-    process.env.jwtSecret,
+    jwtsecret,
     { expiresIn: 3600 },
     (err, token) => {
       if (err) throw err;
@@ -109,7 +117,7 @@ export const register = async (req, res) => {
 
     jwt.sign(
       payload,
-      process.env.jwtSecret,
+      jwtsecret,
       { expiresIn: '9999 years' },
       async (err, token) => {
         if (err) throw err;
@@ -133,7 +141,7 @@ export const register = async (req, res) => {
 
 export const verifyEmail = async (req, res) => {
   try {
-    const decodedJWT = jwt.verify(req.params.token, process.env.jwtSecret);
+    const decodedJWT = jwt.verify(req.params.token, jwtsecret);
     const userID = decodedJWT.user.id;
     const user = await User.findById(userID);
     if (!user.verified) {
@@ -167,7 +175,7 @@ export const forgotPW = async (req, res) => {
     };
     jwt.sign(
       payload,
-      process.env.jwtSecret,
+      jwtsecret,
       { expiresIn: 60 },
       async (err, token) => {
         if (err) throw err;
@@ -202,7 +210,7 @@ export const verifyPWCodeChange = async (req, res) => {
     if (!user) return res.status(401).send('Invalid code!');
     const decodedJWTCode = jwt.verify(
       user.forgotPWToken,
-      process.env.jwtSecret
+      jwtsecret
     );
     if (decodedJWTCode.user.code !== code)
       return res.status(401).send('Invalid code!');
@@ -215,7 +223,7 @@ export const verifyPWCodeChange = async (req, res) => {
     // 2 minutes to change pw
     jwt.sign(
       payload,
-      process.env.jwtSecret,
+      jwtsecret,
       { expiresIn: 120 },
       async (err, token) => {
         if (err) throw err;
