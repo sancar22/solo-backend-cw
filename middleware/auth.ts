@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
+
 
 export default function (req: Request, res: Response, next: NextFunction) {
   // Get token from header (protected route)

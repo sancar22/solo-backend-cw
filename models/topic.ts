@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import mongoose from '../db/db';
 
 export interface Topic {
-  enabled: string;
+  enabled: Boolean,
   courseID: ObjectID;
   name: string;
   description: string;

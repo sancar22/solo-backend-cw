@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import mongoose from '../db/db';
 
 export interface Course {
+  _id: string;
   enabled: string;
   name: string;
   price: number;

@@ -1,7 +1,9 @@
 import Stripe from 'stripe';
-import Course from '../models/course';
+import CourseModel from '../models/course';
+import { Course } from '../models/course';
 import Topic from '../models/topic';
-import UserCourse from '../models/userCourse';
+import UserCourseModel from '../models/userCourse';
+import { UserCourse } from '../models/userCourse';
 import UserTopic from '../models/userTopic';
 import uploadFile from '../functions/uploadFile';
 import {Request, Response} from 'express';
@@ -12,7 +14,6 @@ const secret = `${secretAPITestStripe}`;
 interface ArgumentToFind {
   enabled: boolean;
 }
-
 interface ArgumentToFindOne extends ArgumentToFind {
   _id: string;
 }
@@ -21,11 +22,25 @@ const stripe = new Stripe(secret, {
   apiVersion: '2020-08-27',
 });
 
+interface ClientCourse extends Course {
+  enrolled: boolean;
+  free: boolean;
+  formattedPrice: number;
+
+}
+interface ClientUserCourse extends UserCourse {
+  topicsCompleted: number;
+  numberOfTopics: number;
+  name: string;
+  coverImageURL: string;
+  ratioFinished: number;
+}
+
 // This will give information in a way that can be read by the tables in the admin page
 export const getAllCourses = async (req: Request, res: Response) => {
   try {
     const arg: ArgumentToFind = { enabled: true };
-    const courses = await Course.find({arg});
+    const courses = await CourseModel.find({arg});
     if (!courses) return res.send('No courses are available!');
     const filteredKeys = [
       {
@@ -79,7 +94,7 @@ export const getCoursesById = async (req: Request, res: Response) => {
       _id: req.params.id,
       enabled: true,
     }
-    const course = await Course.findOne({arg}).lean();
+    const course = await CourseModel.findOne({arg}).lean();
 
     if (!course) return res.send('Course does not exist!');
     course.price = parseFloat(course.price.toString());
@@ -140,7 +155,7 @@ export const addCourse = async (req: Request, res: Response) => {
       currency: 'usd',
       product: product.id,
     });
-    const course = new Course({
+    const course = new CourseModel({
       name: name.trim(),
       description: description.trim(),
       price,
@@ -159,44 +174,50 @@ export const editCourse = async (req: Request, res: Response) => {
   try {
     let { price } = req.body;
     const { coverImageURL, name, description } = req.body;
-    const course = await Course.findOne({
+
+    const arg: ArgumentToFindOne = {
       _id: req.params.id,
       enabled: true,
-    }).lean();
-    if (!price) price = 0;
-
-    let URLfromS3 = '';
-    if (coverImageURL && coverImageURL !== course.coverImageURL) {
-      const { data, mime } = coverImageURL;
-      URLfromS3 = await uploadFile(data, mime);
     }
-
-    let priceID = course.priceStripedID;
-    if (course.price !== price) {
-      const product = await stripe.products.create({
-        name: name.trim(),
-      });
-      const priceStripe = await stripe.prices.create({
-        unit_amount: parseInt(price * 100, 10),
-        currency: 'usd',
-        product: product.id,
-      });
-      priceID = priceStripe.id;
-    }
-    await Course.updateOne(
-      { _id: req.params.id },
-      {
-        $set: {
-          name: name.trim(),
-          description: description.trim(),
-          coverImageURL: URLfromS3 !== '' ? URLfromS3 : course.coverImageURL,
-          price,
-          priceStripeID: priceID,
-        },
+    const course = await CourseModel.findOne({arg}).lean();
+    if (course) {
+      if (!price) price = 0;
+      let URLfromS3;
+      if (coverImageURL && coverImageURL !== course.coverImageURL) {
+        const { data, mime } = coverImageURL;
+        const url = await uploadFile(data, mime)
+        URLfromS3 =  url ? url : '';
       }
-    );
 
-    res.status(200).send('Course edited successfully!');
+      let priceID = course.priceStripeID;
+      if (course.price !== price) {
+        const product = await stripe.products.create({
+          name: name.trim(),
+        });
+        const priceStripe = await stripe.prices.create({
+          unit_amount: Number(Number(price).toFixed(2)) * 100,
+          currency: 'usd',
+          product: product.id,
+        });
+        priceID = priceStripe.id;
+      }
+      await CourseModel.updateOne(
+        { _id: req.params.id },
+        {
+          $set: {
+            name: name.trim(),
+            description: description.trim(),
+            coverImageURL: URLfromS3 !== '' ? URLfromS3 : course.coverImageURL,
+            price,
+            priceStripeID: priceID,
+          },
+        }
+      );
+
+      res.status(200).send('Course edited successfully!');
+    } else {
+      res.status(404).send('Course not found');
+    }
   } catch (e) {
     console.log(e);
     res.status(500).send('Internal Server Error!');
@@ -207,17 +228,13 @@ export const editCourse = async (req: Request, res: Response) => {
 export const deleteCourse = async (req: Request, res: Response) => {
   const courseID = req.params.id;
   try {
-    await Course.updateOne(
+    await CourseModel.updateOne(
       { _id: courseID },
-      {
-        $set: {
-          enabled: false,
-        },
-      }
+      { $set: {enabled: false}}
     );
     // deleting topics related to course
     await Topic.updateMany({ courseID }, { enabled: false });
-    await UserCourse.updateMany({ courseID }, { enabled: false });
+    await UserCourseModel.updateMany({ courseID }, { enabled: false });
     await UserTopic.updateMany({ courseID }, { enabled: false });
     res.status(200).send('Course deleted succesfully!');
   } catch (e) {
@@ -229,8 +246,8 @@ export const deleteCourse = async (req: Request, res: Response) => {
 export const enrollFreeCourse = async (req: Request, res: Response) => {
   try {
     const { course } = req.body;
-    const userID = req.user.id;
-    await UserCourse.create({
+    const userID = res.locals.user.id;
+    await UserCourseModel.create({
       userID,
       courseID: course._id,
       coursePricePaid: 0,
@@ -245,8 +262,8 @@ export const enrollFreeCourse = async (req: Request, res: Response) => {
 export const enrollPremiumCourse = async (req: Request, res: Response) => {
   try {
     const { course } = req.body;
-    const userID = req.user.id;
-    await UserCourse.create({
+    const userID = res.locals.user.id;
+    await UserCourseModel.create({
       userID,
       courseID: course._id,
       coursePricePaid: 0,
@@ -260,33 +277,37 @@ export const enrollPremiumCourse = async (req: Request, res: Response) => {
 
 export const getActivitiesClientSide = async (req: Request, res: Response) => {
   try {
-    const userID = req.user.id;
-    const userActiveCourses = await UserCourse.find({ userID, enabled: true });
-    const allAvailableCourses = await Course.find({ enabled: true }).lean();
+    const userID = res.locals.user.id;
+    const userActiveCourses = await UserCourseModel.find({ userID, enabled: true });
+    const allAvailableCourses = await CourseModel.find({ enabled: true }).lean();
 
-    const isMyCourse = (courseID) =>
+    const isMyCourse = (courseID: string) =>
       userActiveCourses.filter(
         (course) => course.courseID.toString() === courseID.toString()
       ).length === 1;
 
+    const ClientCourseArray: ClientCourse[] = [];
     for (let i = 0; i < allAvailableCourses.length; i++) {
-      const currentCourse = allAvailableCourses[i];
-      currentCourse.enrolled = false;
-      currentCourse.free = false;
-      currentCourse.formattedPrice = parseFloat(
-        parseFloat(currentCourse.price.toString()).toFixed(2)
-      );
+      const { price } = allAvailableCourses[i];
+      const currentCourse: ClientCourse = {...allAvailableCourses[i],
+          enrolled: false,
+          free: false,
+          formattedPrice: parseFloat(
+            parseFloat(price.toString()).toFixed(2)
+          ),
+      };
       if (isMyCourse(currentCourse._id)) {
         currentCourse.enrolled = true;
       }
       if (currentCourse.formattedPrice === 0) {
         currentCourse.free = true;
       }
+      ClientCourseArray.push(currentCourse);
     }
 
-    allAvailableCourses.sort((course) => (course.enrolled ? -1 : 1));
+    ClientCourseArray.sort((course) => (course.enrolled ? -1 : 1));
 
-    res.status(200).send(allAvailableCourses);
+    res.status(200).send(ClientCourseArray);
   } catch (e) {
     console.log(e);
     res.status(500).send('Internal Server Error!');
@@ -295,12 +316,13 @@ export const getActivitiesClientSide = async (req: Request, res: Response) => {
 
 export const getMyCourses = async (req: Request, res: Response) => {
   try {
-    const userID = req.user.id;
-    const userActiveCourses = await UserCourse.find({
+    const userID = res.locals.user.id;
+    const userActiveCourses = await UserCourseModel.find({
       userID,
       enabled: true,
     }).lean();
 
+    const ClientUserCourseArray: ClientUserCourse[] = [];
     for (let i = 0; i < userActiveCourses.length; i++) {
       const currentCourse = userActiveCourses[i];
       const topicsFromCourse = await Topic.find({
@@ -312,16 +334,21 @@ export const getMyCourses = async (req: Request, res: Response) => {
         enabled: true,
         userID,
       });
-      const course = await Course.findById(currentCourse.courseID);
-      currentCourse.topicsCompleted = topicsCompleted.length;
-      currentCourse.numberOfTopics = topicsFromCourse.length;
-      currentCourse.name = course.name;
-      currentCourse.coverImageURL = course.coverImageURL;
-      currentCourse.ratioFinished = parseFloat(
-        (topicsCompleted.length / topicsFromCourse.length).toFixed(2)
-      );
+      const course = await CourseModel.findById(currentCourse.courseID);
+      if (course) {
+        const currentUserCourse: ClientUserCourse = { ...currentCourse,
+          topicsCompleted: topicsCompleted.length,
+          numberOfTopics:topicsFromCourse.length,
+          name: course.name,
+          coverImageURL: course.coverImageURL,
+          ratioFinished: parseFloat(
+            (topicsCompleted.length / topicsFromCourse.length).toFixed(2)
+          )
+        }
+        ClientUserCourseArray.push(currentUserCourse);
+      }
     }
-    res.status(200).send(userActiveCourses);
+    res.status(200).send(ClientUserCourseArray);
   } catch (e) {
     console.log(e);
     res.status(500).send('Internal Server Error!');
