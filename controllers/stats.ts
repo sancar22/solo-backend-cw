@@ -9,7 +9,7 @@ import {
   generateInvoiceTable,
 } from '../functions/pdf';
 
-exports.getGlobalStats = async (req, res) => {
+export const getGlobalStats = async (req, res) => {
   try {
     const { startDateQuery, endDateQuery } = req.query;
     const startDate = new Date(startDateQuery);
@@ -112,7 +112,7 @@ exports.getGlobalStats = async (req, res) => {
   }
 };
 
-exports.getAllTestResults = async (req, res) => {
+export const getAllTestResults = async (req, res) => {
   try {
     const userTests = await UserTopic.aggregate([
       {
@@ -274,7 +274,7 @@ exports.getAllTestResults = async (req, res) => {
   }
 };
 
-exports.getTestResultById = async (req, res) => {
+export const getTestResultById = async (req, res) => {
   try {
     const userTests = await UserTopic.aggregate([
       {

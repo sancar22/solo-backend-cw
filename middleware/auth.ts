@@ -1,7 +1,9 @@
+import { Request, Response, NextFunction } from "express";
+
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-export default function (req, res, next) {
+export default function (req: Request, res: Response, next: NextFunction) {
   // Get token from header (protected route)
   const authHeader = req.header('Authorization');
 
@@ -15,7 +17,7 @@ export default function (req, res, next) {
   try {
     const token = authHeader.split(' ')[1];
     const decoded = jwt.verify(token, process.env.jwtSecret);
-    req.user = decoded.user;
+    res.locals.user = decoded.user;
     next();
   } catch (err) {
     if (err.name) {

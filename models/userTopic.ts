@@ -1,6 +1,19 @@
-const mongoose = require('mongoose');
-const { ObjectID } = require('mongodb');
-const { Decimal128 } = require('bson');
+import { ObjectID } from 'mongodb');
+import { Decimal128 } from 'bson');
+
+import { Model } from 'mongoose';
+import mongoose from '../db/db';
+
+export interface UserTopic {
+  enabled: boolean;
+  userID: ObjectID;
+  courseID: ObjectID;
+  topicID: ObjectID;
+  score: Decimal128;
+  responses: string[];
+  totalQuestions: number;
+  correctQuestions: number;
+}
 
 const UserTopicSchema = new mongoose.Schema(
   {
@@ -42,6 +55,9 @@ const UserTopicSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+const UserTopic: Model<UserTopic> = mongoose.model('usertopic', UserTopicSchema);
+export default UserTopic;
 
 const UserTopic = mongoose.model('usertopic', UserTopicSchema);
 module.exports = UserTopic;

@@ -1,10 +1,19 @@
-const express = require('express');
+import { Router } from 'express';
+const router = Router();
 
-const router = express.Router();
-
-const topicController = require('../controllers/topic');
-const authMiddleware = require('../middleware/auth');
-const authAdminMiddleware = require('../middleware/admin');
+import {
+  getAllTopics,
+  getTopicsById,
+  addTopic,
+  editTopic,
+  deleteTopic,
+  getTopicsClientSide,
+  getTopicById,
+  getCompletedTopicsForCourse,
+  submitTest
+} from '../controllers/topic';
+import authMiddleware from '../middleware/auth';
+import authAdminMiddleware from '../middleware/admin';
 
 // router.get('/getInfo', authMiddleware, topicController.getInfo);
 
@@ -12,55 +21,55 @@ router.get(
   '/admin/getAllTopics',
   authMiddleware,
   authAdminMiddleware,
-  topicController.getAllTopics
+  getAllTopics
 );
 
 router.get(
   '/admin/getTopicById/:id',
   authMiddleware,
   authAdminMiddleware,
-  topicController.getTopicsById
+  getTopicsById
 );
 
 router.post(
   '/admin/add',
   authMiddleware,
   authAdminMiddleware,
-  topicController.addTopic
+  addTopic
 );
 
 router.put(
   '/admin/edit/:id',
   authMiddleware,
   authAdminMiddleware,
-  topicController.editTopic
+  editTopic
 );
 
 router.delete(
   '/admin/delete/:id',
   authMiddleware,
   authAdminMiddleware,
-  topicController.deleteTopic
+  deleteTopic
 );
 
 router.get(
   '/client-side/allTopics/:courseID',
   authMiddleware,
-  topicController.getTopicsClientSide
+  getTopicsClientSide
 );
 
 router.get(
   '/client-side/getTopicById/:topicID',
   authMiddleware,
-  topicController.getTopicById
+  getTopicById
 );
 
 router.get(
   '/client-side/completedTopics/:courseID',
   authMiddleware,
-  topicController.getCompletedTopicsForCourse
+  getCompletedTopicsForCourse
 );
 
-router.post('/submitTest', authMiddleware, topicController.submitTest);
+router.post('/submitTest', authMiddleware, submitTest);
 
 module.exports = router;

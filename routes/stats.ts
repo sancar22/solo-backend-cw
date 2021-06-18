@@ -1,30 +1,33 @@
-const express = require('express');
+import { Router } from 'express';
+const router = Router();
 
-const router = express.Router();
-
-const statsController = require('../controllers/stats');
-const authMiddleware = require('../middleware/auth');
-const authAdminMiddleware = require('../middleware/admin');
+import {
+  getGlobalStats,
+  getAllTestResults,
+  getTestResultById
+} from '../controllers/stats';
+import authMiddleware from '../middleware/auth';
+import authAdminMiddleware from '../middleware/admin';
 
 router.get(
   '/admin/global',
   authMiddleware,
   authAdminMiddleware,
-  statsController.getGlobalStats
+  getGlobalStats
 );
 
 router.get(
   '/admin/getAllTestResults',
   authMiddleware,
   authAdminMiddleware,
-  statsController.getAllTestResults
+  getAllTestResults
 );
 
 router.get(
   '/admin/getTestResults/:id',
   authMiddleware,
   authAdminMiddleware,
-  statsController.getTestResultById
+  getTestResultById
 );
 
 module.exports = router;

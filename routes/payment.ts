@@ -1,28 +1,31 @@
-const express = require('express');
+import { Router } from 'express';
+const router = Router();
 
-const router = express.Router();
-
-const paymentController = require('../controllers/payment');
-const authMiddleware = require('../middleware/auth');
-const authAdminMiddleware = require('../middleware/admin');
+import {
+  payPremiumCourse,
+  getPurchases,
+  getPurchaseById
+} from '../controllers/payment';
+import authMiddleware from '../middleware/auth';
+import authAdminMiddleware from '../middleware/admin';
 
 router.post(
   '/course/premium',
   authMiddleware,
-  paymentController.payPremiumCourse
+  payPremiumCourse
 );
 
 router.get(
   '/admin/purchases',
   authMiddleware,
   authAdminMiddleware,
-  paymentController.getPurchases
+  getPurchases
 );
 
 router.get(
   '/admin/getPurchaseById/:id',
   authMiddleware,
   authAdminMiddleware,
-  paymentController.getPurchaseById
+  getPurchaseById
 );
 module.exports = router;

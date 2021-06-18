@@ -11,7 +11,7 @@ const stripe = new Stripe(secret, {
   apiVersion: '2020-08-27',
 });
 
-exports.payPremiumCourse = async (req, res) => {
+export const payPremiumCourse = async (req, res) => {
   try {
     const userID = req.user.id;
     const { course, creditCardDetails } = req.body;
@@ -64,7 +64,7 @@ exports.payPremiumCourse = async (req, res) => {
   }
 };
 
-exports.getPurchases = async (req, res) => {
+export const getPurchases = async (req, res) => {
   try {
     const transactions = await Transaction.find().lean();
     if (!transactions) return res.send('No transactions are available!');
@@ -109,7 +109,7 @@ exports.getPurchases = async (req, res) => {
   }
 };
 
-exports.getPurchaseById = async (req, res) => {
+export const getPurchaseById = async (req, res) => {
   try {
     console.log('entering');
     const transaction = await Transaction.findById(req.params.id).lean();

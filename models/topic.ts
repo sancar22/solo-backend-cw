@@ -1,5 +1,16 @@
-const mongoose = require('mongoose');
-const { ObjectID } = require('mongodb');
+import { ObjectID } from 'mongodb';
+
+import { Model } from 'mongoose';
+import mongoose from '../db/db';
+
+export interface Topic {
+  enabled: string;
+  courseID: ObjectID;
+  name: string;
+  description: string;
+  videoURL: string;
+  questions: string[];
+}
 
 const TopicSchema = new mongoose.Schema(
   {
@@ -34,5 +45,5 @@ const TopicSchema = new mongoose.Schema(
   }
 );
 
-const Topic = mongoose.model('topic', TopicSchema);
-module.exports = Topic;
+const Topic: Model<Topic> = mongoose.model('topic', TopicSchema);
+export default Topic;

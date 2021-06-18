@@ -1,6 +1,13 @@
-const mongoose = require('mongoose');
+import { Model } from 'mongoose';
+import mongoose from '../db/db';
 
-const AdminSchema = new mongoose.Schema(
+export interface Admin {
+  email: string;
+  password: string;
+  enabled: boolean
+}
+
+const AdminSchema = new mongoose.Schema<Admin>(
   {
     email: {
       type: String,
@@ -18,8 +25,8 @@ const AdminSchema = new mongoose.Schema(
   {
     versionKey: false,
     timestamps: true,
-  }
+  },
 );
 
-const Admin = mongoose.model('admin', AdminSchema);
-module.exports = Admin;
+const Admin: Model<Admin> = mongoose.model('admin', AdminSchema);
+export default Admin;

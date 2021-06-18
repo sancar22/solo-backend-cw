@@ -1,6 +1,15 @@
-const mongoose = require('mongoose');
-const { Decimal128 } = require('bson');
-const { ObjectID } = require('mongodb');
+import { Decimal128 } from 'bson';
+import { ObjectID } from 'mongodb';
+
+import { Model } from 'mongoose';
+import mongoose from '../db/db';
+
+export interface UserCourse {
+  enabled: boolean;
+  userID: ObjectID;
+  courseID: ObjectID;
+  coursePricePaid: Decimal128;
+}
 
 const UserCourseSchema = new mongoose.Schema(
   {
@@ -27,5 +36,5 @@ const UserCourseSchema = new mongoose.Schema(
   }
 );
 
-const UserCourse = mongoose.model('usercourse', UserCourseSchema);
-module.exports = UserCourse;
+const UserCourse: Model<UserCourse> = mongoose.model('usercourse', UserCourseSchema);
+export default UserCourse;

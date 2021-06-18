@@ -1,6 +1,15 @@
-const mongoose = require('mongoose');
-const { Decimal128 } = require('bson');
-const { ObjectID } = require('mongodb');
+import { Model } from 'mongoose';
+import { Decimal128 } from 'bson';
+import { ObjectID } from 'mongodb';
+
+import mongoose from '../db/db';
+
+export interface Transaction {
+  userID: ObjectID;
+  userEmail: string;
+  courseID: ObjectID;
+  price: Decimal128;
+}
 
 const TransactionSchema = new mongoose.Schema(
   {
@@ -27,5 +36,5 @@ const TransactionSchema = new mongoose.Schema(
   }
 );
 
-const Transaction = mongoose.model('transaction', TransactionSchema);
-module.exports = Transaction;
+const Transaction: Model<Transaction> = mongoose.model('transaction', TransactionSchema);
+export default Transaction;

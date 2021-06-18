@@ -1,25 +1,27 @@
-const express = require('express');
+import { Router } from 'express';
+const router = Router();
 
-const router = express.Router();
+import {
+  getInfo,
+  getAllUsers,
+getUserById} from '../controllers/user';
+import authMiddleware from '../middleware/auth';
+import authAdminMiddleware from '../middleware/admin';
 
-const userController = require('../controllers/user');
-const authMiddleware = require('../middleware/auth');
-const authAdminMiddleware = require('../middleware/admin');
-
-router.get('/getInfo', authMiddleware, userController.getInfo);
+router.get('/getInfo', authMiddleware, getInfo);
 
 router.get(
   '/admin/getAllUsers',
   authMiddleware,
   authAdminMiddleware,
-  userController.getAllUsers
+  getAllUsers
 );
 
 router.get(
   '/admin/getUserById/:id',
   authMiddleware,
   authAdminMiddleware,
-  userController.getUserById
+  getUserById
 );
 
 module.exports = router;
