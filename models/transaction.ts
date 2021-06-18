@@ -5,13 +5,13 @@ import { ObjectID } from 'mongodb';
 import mongoose from '../db/db';
 
 export interface Transaction {
-  userID: ObjectID;
+  userID: string;
   userEmail: string;
-  courseID: ObjectID;
-  price: Decimal128;
+  courseID: string;
+  price: number;
 }
 
-const TransactionSchema = new mongoose.Schema(
+const TransactionSchema = new mongoose.Schema<Transaction>(
   {
     userID: {
       type: ObjectID,

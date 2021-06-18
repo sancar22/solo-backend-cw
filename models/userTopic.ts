@@ -1,21 +1,22 @@
-import { ObjectID } from 'mongodb');
-import { Decimal128 } from 'bson');
+import { ObjectID } from 'mongodb';
+import { Decimal128 } from 'bson';
 
 import { Model } from 'mongoose';
 import mongoose from '../db/db';
 
 export interface UserTopic {
+  _id: string;
   enabled: boolean;
-  userID: ObjectID;
-  courseID: ObjectID;
-  topicID: ObjectID;
-  score: Decimal128;
+  userID: string;
+  courseID: string;
+  topicID: string;
+  score: number;
   responses: string[];
   totalQuestions: number;
   correctQuestions: number;
 }
 
-const UserTopicSchema = new mongoose.Schema(
+const UserTopicSchema = new mongoose.Schema<UserTopic>(
   {
     enabled: {
       type: Boolean,
@@ -56,8 +57,8 @@ const UserTopicSchema = new mongoose.Schema(
   }
 );
 
+
+
 const UserTopic: Model<UserTopic> = mongoose.model('usertopic', UserTopicSchema);
 export default UserTopic;
 
-const UserTopic = mongoose.model('usertopic', UserTopicSchema);
-module.exports = UserTopic;

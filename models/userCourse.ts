@@ -5,13 +5,14 @@ import { Model } from 'mongoose';
 import mongoose from '../db/db';
 
 export interface UserCourse {
+  _id: string;
   enabled: boolean;
-  userID: ObjectID;
-  courseID: ObjectID;
-  coursePricePaid: Decimal128;
+  userID: string;
+  courseID: string;
+  coursePricePaid: number;
 }
 
-const UserCourseSchema = new mongoose.Schema(
+const UserCourseSchema = new mongoose.Schema<UserCourse>(
   {
     enabled: {
       type: Boolean,

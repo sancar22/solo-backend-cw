@@ -10,7 +10,7 @@ export interface User {
   forgotPWToken: string;
 }
 
-const UserSchema = new mongoose.Schema(
+const UserSchema = new mongoose.Schema<User>(
   {
     name: {
       type: String,

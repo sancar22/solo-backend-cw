@@ -5,14 +5,14 @@ import mongoose from '../db/db';
 
 export interface Topic {
   enabled: Boolean,
-  courseID: ObjectID;
+  courseID: string;
   name: string;
   description: string;
   videoURL: string;
   questions: string[];
 }
 
-const TopicSchema = new mongoose.Schema(
+const TopicSchema = new mongoose.Schema<Topic>(
   {
     enabled: {
       type: Boolean,

@@ -7,6 +7,7 @@ import { UserCourse } from '../models/userCourse';
 import UserTopic from '../models/userTopic';
 import uploadFile from '../functions/uploadFile';
 import {Request, Response} from 'express';
+import { UpdateQuery } from 'mongoose';
 
 const { secretAPITestStripe } = process.env;
 const secret = `${secretAPITestStripe}`;
@@ -227,10 +228,12 @@ export const editCourse = async (req: Request, res: Response) => {
 // Logical delete
 export const deleteCourse = async (req: Request, res: Response) => {
   const courseID = req.params.id;
+  const update: UpdateQuery<Course> = {enabled: false};
+
   try {
     await CourseModel.updateOne(
       { _id: courseID },
-      { $set: {enabled: false}}
+      update,
     );
     // deleting topics related to course
     await Topic.updateMany({ courseID }, { enabled: false });

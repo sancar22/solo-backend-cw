@@ -5,7 +5,7 @@ import mongoose from '../db/db';
 
 export interface Course {
   _id: string;
-  enabled: string;
+  enabled: boolean;
   name: string;
   price: number;
   coverImageURL: string;
@@ -13,7 +13,7 @@ export interface Course {
   priceStripeID: string;
 }
 
-const CourseSchema = new mongoose.Schema(
+const CourseSchema = new mongoose.Schema<Course>(
   {
     enabled: {
       type: Boolean,

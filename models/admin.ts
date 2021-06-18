@@ -2,6 +2,7 @@ import { Model } from 'mongoose';
 import mongoose from '../db/db';
 
 export interface Admin {
+  _id: string
   email: string;
   password: string;
   enabled: boolean
