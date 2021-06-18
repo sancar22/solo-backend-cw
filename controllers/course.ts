@@ -1,22 +1,31 @@
-import Stripe from 'stripe'
-import Course from '../models/course'
-import Topic from '../models/topic'
-import UserCourse from '../models/userCourse'
-import UserTopic from '../models/userTopic'
-import uploadFile from '../functions/uploadFile'
+import Stripe from 'stripe';
+import Course from '../models/course';
+import Topic from '../models/topic';
+import UserCourse from '../models/userCourse';
+import UserTopic from '../models/userTopic';
+import uploadFile from '../functions/uploadFile';
+import {Request, Response} from 'express';
 
 const { secretAPITestStripe } = process.env;
-const secret = `${secretAPITestStripe}`
+const secret = `${secretAPITestStripe}`;
 
+interface ArgumentToFind {
+  enabled: boolean;
+}
+
+interface ArgumentToFindOne extends ArgumentToFind {
+  _id: string;
+}
 
 const stripe = new Stripe(secret, {
   apiVersion: '2020-08-27',
 });
 
 // This will give information in a way that can be read by the tables in the admin page
-export const getAllCourses = async (req, res) => {
+export const getAllCourses = async (req: Request, res: Response) => {
   try {
-    const courses = await Course.find({ enabled: true });
+    const arg: ArgumentToFind = { enabled: true };
+    const courses = await Course.find({arg});
     if (!courses) return res.send('No courses are available!');
     const filteredKeys = [
       {
@@ -64,12 +73,13 @@ export const getAllCourses = async (req, res) => {
   }
 };
 
-export const getCoursesById = async (req, res) => {
+export const getCoursesById = async (req: Request, res: Response) => {
   try {
-    const course = await Course.findOne({
+    const arg: ArgumentToFindOne = {
       _id: req.params.id,
       enabled: true,
-    }).lean();
+    }
+    const course = await Course.findOne({arg}).lean();
 
     if (!course) return res.send('Course does not exist!');
     course.price = parseFloat(course.price.toString());
@@ -112,13 +122,13 @@ export const getCoursesById = async (req, res) => {
   }
 };
 
-export const addCourse = async (req, res) => {
+export const addCourse = async (req: Request, res: Response) => {
   try {
-    let { price } = req.body;
+    let price: string = req.body.price;
     const { coverImageURL, name, description } = req.body;
     if (!coverImageURL)
       return res.status(400).send('You have to insert a cover image!');
-    if (!price) price = 0;
+    if (!price) price = '0';
 
     const { data, mime } = coverImageURL;
     const URLfromS3 = await uploadFile(data, mime);
@@ -126,7 +136,7 @@ export const addCourse = async (req, res) => {
       name: name.trim(),
     });
     const priceStripe = await stripe.prices.create({
-      unit_amount: parseInt(price * 100, 10),
+      unit_amount: Number(Number(price).toFixed(2)) * 100,
       currency: 'usd',
       product: product.id,
     });
@@ -145,7 +155,7 @@ export const addCourse = async (req, res) => {
   }
 };
 
-export const editCourse = async (req, res) => {
+export const editCourse = async (req: Request, res: Response) => {
   try {
     let { price } = req.body;
     const { coverImageURL, name, description } = req.body;
@@ -194,7 +204,7 @@ export const editCourse = async (req, res) => {
 };
 
 // Logical delete
-export const deleteCourse = async (req, res) => {
+export const deleteCourse = async (req: Request, res: Response) => {
   const courseID = req.params.id;
   try {
     await Course.updateOne(
@@ -216,7 +226,7 @@ export const deleteCourse = async (req, res) => {
   }
 };
 
-export const enrollFreeCourse = async (req, res) => {
+export const enrollFreeCourse = async (req: Request, res: Response) => {
   try {
     const { course } = req.body;
     const userID = req.user.id;
@@ -232,7 +242,7 @@ export const enrollFreeCourse = async (req, res) => {
   }
 };
 
-export const enrollPremiumCourse = async (req, res) => {
+export const enrollPremiumCourse = async (req: Request, res: Response) => {
   try {
     const { course } = req.body;
     const userID = req.user.id;
@@ -248,7 +258,7 @@ export const enrollPremiumCourse = async (req, res) => {
   }
 };
 
-export const getActivitiesClientSide = async (req, res) => {
+export const getActivitiesClientSide = async (req: Request, res: Response) => {
   try {
     const userID = req.user.id;
     const userActiveCourses = await UserCourse.find({ userID, enabled: true });
@@ -283,7 +293,7 @@ export const getActivitiesClientSide = async (req, res) => {
   }
 };
 
-export const getMyCourses = async (req, res) => {
+export const getMyCourses = async (req: Request, res: Response) => {
   try {
     const userID = req.user.id;
     const userActiveCourses = await UserCourse.find({

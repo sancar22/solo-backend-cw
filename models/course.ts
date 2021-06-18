@@ -6,7 +6,7 @@ import mongoose from '../db/db';
 export interface Course {
   enabled: string;
   name: string;
-  price: Decimal128;
+  price: number;
   coverImageURL: string;
   description: string;
   priceStripeID: string;
