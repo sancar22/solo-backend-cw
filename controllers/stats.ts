@@ -1,5 +1,5 @@
 import PDFDocument from'pdfkit';
-import { ObjectID } from'mongodb';
+import {Request, Response} from 'express';
 import moment from'moment';
 import Course from'../models/course';
 import UserTopic from'../models/userTopic';
@@ -9,7 +9,7 @@ import {
   generateInvoiceTable,
 } from '../functions/pdf';
 
-export const getGlobalStats = async (req, res) => {
+export const getGlobalStats = async (req: Request, res: Response) => {
   try {
     const { startDateQuery, endDateQuery } = req.query;
     const startDate = new Date(startDateQuery);
@@ -112,7 +112,7 @@ export const getGlobalStats = async (req, res) => {
   }
 };
 
-export const getAllTestResults = async (req, res) => {
+export const getAllTestResults = async (req: Request, res: Response) => {
   try {
     const userTests = await UserTopic.aggregate([
       {
@@ -274,13 +274,13 @@ export const getAllTestResults = async (req, res) => {
   }
 };
 
-export const getTestResultById = async (req, res) => {
+export const getTestResultById = async (req: Request, res: Response) => {
   try {
     const userTests = await UserTopic.aggregate([
       {
         $match: {
           enabled: true,
-          _id: ObjectID(req.params.id),
+          _id: req.params.id,
         },
       },
       {

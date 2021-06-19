@@ -1,11 +1,24 @@
+import {Request, Response} from 'express';
 import Course from '../models/course';
-import Topic from '../models/topic';
-import UserTopic from '../models/userTopic';
+import {Topic} from '../models/topic';
+import TopicModel from '../models/topic';
+import UserTopicModel from '../models/userTopic';
+import {UserTopic} from '../models/userTopic';
+
+
+interface ClientTopic extends Topic {
+  courseName: string;
+}
+
+interface ClientUserTopic extends UserTopic {
+  name: string;
+  description: string;
+}
 
 // This will give information in a way that can be read by the tables in the admin page
-export const getAllTopics = async (req, res) => {
+export const getAllTopics = async (req: Request, res: Response) => {
   try {
-    const topics = await Topic.aggregate([
+    const topics = await TopicModel.aggregate([
       {
         $match: {
           enabled: true,
@@ -88,69 +101,75 @@ export const getAllTopics = async (req, res) => {
   }
 };
 
-export const getTopicsById = async (req, res) => {
+export const getTopicsById = async (req: Request, res: Response) => {
   try {
-    const topic = await Topic.findOne({
+    const topic = await TopicModel.findOne({
       _id: req.params.id,
       enabled: true,
     }).lean();
-    const course = await Course.findById(topic.courseID);
-    topic.courseName = course.name;
 
-    if (!topic) return res.send('Topic does not exist!');
-    const filteredKeys = [
-      {
-        field: 'courseName',
-        headerName: 'Course Name',
-        type: 'string',
-        required: true,
-      },
-      {
-        field: 'name',
-        headerName: 'Topic Name',
-        type: 'string',
-        required: true,
-      },
-      {
-        field: 'description',
-        headerName: 'Description',
-        type: 'string',
-        required: true,
-      },
-      {
-        field: 'videoURL',
-        headerName: 'Video',
-        type: 'string',
-        required: true,
-      },
-      {
-        field: 'questions',
-        headerName: 'Questions',
-        type: 'array',
-        required: true,
-      },
-      { field: 'options', headerName: 'Options' },
-    ];
-    const tableOptions = { show: true, edit: true, delete: true };
-    const entityName = 'topic';
-    const categoryName = 'Topic';
 
-    res.status(200).send({
-      keysLabel: filteredKeys,
-      allInfo: topic,
-      tableOptions,
-      entityName,
-      categoryName,
-    });
+    if (topic) {
+      const course = await Course.findById(topic.courseID);
+      if (course) {
+        const clientTopic: ClientTopic = {...topic, courseName: course.name};
+
+        const filteredKeys = [
+          {
+            field: 'courseName',
+            headerName: 'Course Name',
+            type: 'string',
+            required: true,
+          },
+          {
+            field: 'name',
+            headerName: 'Topic Name',
+            type: 'string',
+            required: true,
+          },
+          {
+            field: 'description',
+            headerName: 'Description',
+            type: 'string',
+            required: true,
+          },
+          {
+            field: 'videoURL',
+            headerName: 'Video',
+            type: 'string',
+            required: true,
+          },
+          {
+            field: 'questions',
+            headerName: 'Questions',
+            type: 'array',
+            required: true,
+          },
+          { field: 'options', headerName: 'Options' },
+        ];
+        const tableOptions = { show: true, edit: true, delete: true };
+        const entityName = 'topic';
+        const categoryName = 'Topic';
+
+        res.status(200).send({
+          keysLabel: filteredKeys,
+          allInfo: clientTopic,
+          tableOptions,
+          entityName,
+          categoryName,
+        });
+      } else res.status(404).send('course not found');
+    } else res.status(404).send('topic not found');
+
   } catch (e) {
     console.log(e);
     res.status(500).send('Internal Server Error!');
   }
 };
 
-export const addTopic = async (req, res) => {
+export const addTopic = async (req: Request, res: Response) => {
   try {
-    await Topic.create(req.body);
+    await TopicModel.create(req.body);
     res.status(200).send('Topic added succesfully!');
   } catch (e) {
     console.log(e);
@@ -158,10 +177,10 @@ export const addTopic = async (req, res) => {
   }
 };
 
-export const editTopic = async (req, res) => {
+export const editTopic = async (req: Request, res: Response) => {
   try {
     const { questions, videoURL, name, description } = req.body;
-    await Topic.updateOne(
+    await TopicModel.updateOne(
       { _id: req.params.id },
       {
         $set: {
@@ -180,10 +199,10 @@ export const editTopic = async (req, res) => {
 };
 
 // Logical delete
-export const deleteTopic = async (req, res) => {
+export const deleteTopic = async (req: Request, res: Response) => {
   const topicID = req.params.id;
   try {
-    await Topic.updateOne(
+    await TopicModel.updateOne(
       { _id: topicID },
       {
         $set: {
@@ -191,7 +210,7 @@ export const deleteTopic = async (req, res) => {
         },
       }
     );
-    await UserTopic.updateMany({ topicID }, { enabled: false });
+    await UserTopicModel.updateMany({ topicID }, { enabled: false });
     res.status(200).send('Topic deleted succesfully!');
   } catch (e) {
     console.log(e);
@@ -199,16 +218,16 @@ export const deleteTopic = async (req, res) => {
   }
 };
 
-export const getTopicsClientSide = async (req, res) => {
+export const getTopicsClientSide = async (req: Request, res: Response) => {
   try {
-    const userID = req.user.id;
+    const userID = res.locals.user.id;
     const { courseID } = req.params;
-    const allTopics = await Topic.find({ courseID, enabled: true }).lean();
+    const allTopics = await TopicModel.find({ courseID, enabled: true }).lean();
 
     for (let i = 0; i < allTopics.length; i++) {
       const currentTopic = allTopics[i];
       currentTopic.completed = false;
-      const userTopic = await UserTopic.findOne({
+      const userTopic = await UserTopicModel.findOne({
         topicID: currentTopic._id,
         userID,
         enabled: true,
@@ -224,27 +243,30 @@ export const getTopicsClientSide = async (req, res) => {
   }
 };
 
-export const getTopicById = async (req, res) => {
+export const getTopicById = async (req: Request, res: Response) => {
   try {
     const { topicID } = req.params;
-    const topic = await Topic.findOne({ _id: topicID, enabled: true }).lean();
-    for (let i = 0; i < topic.questions.length; i++) {
-      topic.questions[i].userAnswer = 0;
-      topic.questions[i].userRespondedCorrectly = false;
-      if (topic.questions[i].choices[0].correct) {
-        topic.questions[i].userRespondedCorrectly = true;
+    const topic = await TopicModel.findOne({ _id: topicID, enabled: true }).lean();
+
+    if (topic) {
+      for (let i = 0; i < topic.questions.length; i++) {
+        topic.questions[i].userAnswer = 0;
+        topic.questions[i].userRespondedCorrectly = false;
+        if (topic.questions[i].choices[0].correct) {
+          topic.questions[i].userRespondedCorrectly = true;
+        }
       }
+      res.status(200).send(topic);
     }
-    res.status(200).send(topic);
   } catch (e) {
     console.log(e);
     res.status(500).send('Internal Server Error!');
   }
 };
 
-export const submitTest = async (req, res) => {
+export const submitTest = async (req: Request, res: Response) => {
   try {
-    const userID = req.user.id;
+    const userID = res.locals.user.id;
     const { responses, courseID, topicID } = req.body;
     const totalQuestions = responses.length;
     let numberOfCorrectQuestions = 0;
@@ -256,7 +278,7 @@ export const submitTest = async (req, res) => {
     const score = parseFloat(
       ((numberOfCorrectQuestions / totalQuestions) * 100).toFixed(2)
     );
-    await UserTopic.create({
+    await UserTopicModel.create({
       userID,
       courseID,
       topicID,
@@ -290,22 +312,26 @@ export const submitTest = async (req, res) => {
   }
 };
 
-export const getCompletedTopicsForCourse = async (req, res) => {
+export const getCompletedTopicsForCourse = async (req: Request, res: Response) => {
   try {
-    const userID = req.user.id;
+    const userID = res.locals.user.id;
     const { courseID } = req.params;
-    const completedTopicsForCourse = await UserTopic.find({
+    const completedTopicsForCourse = await UserTopicModel.find({
       courseID,
       userID,
       enabled: true,
     }).lean();
 
+    const clientTopicsForCourse: ClientUserTopic[] = [];
     for (let i = 0; i < completedTopicsForCourse.length; i++) {
-      const currentTopicUser = completedTopicsForCourse[i];
-      const topic = await Topic.findOne({
+      const topic = await TopicModel.findOne({
         _id: currentTopicUser.topicID,
         enabled: true,
       });
+      if (topic) {
+        // we were here TODOTODTOTODO
+      }
+      const currentTopicUser = completedTopicsForCourse[i];
       currentTopicUser.name = topic.name;
       currentTopicUser.description = topic.description;
     }
