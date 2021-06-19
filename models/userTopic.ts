@@ -1,4 +1,4 @@
-import { ObjectID } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import { Decimal128 } from 'bson';
 
 import { Model, Schema, model } from 'mongoose';
@@ -22,15 +22,15 @@ const UserTopicSchema = new Schema<UserTopic>(
       default: true,
     },
     userID: {
-      type: ObjectID,
+      type: ObjectId,
       required: true,
     },
     courseID: {
-      type: ObjectID,
+      type: ObjectId,
       required: true,
     },
     topicID: {
-      type: ObjectID,
+      type: ObjectId,
       required: true,
     },
     score: {

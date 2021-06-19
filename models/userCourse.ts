@@ -1,7 +1,7 @@
 import { Decimal128 } from 'bson';
 import { ObjectID } from 'mongodb';
 
-import { Model, Schema, model } from 'mongoose';
+import { Model, Schema, model, ObjectId } from 'mongoose';
 
 export interface UserCourse {
   _id: string;

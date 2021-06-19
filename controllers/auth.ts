@@ -9,18 +9,15 @@ import validateEmail from '../utils/index';
 
 import {Request, Response} from 'express';
 
-const { secretAPITestStripe } = process.env;
-const secret = `${secretAPITestStripe}`;
-
+const { secretAPITestStripe: secret } = process.env;
 const { jwtSecret } = process.env;
-const jwtsecret = `${jwtSecret}`;
+
 
 interface MyToken {
   name: string;
   user: {
     id: string;
   };
-  // whatever else is in the JWT.
 }
 
 interface MyIForgotToken {
@@ -29,10 +26,9 @@ interface MyIForgotToken {
     id: string;
     code: number;
   };
-  // whatever else is in the JWT.
 }
 
-const stripe = new Stripe(secret, {
+const stripe = new Stripe(secret as string, {
   apiVersion: '2020-08-27',
 });
 
@@ -64,7 +60,7 @@ const loginFunction = async (email: string, password: string, res: Response, adm
 
   jwt.sign(
     userPayload,
-    jwtsecret,
+    jwtSecret as string,
     { expiresIn: 3600 },
     (err, token) => {
       if (err) throw err;
@@ -132,7 +128,7 @@ export const register = async (req: Request, res: Response) => {
 
     jwt.sign(
       payload,
-      jwtsecret,
+      jwtSecret as string,
       { expiresIn: '9999 years' },
       async (err, token) => {
         if (err) throw err;
@@ -156,7 +152,7 @@ export const register = async (req: Request, res: Response) => {
 
 export const verifyEmail = async (req: Request, res: Response) => {
   try {
-    const decodedJWT = jwt.verify(req.params.token, jwtsecret);
+    const decodedJWT = jwt.verify(req.params.token, jwtSecret as string);
     const userID = (decodedJWT as MyToken).user.id;
     const user = await UserModel.findById(userID);
     const isUser = (input: any): input is User => 'verified' in input;
@@ -191,7 +187,7 @@ export const forgotPW = async (req: Request, res: Response) => {
     };
     jwt.sign(
       payload,
-      jwtsecret,
+      jwtSecret as string,
       { expiresIn: 60 },
       async (err, token) => {
         if (err) throw err;
@@ -226,7 +222,7 @@ export const verifyPWCodeChange = async (req: Request, res: Response) => {
     if (!user) return res.status(401).send('Invalid code!');
     const decodedJWTCode = jwt.verify(
       user.forgotPWToken,
-      jwtsecret
+      jwtSecret as string
     );
     if ((decodedJWTCode as MyIForgotToken).user.code !== code)
       return res.status(401).send('Invalid code!');
@@ -239,7 +235,7 @@ export const verifyPWCodeChange = async (req: Request, res: Response) => {
     // 2 minutes to change pw
     jwt.sign(
       payload,
-      jwtsecret,
+      jwtSecret as string,
       { expiresIn: 120 },
       async (err, token) => {
         if (err) throw err;

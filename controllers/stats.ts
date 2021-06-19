@@ -7,7 +7,7 @@ import {
   generateFooter,
   generateHeader,
   generateInvoiceTable,
-} from '../functions/pdf';
+} from '../lib/pdf';
 
 export const getGlobalStats = async (req: Request, res: Response) => {
   try {
