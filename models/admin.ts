@@ -1,7 +1,7 @@
-import { Model, Schema, model } from 'mongoose';
+import { Model, Schema, model, ObjectId } from 'mongoose';
 
 export interface Admin {
-  _id: string
+  _id: string;
   email: string;
   password: string;
   enabled: boolean

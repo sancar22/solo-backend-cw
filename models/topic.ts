@@ -1,5 +1,4 @@
-import { ObjectID } from 'mongodb';
-
+import { ObjectId } from 'mongodb';
 import { Model, Schema, model } from 'mongoose';
 
 export interface Topic {
@@ -19,7 +18,7 @@ const TopicSchema = new Schema<Topic>(
       default: true,
     },
     courseID: {
-      type: ObjectID,
+      type: ObjectId,
       required: true,
     },
     name: {
@@ -45,5 +44,5 @@ const TopicSchema = new Schema<Topic>(
   }
 );
 
-const Topic: Model<Topic> = model('topic', TopicSchema);
+const Topic: Model<Topic> = model('Topic', TopicSchema);
 export default Topic;

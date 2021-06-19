@@ -1,6 +1,5 @@
 import { Decimal128 } from 'bson';
-
-import { Model, Schema, model } from 'mongoose';
+import { Model, Schema, model, ObjectId } from 'mongoose';
 
 export interface Course {
   _id: string;

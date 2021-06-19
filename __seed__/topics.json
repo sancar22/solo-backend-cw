@@ -1,0 +1,281 @@
+[{
+  "_id": {
+    "$oid": "60b6f7457fb57f3a70421ee5"
+  },
+  "enabled": true,
+  "questions": [
+    {
+      "question": "Which directive is used to start an Angular application?",
+      "choices": [
+        {
+          "name": "ng-app",
+          "correct": false
+        },
+        {
+          "name": "ng-start",
+          "correct": true
+        },
+        {
+          "name": "ng-init",
+          "correct": false
+        },
+        {
+          "name": "ng-begin",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "question": "Which of the following is a validation directive?",
+      "choices": [
+        {
+          "name": "ng-required",
+          "correct": false
+        },
+        {
+          "name": "ng-minlength",
+          "correct": false
+        },
+        {
+          "name": "ng-pattern",
+          "correct": false
+        },
+        {
+          "name": "All of the above",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "question": "Where is the usage of AngularJS directives?",
+      "choices": [
+        {
+          "name": "Module",
+          "correct": false
+        },
+        {
+          "name": "Controller",
+          "correct": false
+        },
+        {
+          "name": "Service",
+          "correct": false
+        },
+        {
+          "name": "View",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "question": "Which directive is used to initialize an AngularJS application data?",
+      "choices": [
+        {
+          "name": "ng-app",
+          "correct": false
+        },
+        {
+          "name": "ng-start",
+          "correct": false
+        },
+        {
+          "name": "ng-init",
+          "correct": true
+        },
+        {
+          "name": "ng-begin",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "question": "Which directive is used to assign values to the variables in AngularJS?",
+      "choices": [
+        {
+          "name": "ng-init",
+          "correct": true
+        },
+        {
+          "name": "ng-bind",
+          "correct": false
+        },
+        {
+          "name": "ng-model",
+          "correct": false
+        },
+        {
+          "name": "ng-app",
+          "correct": false
+        }
+      ]
+    }
+  ],
+  "videoURL": "https://cwsoloproject.s3.us-east-2.amazonaws.com/Angular+Directives+Tutorial+_+Types+of+Directives+Angular+8+_+Angular+Training+_+Edureka.mp4",
+  "description": "Very easy topic. Good luck though...",
+  "name": "Directives!",
+  "courseID": {
+    "$oid": "60b68b3040121041200bf75e"
+  },
+  "createdAt": {
+    "$date": "2021-06-02T03:13:09.739Z"
+  },
+  "updatedAt": {
+    "$date": "2021-06-14T23:14:22.468Z"
+  }
+},{
+  "_id": {
+    "$oid": "60b71c523ac83d67b4647e88"
+  },
+  "enabled": true,
+  "questions": [
+    {
+      "question": "The pop() method of the array does which of the following task?",
+      "choices": [
+        {
+          "name": "Decrements the total length by 1",
+          "correct": true
+        },
+        {
+          "name": "Increments the total length by 1",
+          "correct": false
+        },
+        {
+          "name": "Prints the first element but does not affect the length",
+          "correct": false
+        },
+        {
+          "name": "Updates the element",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "question": "What does this code do? if (!a[i]) continue;",
+      "choices": [
+        {
+          "name": "Skips the defined elements",
+          "correct": false
+        },
+        {
+          "name": "Skips the existent elements",
+          "correct": false
+        },
+        {
+          "name": "Skips the null elements",
+          "correct": true
+        },
+        {
+          "name": "Skips the defined & existent elements",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "question": "The primary purpose of the array map() function is that it ______",
+      "choices": [
+        {
+          "name": "Maps the elements of another array into itself",
+          "correct": false
+        },
+        {
+          "name": " Passes each element of the array and returns the necessary mapped elements",
+          "correct": false
+        },
+        {
+          "name": "Passes each element of the array on which it is invoked to the function you specify, and returns an array containing the values returned by that function",
+          "correct": true
+        },
+        {
+          "name": "Pass the elements of the array into another array",
+          "correct": false
+        }
+      ]
+    }
+  ],
+  "videoURL": "https://cwsoloproject.s3.us-east-2.amazonaws.com/y2mate.com+-+Javascript+Arrays++Javascript+Tutorial+For+Beginners_360p.mp4",
+  "description": "You'll learn a lot about this important data structure!",
+  "name": "Arrays",
+  "courseID": {
+    "$oid": "60b719cbe39edb23a81e2862"
+  },
+  "createdAt": {
+    "$date": "2021-06-02T05:51:14.566Z"
+  },
+  "updatedAt": {
+    "$date": "2021-06-07T21:44:38.680Z"
+  }
+},{
+  "_id": {
+    "$oid": "60c8c9267b784600158096d6"
+  },
+  "enabled": true,
+  "questions": [
+    {
+      "question": "Observables allow you to watch values for changes over time and also Observables can have multiple values over time.",
+      "choices": [
+        {
+          "name": "True",
+          "correct": true
+        },
+        {
+          "name": "False",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "question": " We can subscribe to an observable using the . . . . . . . . The benefit of this is that Angular deals with your subscription during the lifecycle of a component. Angular will automatically subscribe and unsubscribe for you.",
+      "choices": [
+        {
+          "name": "Sync Pipe",
+          "correct": false
+        },
+        {
+          "name": "Async Var",
+          "correct": false
+        },
+        {
+          "name": "Async Pipe",
+          "correct": true
+        },
+        {
+          "name": "Syn Var",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "question": "To use observables, Angular uses a third-party library called . . . . . . .",
+      "choices": [
+        {
+          "name": "ng2-bootstrap",
+          "correct": false
+        },
+        {
+          "name": "angular-cli",
+          "correct": false
+        },
+        {
+          "name": "numeral",
+          "correct": false
+        },
+        {
+          "name": "RxJS",
+          "correct": true
+        }
+      ]
+    }
+  ],
+  "videoURL": "https://cwsoloproject.s3.us-east-2.amazonaws.com/Angular+Tutorial+-+20+-+HTTP+and+Observables.mp4",
+  "description": "Very difficult topic to grasp, but it'll be your best friend when doing asynchronous requests!",
+  "name": "Observables",
+  "courseID": {
+    "$oid": "60b68b3040121041200bf75e"
+  },
+  "createdAt": {
+    "$date": "2021-06-15T15:37:10.713Z"
+  },
+  "updatedAt": {
+    "$date": "2021-06-15T15:37:10.713Z"
+  }
+}]

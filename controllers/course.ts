@@ -5,10 +5,11 @@ import Topic from '../models/topic';
 import UserCourseModel from '../models/userCourse';
 import { UserCourse } from '../models/userCourse';
 import UserTopic from '../models/userTopic';
-import uploadFile from '../functions/uploadFile';
+import uploadFile from '../lib/uploadFile';
 import {Request, Response} from 'express';
 import { UpdateQuery } from 'mongoose';
 
+//TODO
 const { secretAPITestStripe } = process.env;
 const secret = `${secretAPITestStripe}`;
 
