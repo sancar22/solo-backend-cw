@@ -52,14 +52,9 @@ const loginFunction = async (email: string, password: string, res: Response, adm
   if (isUser(user) && !user.verified)
     return res.status(401).send('You need to verify your account!');
 
-  const userPayload = {
-    user: {
-      id: user._id,
-    },
-  };
 
   jwt.sign(
-    userPayload,
+    { user: {id: user._id}},
     jwtSecret as string,
     { expiresIn: 3600 },
     (err, token) => {

@@ -2,10 +2,6 @@ import { Mongoose, ObjectId, Types } from 'mongoose';
 import { Topic } from '../models/topic';
 import topics from './topics.json';
 
-
-
-
-
 interface DbSeedData {
   topics: Topic[]
 }
