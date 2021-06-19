@@ -24,4 +24,4 @@ router.get(
   getUserById
 );
 
-module.exports = router;
+export default router;

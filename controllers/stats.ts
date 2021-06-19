@@ -11,7 +11,10 @@ import {
 
 export const getGlobalStats = async (req: Request, res: Response) => {
   try {
-    const { startDateQuery, endDateQuery } = req.query;
+    const startDateQuery = String(req.query.startDateQuery);
+    const endDateQuery = String(req.query.endDateQuery);
+    // TODO
+    // this may be a problem we're not sure what effect this will have
     const startDate = new Date(startDateQuery);
     const endDate = new Date(endDateQuery);
     const globalMoneyQuery = await Course.aggregate([

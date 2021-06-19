@@ -10,6 +10,10 @@ interface ClientTopic extends Topic {
   courseName: string;
 }
 
+interface TopicStatus extends Topic {
+  completed: boolean;
+}
+
 interface ClientUserTopic extends UserTopic {
   name: string;
   description: string;
@@ -225,8 +229,9 @@ export const getTopicsClientSide = async (req: Request, res: Response) => {
     const allTopics = await TopicModel.find({ courseID, enabled: true }).lean();
 
     for (let i = 0; i < allTopics.length; i++) {
-      const currentTopic = allTopics[i];
-      currentTopic.completed = false;
+      const currentTopic: TopicStatus = {...allTopics[i],
+        completed: false
+      };
       const userTopic = await UserTopicModel.findOne({
         topicID: currentTopic._id,
         userID,
@@ -249,6 +254,8 @@ export const getTopicById = async (req: Request, res: Response) => {
     const topic = await TopicModel.findOne({ _id: topicID, enabled: true }).lean();
 
     if (topic) {
+      //TODO
+      // any[], make an interface for questions
       for (let i = 0; i < topic.questions.length; i++) {
         topic.questions[i].userAnswer = 0;
         topic.questions[i].userRespondedCorrectly = false;
@@ -257,6 +264,8 @@ export const getTopicById = async (req: Request, res: Response) => {
         }
       }
       res.status(200).send(topic);
+    } else {
+      res.status(404).send('topic not found');
     }
   } catch (e) {
     console.log(e);
@@ -324,18 +333,21 @@ export const getCompletedTopicsForCourse = async (req: Request, res: Response) =
 
     const clientTopicsForCourse: ClientUserTopic[] = [];
     for (let i = 0; i < completedTopicsForCourse.length; i++) {
+      let currentUserTopic = completedTopicsForCourse[i];
       const topic = await TopicModel.findOne({
-        _id: currentTopicUser.topicID,
+        _id: currentUserTopic.topicID,
         enabled: true,
       });
+
       if (topic) {
-        // we were here TODOTODTOTODO
+        const clientUserTopic: ClientUserTopic = {...currentUserTopic,
+          name: topic.name,
+          description: topic.description
+        }
+        clientTopicsForCourse.push(clientUserTopic);
       }
-      const currentTopicUser = completedTopicsForCourse[i];
-      currentTopicUser.name = topic.name;
-      currentTopicUser.description = topic.description;
     }
-    res.status(200).send(completedTopicsForCourse);
+    res.status(200).send(clientTopicsForCourse);
   } catch (e) {
     console.log(e);
     res.status(500).send('Internal Server Error!');

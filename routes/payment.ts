@@ -28,4 +28,4 @@ router.get(
   authAdminMiddleware,
   getPurchaseById
 );
-module.exports = router;
+export default router;

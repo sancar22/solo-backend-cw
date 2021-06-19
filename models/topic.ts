@@ -4,12 +4,13 @@ import { Model } from 'mongoose';
 import mongoose from '../db/db';
 
 export interface Topic {
+  _id: string,
   enabled: Boolean,
   courseID: string;
   name: string;
   description: string;
   videoURL: string;
-  questions: string[];
+  questions: any[];
 }
 
 const TopicSchema = new mongoose.Schema<Topic>(

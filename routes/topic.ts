@@ -72,4 +72,4 @@ router.get(
 
 router.post('/submitTest', authMiddleware, submitTest);
 
-module.exports = router;
+export default router;
