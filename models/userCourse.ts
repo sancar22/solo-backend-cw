@@ -1,8 +1,7 @@
 import { Decimal128 } from 'bson';
 import { ObjectID } from 'mongodb';
 
-import { Model } from 'mongoose';
-import mongoose from '../db/db';
+import { Model, Schema, model } from 'mongoose';
 
 export interface UserCourse {
   _id: string;
@@ -12,7 +11,7 @@ export interface UserCourse {
   coursePricePaid: number;
 }
 
-const UserCourseSchema = new mongoose.Schema<UserCourse>(
+const UserCourseSchema = new Schema<UserCourse>(
   {
     enabled: {
       type: Boolean,
@@ -37,5 +36,5 @@ const UserCourseSchema = new mongoose.Schema<UserCourse>(
   }
 );
 
-const UserCourse: Model<UserCourse> = mongoose.model('usercourse', UserCourseSchema);
+const UserCourse: Model<UserCourse> = model('usercourse', UserCourseSchema);
 export default UserCourse;

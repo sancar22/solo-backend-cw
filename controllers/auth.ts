@@ -136,7 +136,7 @@ export const register = async (req: Request, res: Response) => {
       { expiresIn: '9999 years' },
       async (err, token) => {
         if (err) throw err;
-        res.send('User created successfully!');
+        res.status(201).send('User created successfully!');
         const output = `
         <h2>Please click on the following link to verify your account!</h2>
         <p>${process.env.serverURL}/auth/confirmation/${token}</p>

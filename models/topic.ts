@@ -1,7 +1,6 @@
 import { ObjectID } from 'mongodb';
 
-import { Model } from 'mongoose';
-import mongoose from '../db/db';
+import { Model, Schema, model } from 'mongoose';
 
 export interface Topic {
   _id: string,
@@ -13,7 +12,7 @@ export interface Topic {
   questions: any[];
 }
 
-const TopicSchema = new mongoose.Schema<Topic>(
+const TopicSchema = new Schema<Topic>(
   {
     enabled: {
       type: Boolean,
@@ -46,5 +45,5 @@ const TopicSchema = new mongoose.Schema<Topic>(
   }
 );
 
-const Topic: Model<Topic> = mongoose.model('topic', TopicSchema);
+const Topic: Model<Topic> = model('topic', TopicSchema);
 export default Topic;

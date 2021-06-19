@@ -1,8 +1,6 @@
-import { Model } from 'mongoose';
+import { Model, Schema, model } from 'mongoose';
 import { Decimal128 } from 'bson';
 import { ObjectID } from 'mongodb';
-
-import mongoose from '../db/db';
 
 export interface Transaction {
   userID: string;
@@ -11,7 +9,7 @@ export interface Transaction {
   price: number;
 }
 
-const TransactionSchema = new mongoose.Schema<Transaction>(
+const TransactionSchema = new Schema<Transaction>(
   {
     userID: {
       type: ObjectID,
@@ -36,5 +34,5 @@ const TransactionSchema = new mongoose.Schema<Transaction>(
   }
 );
 
-const Transaction: Model<Transaction> = mongoose.model('transaction', TransactionSchema);
+const Transaction: Model<Transaction> = model('transaction', TransactionSchema);
 export default Transaction;

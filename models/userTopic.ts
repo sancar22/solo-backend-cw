@@ -1,8 +1,7 @@
 import { ObjectID } from 'mongodb';
 import { Decimal128 } from 'bson';
 
-import { Model } from 'mongoose';
-import mongoose from '../db/db';
+import { Model, Schema, model } from 'mongoose';
 
 export interface UserTopic {
   _id: string;
@@ -16,7 +15,7 @@ export interface UserTopic {
   correctQuestions: number;
 }
 
-const UserTopicSchema = new mongoose.Schema<UserTopic>(
+const UserTopicSchema = new Schema<UserTopic>(
   {
     enabled: {
       type: Boolean,
@@ -59,6 +58,6 @@ const UserTopicSchema = new mongoose.Schema<UserTopic>(
 
 
 
-const UserTopic: Model<UserTopic> = mongoose.model('usertopic', UserTopicSchema);
+const UserTopic: Model<UserTopic> = model('usertopic', UserTopicSchema);
 export default UserTopic;
 

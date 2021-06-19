@@ -1,5 +1,4 @@
-import { Model } from 'mongoose';
-import mongoose from '../db/db';
+import { Model, Schema, model } from 'mongoose';
 
 export interface Admin {
   _id: string
@@ -8,7 +7,7 @@ export interface Admin {
   enabled: boolean
 }
 
-const AdminSchema = new mongoose.Schema<Admin>(
+const AdminSchema = new Schema<Admin>(
   {
     email: {
       type: String,
@@ -29,5 +28,5 @@ const AdminSchema = new mongoose.Schema<Admin>(
   },
 );
 
-const Admin: Model<Admin> = mongoose.model('admin', AdminSchema);
+const Admin: Model<Admin> = model('admin', AdminSchema);
 export default Admin;

@@ -1,5 +1,4 @@
-import { Model } from 'mongoose';
-import mongoose from '../db/db';
+import { Model, Schema, model } from 'mongoose';
 
 export interface User {
   name: string;
@@ -10,7 +9,7 @@ export interface User {
   forgotPWToken: string;
 }
 
-const UserSchema = new mongoose.Schema<User>(
+const UserSchema = new Schema<User>(
   {
     name: {
       type: String,
@@ -42,5 +41,5 @@ const UserSchema = new mongoose.Schema<User>(
   }
 );
 
-const User: Model<User> = mongoose.model('user', UserSchema);
+const User: Model<User> = model('user', UserSchema);
 export default User;
