@@ -44,5 +44,5 @@ const CourseSchema = new Schema<Course>(
   }
 );
 
-const Course: Model<Course> = model('course', CourseSchema);
+const Course: Model<Course> = model('Course', CourseSchema);
 export default Course;

@@ -1,0 +1,73 @@
+[{
+  "_id": {
+    "$oid": "60b68b3040121041200bf75e"
+  },
+  "enabled": true,
+  "name": "Angular",
+  "description": "Hated by a lot, but it's cool!",
+  "price": {
+    "$numberDecimal": "59.99"
+  },
+  "coverImageURL": "https://cwsoloproject.s3.amazonaws.com/FaErJKmCH1623421406881.jpeg",
+  "priceStripeID": "price_1J2eIFHlAtfHjNOUNvsXiFmt",
+  "createdAt": {
+    "$date": "2021-06-01T19:32:00.284Z"
+  },
+  "updatedAt": {
+    "$date": "2021-06-15T15:35:12.207Z"
+  }
+},{
+  "_id": {
+    "$oid": "60b719cbe39edb23a81e2862"
+  },
+  "enabled": true,
+  "name": "Javascript",
+  "description": "Best course ever. For the price of nothing!",
+  "price": {
+    "$numberDecimal": "0"
+  },
+  "coverImageURL": "https://cwsoloproject.s3.us-east-2.amazonaws.com/KZfKmfmBK1622834251951.jpeg",
+  "priceStripeID": "price_1IyiWOHlAtfHjNOUBsh5fw12",
+  "createdAt": {
+    "$date": "2021-06-02T05:40:27.090Z"
+  },
+  "updatedAt": {
+    "$date": "2021-06-07T21:44:38.597Z"
+  }
+},{
+  "_id": {
+    "$oid": "60be8c38cc0c0e1724cbd910"
+  },
+  "enabled": true,
+  "name": "Python",
+  "description": "You'll code like a snake!",
+  "price": {
+    "$numberDecimal": "9.99"
+  },
+  "coverImageURL": "https://cwsoloproject.s3.amazonaws.com/8LY-quNGw1623100470403.jpeg",
+  "priceStripeID": "price_1IzpmHHlAtfHjNOUfxyhO4Nq",
+  "createdAt": {
+    "$date": "2021-06-07T21:14:32.543Z"
+  },
+  "updatedAt": {
+    "$date": "2021-06-07T21:14:32.543Z"
+  }
+},{
+  "_id": {
+    "$oid": "60c8c8ca7b784600158096d5"
+  },
+  "enabled": true,
+  "name": "React",
+  "description": "Best course ever",
+  "price": {
+    "$numberDecimal": "100.99"
+  },
+  "coverImageURL": "https://cwsoloproject.s3.us-east-2.amazonaws.com/VF76zCtT71623771337756.jpeg",
+  "priceStripeID": "price_1J2eIgHlAtfHjNOUGYY845P1",
+  "createdAt": {
+    "$date": "2021-06-15T15:35:38.277Z"
+  },
+  "updatedAt": {
+    "$date": "2021-06-15T15:35:38.277Z"
+  }
+}]

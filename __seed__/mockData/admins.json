@@ -1,0 +1,14 @@
+[{
+  "_id": {
+    "$oid": "60b5ca5a441e5455c40782b6"
+  },
+  "enabled": true,
+  "email": "admin@gmail.com",
+  "password": "$2a$10$UnfCcWpxoo1pt7Gw9gkHauLtpgfrQQ/vH380pT5VCrDBdj2y8HLDK",
+  "createdAt": {
+    "$date": "2021-06-01T05:49:14.335Z"
+  },
+  "updatedAt": {
+    "$date": "2021-06-01T05:49:14.335Z"
+  }
+}]

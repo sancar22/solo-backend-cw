@@ -1,0 +1,185 @@
+[{
+  "_id": {
+    "$oid": "60c7667fb61502001539539d"
+  },
+  "enabled": true,
+  "responses": [
+    {
+      "question": "The pop() method of the array does which of the following task?",
+      "choices": [
+        {
+          "name": "Decrements the total length by 1",
+          "correct": true
+        },
+        {
+          "name": "Increments the total length by 1",
+          "correct": false
+        },
+        {
+          "name": "Prints the first element but does not affect the length",
+          "correct": false
+        },
+        {
+          "name": "Updates the element",
+          "correct": false
+        }
+      ],
+      "userAnswer": 0,
+      "userRespondedCorrectly": true
+    },
+    {
+      "question": "What does this code do? if (!a[i]) continue;",
+      "choices": [
+        {
+          "name": "Skips the defined elements",
+          "correct": false
+        },
+        {
+          "name": "Skips the existent elements",
+          "correct": false
+        },
+        {
+          "name": "Skips the null elements",
+          "correct": true
+        },
+        {
+          "name": "Skips the defined & existent elements",
+          "correct": false
+        }
+      ],
+      "userAnswer": 2,
+      "userRespondedCorrectly": true
+    },
+    {
+      "question": "The primary purpose of the array map() function is that it ______",
+      "choices": [
+        {
+          "name": "Maps the elements of another array into itself",
+          "correct": false
+        },
+        {
+          "name": " Passes each element of the array and returns the necessary mapped elements",
+          "correct": false
+        },
+        {
+          "name": "Passes each element of the array on which it is invoked to the function you specify, and returns an array containing the values returned by that function",
+          "correct": true
+        },
+        {
+          "name": "Pass the elements of the array into another array",
+          "correct": false
+        }
+      ],
+      "userAnswer": 2,
+      "userRespondedCorrectly": true
+    }
+  ],
+  "userID": {
+    "$oid": "60c631a29d4ed6001500257a"
+  },
+  "courseID": {
+    "$oid": "60b719cbe39edb23a81e2862"
+  },
+  "topicID": {
+    "$oid": "60b71c523ac83d67b4647e88"
+  },
+  "score": {
+    "$numberDecimal": "100"
+  },
+  "totalQuestions": 3,
+  "correctQuestions": 3,
+  "createdAt": {
+    "$date": "2021-06-14T14:23:59.948Z"
+  },
+  "updatedAt": {
+    "$date": "2021-06-14T14:23:59.948Z"
+  }
+},{
+  "_id": {
+    "$oid": "60c8cfbd7b784600158096da"
+  },
+  "enabled": true,
+  "responses": [
+    {
+      "question": "Observables allow you to watch values for changes over time and also Observables can have multiple values over time.",
+      "choices": [
+        {
+          "name": "True",
+          "correct": true
+        },
+        {
+          "name": "False",
+          "correct": false
+        }
+      ],
+      "userAnswer": 0,
+      "userRespondedCorrectly": true
+    },
+    {
+      "question": " We can subscribe to an observable using the . . . . . . . . The benefit of this is that Angular deals with your subscription during the lifecycle of a component. Angular will automatically subscribe and unsubscribe for you.",
+      "choices": [
+        {
+          "name": "Sync Pipe",
+          "correct": false
+        },
+        {
+          "name": "Async Var",
+          "correct": false
+        },
+        {
+          "name": "Async Pipe",
+          "correct": true
+        },
+        {
+          "name": "Syn Var",
+          "correct": false
+        }
+      ],
+      "userAnswer": 0,
+      "userRespondedCorrectly": false
+    },
+    {
+      "question": "To use observables, Angular uses a third-party library called . . . . . . .",
+      "choices": [
+        {
+          "name": "ng2-bootstrap",
+          "correct": false
+        },
+        {
+          "name": "angular-cli",
+          "correct": false
+        },
+        {
+          "name": "numeral",
+          "correct": false
+        },
+        {
+          "name": "RxJS",
+          "correct": true
+        }
+      ],
+      "userAnswer": 3,
+      "userRespondedCorrectly": true
+    }
+  ],
+  "userID": {
+    "$oid": "60c8cf687b784600158096d7"
+  },
+  "courseID": {
+    "$oid": "60b68b3040121041200bf75e"
+  },
+  "topicID": {
+    "$oid": "60c8c9267b784600158096d6"
+  },
+  "score": {
+    "$numberDecimal": "66.67"
+  },
+  "totalQuestions": 3,
+  "correctQuestions": 2,
+  "createdAt": {
+    "$date": "2021-06-15T16:05:17.754Z"
+  },
+  "updatedAt": {
+    "$date": "2021-06-15T16:05:17.754Z"
+  }
+}]

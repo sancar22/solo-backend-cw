@@ -1,13 +1,14 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import {Request, Response} from 'express';
 import nodemailer from 'nodemailer';
 import Stripe from 'stripe';
+
 import UserModel from '../models/user';
 import {User} from '../models/user';
 import AdminModel from '../models/admin';
 import validateEmail from '../utils/index';
 
-import {Request, Response} from 'express';
 
 const { secretAPITestStripe: secret } = process.env;
 const { jwtSecret } = process.env;
@@ -19,7 +20,6 @@ interface MyToken {
     id: string;
   };
 }
-
 interface MyIForgotToken {
   name: string;
   user: {
@@ -27,11 +27,9 @@ interface MyIForgotToken {
     code: number;
   };
 }
-
 const stripe = new Stripe(secret as string, {
   apiVersion: '2020-08-27',
 });
-
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -39,6 +37,9 @@ const transporter = nodemailer.createTransport({
     pass: process.env.emailPW,
   },
 });
+
+
+
 
 const loginFunction = async (email: string, password: string, res: Response, admin: boolean) => {
   const user = !admin
@@ -51,7 +52,6 @@ const loginFunction = async (email: string, password: string, res: Response, adm
   const isUser = (input: any): input is User => 'verified' in input;
   if (isUser(user) && !user.verified)
     return res.status(401).send('You need to verify your account!');
-
 
   jwt.sign(
     { user: {id: user._id}},
@@ -115,14 +115,9 @@ export const register = async (req: Request, res: Response) => {
       stripeID: customer.id,
     });
 
-    const payload = {
-      user: {
-        id: newUser._id,
-      },
-    };
 
     jwt.sign(
-      payload,
+      {user: {id: newUser._id}},
       jwtSecret as string,
       { expiresIn: '9999 years' },
       async (err, token) => {
@@ -150,6 +145,8 @@ export const verifyEmail = async (req: Request, res: Response) => {
     const decodedJWT = jwt.verify(req.params.token, jwtSecret as string);
     const userID = (decodedJWT as MyToken).user.id;
     const user = await UserModel.findById(userID);
+    //TODO
+    // why are we doing this, we shoudl just be able to say if user
     const isUser = (input: any): input is User => 'verified' in input;
     if (isUser(user) && !user.verified) {
       await UserModel.updateOne(
@@ -170,8 +167,7 @@ export const forgotPW = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
     const user = await UserModel.findOne({ email: email.toLowerCase() });
-    if (!user)
-      return res.status(200).send('Email was sent (if it exists) with a code!');
+    if (!user) return res.status(200).send('Email was sent (if it exists) with a code!');
 
     const randomNumber = Math.floor(100000 + Math.random() * 900000);
     const payload = {
@@ -222,14 +218,10 @@ export const verifyPWCodeChange = async (req: Request, res: Response) => {
     if ((decodedJWTCode as MyIForgotToken).user.code !== code)
       return res.status(401).send('Invalid code!');
 
-    const payload = {
-      user: {
-        id: user._id,
-      },
-    };
+
     // 2 minutes to change pw
     jwt.sign(
-      payload,
+      {user: {id: user._id}},
       jwtSecret as string,
       { expiresIn: 120 },
       async (err, token) => {

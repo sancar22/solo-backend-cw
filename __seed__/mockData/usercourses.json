@@ -1,0 +1,81 @@
+[{
+  "_id": {
+    "$oid": "60c6334d9d4ed6001500257b"
+  },
+  "enabled": true,
+  "userID": {
+    "$oid": "60c631a29d4ed6001500257a"
+  },
+  "courseID": {
+    "$oid": "60b68b3040121041200bf75e"
+  },
+  "coursePricePaid": {
+    "$numberDecimal": "29.99"
+  },
+  "createdAt": {
+    "$date": "2021-06-13T16:33:17.962Z"
+  },
+  "updatedAt": {
+    "$date": "2021-06-13T16:33:17.962Z"
+  }
+},{
+  "_id": {
+    "$oid": "60c6337a9d4ed6001500257d"
+  },
+  "enabled": true,
+  "userID": {
+    "$oid": "60c631a29d4ed6001500257a"
+  },
+  "courseID": {
+    "$oid": "60b719cbe39edb23a81e2862"
+  },
+  "coursePricePaid": {
+    "$numberDecimal": "0"
+  },
+  "createdAt": {
+    "$date": "2021-06-13T16:34:02.960Z"
+  },
+  "updatedAt": {
+    "$date": "2021-06-13T16:34:02.960Z"
+  }
+},{
+  "_id": {
+    "$oid": "60c8cfa27b784600158096d8"
+  },
+  "enabled": true,
+  "userID": {
+    "$oid": "60c8cf687b784600158096d7"
+  },
+  "courseID": {
+    "$oid": "60b68b3040121041200bf75e"
+  },
+  "coursePricePaid": {
+    "$numberDecimal": "59.99"
+  },
+  "createdAt": {
+    "$date": "2021-06-15T16:04:50.869Z"
+  },
+  "updatedAt": {
+    "$date": "2021-06-15T16:04:50.869Z"
+  }
+},{
+  "_id": {
+    "$oid": "60cbd948b49e7e0015b0dc35"
+  },
+  "enabled": true,
+  "userID": {
+    "$oid": "60c631a29d4ed6001500257a"
+  },
+  "courseID": {
+    "$oid": "60c8c8ca7b784600158096d5"
+  },
+  "coursePricePaid": {
+    "$numberDecimal": "100.99"
+  },
+  "createdAt": {
+    "$date": "2021-06-17T23:22:48.806Z"
+  },
+  "updatedAt": {
+    "$date": "2021-06-17T23:22:48.806Z"
+  }
+}]

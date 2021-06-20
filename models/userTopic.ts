@@ -10,7 +10,7 @@ export interface UserTopic {
   courseID: string;
   topicID: string;
   score: number;
-  responses: string[];
+  responses: any[];
   totalQuestions: number;
   correctQuestions: number;
 }
@@ -58,6 +58,6 @@ const UserTopicSchema = new Schema<UserTopic>(
 
 
 
-const UserTopic: Model<UserTopic> = model('usertopic', UserTopicSchema);
+const UserTopic: Model<UserTopic> = model('UserTopic', UserTopicSchema);
 export default UserTopic;
 
