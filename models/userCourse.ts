@@ -1,7 +1,7 @@
 import { Decimal128 } from 'bson';
-import { ObjectID } from 'mongodb';
+import { ObjectId } from 'mongodb';
 
-import { Model, Schema, model, ObjectId } from 'mongoose';
+import { Model, Schema, model, } from 'mongoose';
 
 export interface UserCourse {
   _id: string;
@@ -18,11 +18,11 @@ const UserCourseSchema = new Schema<UserCourse>(
       default: true,
     },
     userID: {
-      type: ObjectID,
+      type: ObjectId,
       required: true,
     },
     courseID: {
-      type: ObjectID,
+      type: ObjectId,
       required: true,
     },
     coursePricePaid: {

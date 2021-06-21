@@ -5,7 +5,6 @@ import adminController from '../controllers/admin/course';
 import clientController from '../controllers/client/course';
 
 
-
 const router = Router();
 
 // admin
@@ -43,6 +42,7 @@ router.delete(
   authAdminMiddleware,
   adminController.deleteCourse
 );
+
 
 
 // client
