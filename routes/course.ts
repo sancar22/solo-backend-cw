@@ -1,70 +1,73 @@
 import { Router } from 'express';
-const router = Router();
-
-import {
-  getAllCourses,
-  getCoursesById,
-  addCourse,
-  editCourse,
-  deleteCourse,
-  getActivitiesClientSide,
-  getMyCourses,
-  enrollFreeCourse,
-  enrollPremiumCourse
- } from '../controllers/course';
 import authMiddleware from '../middleware/auth';
 import authAdminMiddleware from '../middleware/admin';
+import adminController from '../controllers/admin/course';
+import clientController from '../controllers/client/course';
 
-// router.get('/getInfo', authMiddleware, courseController.getInfo);
 
-router.get('/admin/getAllCourses',authMiddleware, authAdminMiddleware, getAllCourses);
+
+const router = Router();
+
+// admin
+router.get(
+  '/admin/getAllCourses',
+  authMiddleware,
+  authAdminMiddleware,
+  adminController.getAllCourses
+);
 
 router.get(
   '/admin/getCourseById/:id',
   authMiddleware,
   authAdminMiddleware,
-  getCoursesById
+  adminController.getCoursesById
 );
 
 router.post(
   '/admin/add',
   authMiddleware,
   authAdminMiddleware,
-  addCourse
+  adminController.addCourse
 );
 
 router.put(
   '/admin/edit/:id',
   authMiddleware,
   authAdminMiddleware,
-  editCourse
+  adminController.editCourse
 );
 
 router.delete(
   '/admin/delete/:id',
   authMiddleware,
   authAdminMiddleware,
-  deleteCourse
+  adminController.deleteCourse
 );
 
+
+// client
 router.get(
   '/client-side/allCourses',
   authMiddleware,
-  getActivitiesClientSide
+  clientController.getActivitiesClientSide
 );
 
 router.get(
   '/client-side/myCourses',
   authMiddleware,
-  getMyCourses
+  clientController.getMyCourses
 );
 
-router.post('/enroll/free', authMiddleware, enrollFreeCourse);
+router.post(
+  '/enroll/free',
+  authMiddleware,
+  clientController.enrollFreeCourse
+);
 
 router.post(
   '/enroll/premium',
   authMiddleware,
-  enrollPremiumCourse
+  clientController.enrollPremiumCourse
 );
 
 export default router;

@@ -1,31 +1,30 @@
 import { Router } from 'express';
-const router = Router();
-
-import {
-  payPremiumCourse,
-  getPurchases,
-  getPurchaseById
-} from '../controllers/payment';
 import authMiddleware from '../middleware/auth';
 import authAdminMiddleware from '../middleware/admin';
+import adminController from '../controllers/admin/payment';
+import clientController from '../controllers/client/payment';
+
+
+const router = Router();
 
 router.post(
   '/course/premium',
   authMiddleware,
-  payPremiumCourse
+  clientController.payPremiumCourse
 );
 
 router.get(
   '/admin/purchases',
   authMiddleware,
   authAdminMiddleware,
-  getPurchases
+  adminController.getPurchases
 );
 
 router.get(
   '/admin/getPurchaseById/:id',
   authMiddleware,
   authAdminMiddleware,
-  getPurchaseById
+  adminController.getPurchaseById
 );
+
 export default router;

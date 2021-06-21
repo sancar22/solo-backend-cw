@@ -1,28 +1,29 @@
 import { Router } from 'express';
-import { getInfo, getAllUsers, getUserById} from '../controllers/user';
 import authMiddleware from '../middleware/auth';
 import authAdminMiddleware from '../middleware/admin';
+import adminController from '../controllers/admin/user';
+import clientController from '../controllers/client/user';
 
 const router = Router();
 
 router.get(
   '/getInfo',
   authMiddleware,
-  getInfo
+  clientController.getInfo
 );
 
 router.get(
   '/admin/getAllUsers',
   authMiddleware,
   authAdminMiddleware,
-  getAllUsers
+  adminController.getAllUsers
 );
 
 router.get(
   '/admin/getUserById/:id',
   authMiddleware,
   authAdminMiddleware,
-  getUserById
+  adminController.getUserById
 );
 
 export default router;

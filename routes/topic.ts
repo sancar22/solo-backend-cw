@@ -1,75 +1,67 @@
 import { Router } from 'express';
-const router = Router();
-
-import {
-  getAllTopics,
-  getTopicsById,
-  addTopic,
-  editTopic,
-  deleteTopic,
-  getTopicsClientSide,
-  getTopicById,
-  getCompletedTopicsForCourse,
-  submitTest
-} from '../controllers/topic';
 import authMiddleware from '../middleware/auth';
 import authAdminMiddleware from '../middleware/admin';
+import adminController from '../controllers/admin/topic';
+import clientController from '../controllers/client/topic';
 
-// router.get('/getInfo', authMiddleware, topicController.getInfo);
+const router = Router();
 
+// admin
 router.get(
   '/admin/getAllTopics',
   authMiddleware,
   authAdminMiddleware,
-  getAllTopics
+  adminController.getAllTopics
 );
 
 router.get(
   '/admin/getTopicById/:id',
   authMiddleware,
   authAdminMiddleware,
-  getTopicsById
+  adminController.getTopicsById
 );
 
 router.post(
   '/admin/add',
   authMiddleware,
   authAdminMiddleware,
-  addTopic
+  adminController.addTopic
 );
 
 router.put(
   '/admin/edit/:id',
   authMiddleware,
   authAdminMiddleware,
-  editTopic
+  adminController.editTopic
 );
 
 router.delete(
   '/admin/delete/:id',
   authMiddleware,
   authAdminMiddleware,
-  deleteTopic
+  adminController.deleteTopic
 );
 
+
+// client
 router.get(
   '/client-side/allTopics/:courseID',
   authMiddleware,
-  getTopicsClientSide
+  clientController.getTopicsClientSide
 );
 
 router.get(
   '/client-side/getTopicById/:topicID',
   authMiddleware,
-  getTopicById
+  clientController.getTopicById
 );
 
 router.get(
   '/client-side/completedTopics/:courseID',
   authMiddleware,
-  getCompletedTopicsForCourse
+  clientController.getCompletedTopicsForCourse
 );
 
-router.post('/submitTest', authMiddleware, submitTest);
+router.post('/submitTest', authMiddleware, clientController.submitTest);
 
 export default router;
