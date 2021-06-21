@@ -1,4 +1,4 @@
-import { Model, Schema, model, ObjectId } from 'mongoose';
+import { Model, Schema, model } from 'mongoose';
 
 export interface Admin {
   _id: string;

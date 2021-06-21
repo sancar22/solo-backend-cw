@@ -176,6 +176,9 @@ export const forgotPW = async (req: Request, res: Response) => {
         code: randomNumber,
       },
     };
+    //TODO
+    // why save this as a token? why not just save the code?
+    // if it's a security thing why not just hash it?
     jwt.sign(
       payload,
       jwtSecret as string,

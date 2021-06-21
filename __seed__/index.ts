@@ -44,7 +44,6 @@ let untypedSeed: any = {};
 export const seedDb = async (db: Mongoose): Promise<DbSeedData> => {
 
   const formatMocks = (data: any[], modelName: string) => {
-
     const  mockArray: any[] = [];
     data.forEach(data => {
       const mock = {...data,

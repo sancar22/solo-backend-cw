@@ -16,8 +16,6 @@ beforeAll(async () => {
   if (db) {
     await db?.connection.db.dropDatabase();
     const seedData = await seedDb(db);
-    // mockUsers = seedData.users;
-    // mockProducts = seedData.products;
   }
   server = bootServer(port);
 });

@@ -10,7 +10,7 @@ export interface UserTopic {
   courseID: string;
   topicID: string;
   score: number;
-  responses: any[];
+  responses: any[]; //TODO interface the objects in here
   totalQuestions: number;
   correctQuestions: number;
 }

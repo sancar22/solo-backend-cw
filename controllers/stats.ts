@@ -11,6 +11,8 @@ import {
 
 export const getGlobalStats = async (req: Request, res: Response) => {
   try {
+    //TODO
+    // what is request.query?
     const startDateQuery = String(req.query.startDateQuery);
     const endDateQuery = String(req.query.endDateQuery);
     // TODO

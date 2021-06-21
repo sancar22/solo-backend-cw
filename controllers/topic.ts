@@ -174,7 +174,7 @@ export const getTopicsById = async (req: Request, res: Response) => {
 export const addTopic = async (req: Request, res: Response) => {
   try {
     await TopicModel.create(req.body);
-    res.status(200).send('Topic added succesfully!');
+    res.status(201).send('Topic added succesfully!');
   } catch (e) {
     console.log(e);
     res.status(500).send('Internal Server Error!');

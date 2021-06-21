@@ -127,9 +127,7 @@ export const getPurchases = async (req: Request, res: Response) => {
 
 export const getPurchaseById = async (req: Request, res: Response) => {
   try {
-    console.log('entering');
     const transaction = await TransactionModel.findById(req.params.id).lean();
-
     if (!transaction) return res.send('Transaction not available.');
     const course = await Course.findById(transaction.courseID);
     if (course) {
