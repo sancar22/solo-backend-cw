@@ -1,4 +1,4 @@
-import { Mongoose, Types } from 'mongoose';
+import { Mongoose } from 'mongoose';
 
 import { Admin } from '../models/admin';
 import { Course } from '../models/course';
@@ -43,22 +43,22 @@ let untypedSeed: any = {};
 
 export const seedDb = async (db: Mongoose): Promise<DbSeedData> => {
 
-  const formatMocks = (data: any[], modelName: string) => {
+  const formatMocks = (input: any[], modelName: string) => {
     const  mockArray: any[] = [];
-    data.forEach(data => {
+    input.forEach(data => {
       const mock = {...data,
-        _id: new Types.ObjectId() as unknown as string,
+        _id: data._id['$oid'],
         createdAt: new Date(),
         updatedAt: new Date()
       }
       if (HAS_USER_ID.includes(modelName)) {
-        mock.userID = new Types.ObjectId() as unknown as string
+        mock.userID = data.userID['$oid'];
       }
       if (HAS_COURSE_ID.includes(modelName)) {
-        mock.courseID = new Types.ObjectId() as unknown as string
+        mock.courseID = data.courseID['$oid'];
       }
       if (HAS_TOPIC_ID.includes(modelName)) {
-        mock.topicID = new Types.ObjectId() as unknown as string
+        mock.topicID = data.topicID['$oid'];
       }
       mockArray.push(mock);
     })
@@ -70,9 +70,8 @@ export const seedDb = async (db: Mongoose): Promise<DbSeedData> => {
     formatMocks(data.import, data.modelName);
   })
   // type check
-  const seed: DbSeedData = untypedSeed;
+  const seed: DbSeedData = {...untypedSeed};
 
-  await db.connection.models.Admin.insertMany(seed['Admin']);
   await db.connection.models.Admin.insertMany(seed['Admin']);
   await db.connection.models.Topic.insertMany(seed['Topic']);
   await db.connection.models.Course.insertMany(seed['Course']);
