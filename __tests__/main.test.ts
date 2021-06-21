@@ -6,7 +6,7 @@ import bootDB from '../db/db';
 import { seedDb } from '../__seed__/index';
 
 const port = Number(process.env.TEST_PORT);
-const connectionString = String(process.env.CHARLEY_TEST_DB_CONN);
+const connectionString = String(process.env.TEST_mongoURI);
 
 let server: Server;
 let db: Mongoose | undefined;
