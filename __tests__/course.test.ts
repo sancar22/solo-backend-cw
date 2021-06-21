@@ -6,8 +6,8 @@ import bootDB from '../db/db';
 import { seedDb } from '../__seed__/index';
 import {User} from '../models/user';
 
-const port = Number(process.env.TEST_PORT);
-const connectionString = String(process.env.CHARLEY_TEST_DB_CONN);
+const port = Number(process.env.COURSE_PORT);
+const connectionString = String(process.env.COURSE_TEST_DB_CONN);
 
 let server: Server;
 let db: Mongoose | undefined;
@@ -26,14 +26,9 @@ beforeAll(async () => {
 
 
 
-
-
-
-
-
-
-
-
+test('a test', () => {
+  expect(2+2).toBe(4);
+})
 
 
 
