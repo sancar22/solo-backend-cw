@@ -13,9 +13,10 @@ import courses from './mockData/courses.json';
 import topics from './mockData/topics.json';
 import transactions from './mockData/transactions.json';
 import userCourses from './mockData/usercourses.json';
+import users from './mockData/users.json';
 import userTopics from './mockData/usertopics.json';
 
-interface DbSeedData {
+export interface DbSeedData {
   Admin: Admin[],
   Course: Course[],
   Topic: Topic[],
@@ -35,6 +36,7 @@ const dataImports = [
   {import: topics, modelName: 'Topic'},
   {import: transactions, modelName: 'Transaction'},
   {import: userCourses, modelName: 'UserCourse'},
+  {import: users, modelName: 'User'},
   {import: userTopics, modelName: 'UserTopic'}
 ]
 
@@ -78,6 +80,7 @@ export const seedDb = async (db: Mongoose): Promise<DbSeedData> => {
   await db.connection.models.Transaction.insertMany(seed['Transaction']);
   await db.connection.models.UserCourse.insertMany(seed['UserCourse']);
   await db.connection.models.UserTopic.insertMany(seed['UserTopic']);
+  await db.connection.models.User.insertMany(seed['User']);
 
   return (seed);
 }
