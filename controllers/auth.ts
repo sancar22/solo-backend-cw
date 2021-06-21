@@ -88,22 +88,23 @@ export const register = async (req: Request, res: Response) => {
     const { name, email, password, passwordRepeat } = req.body;
     // Backend validation just in case
     if (name.length === 0) {
-      return res.status(400).send('You should insert a name!');
+      return res.status(401).send('You should insert a name!');
     }
     if (!validateEmail(email)) {
-      return res.status(400).send('Email is not valid!');
+      return res.status(401).send('Email is not valid!');
     }
     const user = await UserModel.findOne({ email });
     if (user) {
       return res.status(409).send('User already exists!');
     }
+    // TODO
     if (password.length < 6) {
       return res
         .status(400)
         .send('Password should be at least 6 characters long!');
     }
     if (password !== passwordRepeat) {
-      return res.status(400).send("Passwords don't match!");
+      return res.status(401).send("Passwords don't match!");
     }
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -250,7 +251,7 @@ export const changePassword = async (req: Request, res: Response) => {
         .send('Password should be at least 6 characters long!');
     }
     if (password !== passwordRepeat) {
-      return res.status(400).send("Passwords don't match!");
+      return res.status(401).send("Passwords don't match!");
     }
     const userID = res.locals.user.id;
     const salt = await bcrypt.genSalt(10);

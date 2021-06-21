@@ -16,7 +16,7 @@ import transactions from './mockData/transactions.json';
 import userCourses from './mockData/usercourses.json';
 import userTopics from './mockData/usertopics.json';
 
-interface DbSeedData {
+export interface DbSeedData {
   Admin: Admin[],
   Course: Course[],
   Topic: Topic[],
