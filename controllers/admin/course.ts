@@ -1,11 +1,10 @@
 import Stripe from 'stripe';
-import CourseModel from '../models/course';
-import { Course } from '../models/course';
-import Topic from '../models/topic';
-import UserCourseModel from '../models/userCourse';
-import { UserCourse } from '../models/userCourse';
-import UserTopic from '../models/userTopic';
-import uploadFile from '../lib/uploadFile';
+import CourseModel from '../../models/course';
+import { Course } from '../../models/course';
+import Topic from '../../models/topic';
+import UserCourseModel from '../../models/userCourse';
+import UserTopic from '../../models/userTopic';
+import uploadFile from '../../lib/uploadFile';
 import {Request, Response} from 'express';
 import { UpdateQuery } from 'mongoose';
 
@@ -16,23 +15,8 @@ const stripe = new Stripe(secret, {
   apiVersion: '2020-08-27',
 });
 
-interface ClientCourse extends Course {
-  enrolled: boolean;
-  free: boolean;
-  formattedPrice: number;
 
-}
-interface ClientUserCourse extends UserCourse {
-  topicsCompleted: number;
-  numberOfTopics: number;
-  name: string;
-  coverImageURL: string;
-  ratioFinished: number;
-}
-
-//ADMIN
-// This will give information in a way that can be read by the tables in the admin page
-export const getAllCourses = async (req: Request, res: Response) => {
+const getAllCourses = async (req: Request, res: Response) => {
   try {
     const courses = await CourseModel.find({ enabled: true });
     if (!courses) return res.send('No courses are available!');
@@ -82,7 +66,7 @@ export const getAllCourses = async (req: Request, res: Response) => {
   }
 };
 
-export const getCoursesById = async (req: Request, res: Response) => {
+const getCoursesById = async (req: Request, res: Response) => {
   try {
     const course = await CourseModel.findOne({
       _id: req.params.id,
@@ -130,7 +114,7 @@ export const getCoursesById = async (req: Request, res: Response) => {
   }
 };
 
-export const addCourse = async (req: Request, res: Response) => {
+const addCourse = async (req: Request, res: Response) => {
   try {
     let price: string = req.body.price;
     const { coverImageURL, name, description } = req.body;
@@ -165,7 +149,7 @@ export const addCourse = async (req: Request, res: Response) => {
   }
 };
 
-export const editCourse = async (req: Request, res: Response) => {
+const editCourse = async (req: Request, res: Response) => {
   try {
     let { price } = req.body;
     const { coverImageURL, name, description } = req.body;
@@ -219,8 +203,7 @@ export const editCourse = async (req: Request, res: Response) => {
   }
 };
 
-// Logical delete
-export const deleteCourse = async (req: Request, res: Response) => {
+const deleteCourse = async (req: Request, res: Response) => {
   const courseID = req.params.id;
   const update: UpdateQuery<Course> = {enabled: false};
 
@@ -240,116 +223,6 @@ export const deleteCourse = async (req: Request, res: Response) => {
   }
 };
 
-
-// CLIENT
-export const enrollFreeCourse = async (req: Request, res: Response) => {
-  try {
-    const { course } = req.body;
-    const userID = res.locals.user.id;
-    await UserCourseModel.create({
-      userID,
-      courseID: course._id,
-      coursePricePaid: 0,
-    });
-    res.status(200).send('Enrolled succesfully!');
-  } catch (e) {
-    console.log(e);
-    res.status(500).send('Internal Server Error!');
-  }
-};
-
-export const enrollPremiumCourse = async (req: Request, res: Response) => {
-  try {
-    const { course } = req.body;
-    const userID = res.locals.user.id;
-    await UserCourseModel.create({
-      userID,
-      courseID: course._id,
-      coursePricePaid: 0,
-    });
-    res.status(200).send('Enrolled succesfully!');
-  } catch (e) {
-    console.log(e);
-    res.status(500).send('Internal Server Error!');
-  }
-};
-
-export const getActivitiesClientSide = async (req: Request, res: Response) => {
-  try {
-    const userID = res.locals.user.id;
-    const userActiveCourses = await UserCourseModel.find({ userID, enabled: true });
-    const allAvailableCourses = await CourseModel.find({ enabled: true }).lean();
-
-    const isMyCourse = (courseID: string) =>
-      userActiveCourses.filter(
-        (course) => course.courseID.toString() === courseID.toString()
-      ).length === 1;
-
-    const ClientCourseArray: ClientCourse[] = [];
-    for (let i = 0; i < allAvailableCourses.length; i++) {
-      const { price } = allAvailableCourses[i];
-      const currentCourse: ClientCourse = {...allAvailableCourses[i],
-          enrolled: false,
-          free: false,
-          formattedPrice: parseFloat(
-            parseFloat(price.toString()).toFixed(2)
-          ),
-      };
-      if (isMyCourse(currentCourse._id)) {
-        currentCourse.enrolled = true;
-      }
-      if (currentCourse.formattedPrice === 0) {
-        currentCourse.free = true;
-      }
-      ClientCourseArray.push(currentCourse);
-    }
-
-    ClientCourseArray.sort((course) => (course.enrolled ? -1 : 1));
-
-    res.status(200).send(ClientCourseArray);
-  } catch (e) {
-    console.log(e);
-    res.status(500).send('Internal Server Error!');
-  }
-};
-
-export const getMyCourses = async (req: Request, res: Response) => {
-  try {
-    const userID = res.locals.user.id;
-    const userActiveCourses = await UserCourseModel.find({
-      userID,
-      enabled: true,
-    }).lean();
-
-    const ClientUserCourseArray: ClientUserCourse[] = [];
-    for (let i = 0; i < userActiveCourses.length; i++) {
-      const currentCourse = userActiveCourses[i];
-      const topicsFromCourse = await Topic.find({
-        courseID: currentCourse.courseID,
-        enabled: true,
-      });
-      const topicsCompleted = await UserTopic.find({
-        courseID: currentCourse.courseID,
-        enabled: true,
-        userID,
-      });
-      const course = await CourseModel.findById(currentCourse.courseID);
-      if (course) {
-        const currentUserCourse: ClientUserCourse = { ...currentCourse,
-          topicsCompleted: topicsCompleted.length,
-          numberOfTopics:topicsFromCourse.length,
-          name: course.name,
-          coverImageURL: course.coverImageURL,
-          ratioFinished: parseFloat(
-            (topicsCompleted.length / topicsFromCourse.length).toFixed(2)
-          )
-        }
-        ClientUserCourseArray.push(currentUserCourse);
-      }
-    }
-    res.status(200).send(ClientUserCourseArray);
-  } catch (e) {
-    console.log(e);
-    res.status(500).send('Internal Server Error!');
-  }
-};
+export default {
+  getAllCourses, getCoursesById, addCourse, editCourse, deleteCourse
+}

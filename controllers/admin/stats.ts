@@ -1,15 +1,15 @@
 import PDFDocument from'pdfkit';
 import {Request, Response} from 'express';
 import moment from'moment';
-import Course from'../models/course';
-import UserTopic from'../models/userTopic';
+import Course from'../../models/course';
+import UserTopic from'../../models/userTopic';
 import {
   generateFooter,
   generateHeader,
   generateInvoiceTable,
-} from '../lib/pdf';
+} from '../../lib/pdf';
 
-export const getGlobalStats = async (req: Request, res: Response) => {
+const getGlobalStats = async (req: Request, res: Response) => {
   try {
     //TODO
     // what is request.query?
@@ -117,7 +117,7 @@ export const getGlobalStats = async (req: Request, res: Response) => {
   }
 };
 
-export const getAllTestResults = async (req: Request, res: Response) => {
+const getAllTestResults = async (req: Request, res: Response) => {
   try {
     const userTests = await UserTopic.aggregate([
       {
@@ -279,7 +279,7 @@ export const getAllTestResults = async (req: Request, res: Response) => {
   }
 };
 
-export const getTestResultById = async (req: Request, res: Response) => {
+const getTestResultById = async (req: Request, res: Response) => {
   try {
     const userTests = await UserTopic.aggregate([
       {
@@ -448,3 +448,7 @@ export const getTestResultById = async (req: Request, res: Response) => {
     res.status(500).send('Internal Server Error!');
   }
 };
+
+export default {
+  getGlobalStats, getAllTestResults, getTestResultById
+}
