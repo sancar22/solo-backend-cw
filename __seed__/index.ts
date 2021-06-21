@@ -9,7 +9,6 @@ import { UserCourse } from '../models/userCourse';
 import { UserTopic } from '../models/userTopic';
 
 import admins from './mockData/admins.json';
-import users from './mockData/users.json';
 import courses from './mockData/courses.json';
 import topics from './mockData/topics.json';
 import transactions from './mockData/transactions.json';
@@ -77,7 +76,6 @@ export const seedDb = async (db: Mongoose): Promise<DbSeedData> => {
   const seed: DbSeedData = {...untypedSeed};
 
   await db.connection.models.Admin.insertMany(seed['Admin']);
-  await db.connection.models.User.insertMany(seed['User']);
   await db.connection.models.Topic.insertMany(seed['Topic']);
   await db.connection.models.Course.insertMany(seed['Course']);
   await db.connection.models.Transaction.insertMany(seed['Transaction']);
