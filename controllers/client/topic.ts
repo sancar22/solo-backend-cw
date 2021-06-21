@@ -15,7 +15,6 @@ interface ClientUserTopic extends UserTopic {
 }
 
 
-
 const getTopicsClientSide = async (req: Request, res: Response) => {
   try {
     const userID = res.locals.user.id;
