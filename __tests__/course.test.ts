@@ -24,23 +24,18 @@ beforeAll(async () => {
 });
 
 
-describe('POST /auth/register', () => {
-  let endpoint: Test;
-  beforeEach(() => {
-    endpoint = request(server).post('/auth/register');
-  });
 
-  test('creates bob', async () => {
-    const response = await endpoint.send({
-      name: 'Bob',
-      email: 'bob@example.com',
-      password: 'password123',
-      passwordRepeat: 'password123',
-    });
-    expect(response.status).toBe(201);
-  });
 
-})
+
+
+
+
+
+
+
+
+
+
 
 afterAll(async () => {
   await db?.connection.close();

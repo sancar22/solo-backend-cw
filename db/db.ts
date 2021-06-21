@@ -6,7 +6,7 @@ const bootDB = async (url: string): Promise<Mongoose | undefined> => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,})
-    console.log('peanut');
+    console.log('connected to db');
     return connection;
   } catch (error) {
     console.log('[Database connection error]:\n', error);
