@@ -26,7 +26,6 @@ beforeAll(async () => {
     seedUsers = seedData.User;
     console.log('Seed users is ', seedUsers);
     seedUserCourses = seedData.UserCourse;
-    console.log('Seed usercourses is ', seedUserCourses);
   }
   server = bootServer(port);
 });
@@ -35,14 +34,12 @@ test('Mock users and mock products must be present', () => {
   expect(seedUsers).toHaveLength(2);
 });
 
-describe.only('POST /auth/login', () => {
+describe('POST /auth/login', () => {
   let endpoint: Test;
 
   beforeEach(() => {
     endpoint = request(server).post('/auth/login');
   });
-
-  // console.log(seedUsers);
 
   // TODO
   // if user not in mocks, return 401
@@ -52,6 +49,7 @@ describe.only('POST /auth/login', () => {
   // if successful, return 200
 
   test('rejects if user not in mocks', async () => {
+    // console.log('SEED USERS ARE: ', seedUsers);
     const response = await endpoint.send({
       name: 'Bob',
       email: 'bob@example.com',
@@ -92,12 +90,12 @@ describe.only('POST /auth/login', () => {
   });
 
   test('200 if successful', async () => {
+    console.log('Seed users[0] ', seedUsers[0])
     const response = await endpoint.send({
-      name: 'Bob',
-      email: 'bob@example.com',
-      password: 'password123',
-      admin: false,
-    });
+      email: seedUsers[0].email,
+      password: seedUsers[0].password
+    }
+    );
     expect(response.status).toBe(200);
   });
 
@@ -130,7 +128,7 @@ describe('POST /auth/register', () => {
   test('rejects if email is not valid', async () => {
     const response = await endpoint.send({
       name: 'Bob',
-      email: 'bob@e.c',
+      email: 'bob@ec',
       password: 'password123',
       passwordRepeat: 'password123',
     });
@@ -138,13 +136,10 @@ describe('POST /auth/register', () => {
   });
 
   test('rejects if user already exists', async () => {
-    const response = await endpoint.send({
-      name: 'Bob',
-      email: 'bob@example.com',
-      password: 'password123',
-      passwordRepeat: 'password123',
-    });
-    expect(response.status).toBe(401);
+    const response = await endpoint.send(
+      seedUsers[0]
+    );
+    expect(response.status).toBe(409);
   });
 
   test('rejects if password not long enough', async () => {
@@ -152,9 +147,9 @@ describe('POST /auth/register', () => {
       name: 'Bob',
       email: 'bob@example.com',
       password: 'passw',
-      passwordRepeat: 'password123',
+      passwordRepeat: 'passw',
     });
-    expect(response.status).toBe(401);
+    expect(response.status).toBe(400);
   });
 
   test('rejects if passwordRepeat does not match', async () => {
@@ -196,7 +191,7 @@ describe('POST /auth/forgotPW', () => {
       password: 'password123',
       passwordRepeat: 'password123',
     });
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(200);
   });
 
   test('sends 200 if user in db', async () => {
@@ -222,14 +217,14 @@ describe('POST /auth/verifyEmailCode', () => {
   // if password updated successfully, send 200
   // if token expires before reset, send 401
 
-  test('creates user', async () => {
+  test('rejects if user does not exist', async () => {
     const response = await endpoint.send({
       name: 'Bob',
       email: 'bob@example.com',
       password: 'password123',
       passwordRepeat: 'password123',
     });
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(401);
   });
 })
 
@@ -249,9 +244,9 @@ describe('POST /auth/changePW', () => {
       name: 'Bob',
       email: 'bob@example.com',
       password: 'passw',
-      passwordRepeat: 'password123',
+      passwordRepeat: 'passw',
     });
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(401);
   });
 
   test('rejects if passwordRepeat does not match password', async () => {
@@ -261,7 +256,7 @@ describe('POST /auth/changePW', () => {
       password: 'password123',
       passwordRepeat: 'password',
     });
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(401);
   });
 })
 
@@ -282,10 +277,10 @@ describe('POST /auth/changePWInApp', () => {
     const response = await endpoint.send({
       name: 'Bob',
       email: 'bob@example.com',
-      password: 'passw',
-      passwordRepeat: 'password123',
+      password: 'password',
+      passwordRepeat: 'password',
     });
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(401);
   });
 
   test('rejects if password not long enough', async () => {
@@ -293,9 +288,9 @@ describe('POST /auth/changePWInApp', () => {
       name: 'Bob',
       email: 'bob@example.com',
       password: 'passw',
-      passwordRepeat: 'password123',
+      passwordRepeat: 'passw',
     });
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(401);
   });
 })
 
