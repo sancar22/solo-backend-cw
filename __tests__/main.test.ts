@@ -8,7 +8,7 @@ import { User } from '../models/user';
 import { UserCourse } from '../models/userCourse';
 
 const port = Number(process.env.TEST_PORT);
-const connectionString = String(process.env.CHARLEY_TEST_DB_CONN);
+const connectionString = String(process.env.TEST_DB_CONN);
 
 let server: Server;
 let db: Mongoose | undefined;
@@ -28,7 +28,7 @@ beforeAll(async () => {
 });
 
 test('Mock users and mock products must be present', () => {
-  expect(seedUsers).toHaveLength(2);
+  expect(seedUsers).toHaveLength(4);
 });
 
 describe('POST /auth/login', () => {
@@ -48,8 +48,8 @@ describe('POST /auth/login', () => {
   test('rejects if user not in mocks', async () => {
     // console.log('SEED USERS ARE: ', seedUsers);
     const response = await endpoint.send({
-      name: 'Bob',
-      email: 'bob@example.com',
+      name: 'Sally',
+      email: 'sally@example.com',
       password: 'password123',
       admin: false,
     });

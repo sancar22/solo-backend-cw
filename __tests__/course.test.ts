@@ -23,12 +23,27 @@ beforeAll(async () => {
   server = bootServer(port);
 });
 
+describe('POST /enroll/free', () => {
+  let endpoint: Test;
+  let token: string;
+
+  beforeEach( async () => {
+    endpoint = request(server).post('/course/enroll/free');
+  });
+
+  test('a test', async () => {
+    const response = await request(server).post('/auth/login').send({
+      email: "charley@test.com",
+      password: "password"
+    })
+    expect(response).toHaveProperty('token');
+    token = response.token;
+  })
 
 
-
-test('a test', () => {
-  expect(2+2).toBe(4);
 })
+
+
 
 
 
