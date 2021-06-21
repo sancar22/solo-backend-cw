@@ -1,4 +1,4 @@
-import { Model, Schema, model, ObjectId } from 'mongoose';
+import { Model, Schema, model } from 'mongoose';
 
 export interface Admin {
   _id: string;
@@ -28,5 +28,5 @@ const AdminSchema = new Schema<Admin>(
   },
 );
 
-const Admin: Model<Admin> = model('admin', AdminSchema);
+const Admin: Model<Admin> = model('Admin', AdminSchema);
 export default Admin;

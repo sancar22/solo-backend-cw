@@ -1,0 +1,33 @@
+[{
+  "_id": {
+    "$oid": "60c631a29d4ed6001500257a"
+  },
+  "verified": true,
+  "forgotPWToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjBjNjMxYTI5ZDRlZDYwMDE1MDAyNTdhIiwiY29kZSI6ODI3MDQ0fSwiaWF0IjoxNjIzNjAyMzAwLCJleHAiOjE2MjM2MDIzNjB9.2GfBGLT6V6yoBHsT9M13-Bmm6Kceqb08A1Bakn7NfTE",
+  "name": "Santiago Vásquez Yacamán",
+  "email": "santiagoyacaman@uninorte.edu.co",
+  "password": "$2a$10$falk1FUsUl0rbNgu8oeS5u9N56woQEE4pFGtoFLPdRot42fsEh7eO",
+  "stripeID": "cus_JfGfWlz3WhxfYE",
+  "createdAt": {
+    "$date": "2021-06-13T16:26:10.557Z"
+  },
+  "updatedAt": {
+    "$date": "2021-06-13T16:39:16.449Z"
+  }
+},{
+  "_id": {
+    "$oid": "60c8cf687b784600158096d7"
+  },
+  "verified": true,
+  "forgotPWToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjBjOGNmNjg3Yjc4NDYwMDE1ODA5NmQ3IiwiY29kZSI6OTEwOTQ5fSwiaWF0IjoxNjIzNzczMTUwLCJleHAiOjE2MjM3NzMyMTB9.maL2Eb4KxhGmJyt1a_ArPfZqbXPOEPUB8irez8dM9WE",
+  "name": "Santiago Vasquez",
+  "email": "svyaca@gmail.com",
+  "password": "$2a$10$Hb3cHsFmmvERRbr/SHMm5eA6TdVx53PfTD26dSgSwG/SW.N.GgQiO",
+  "stripeID": "cus_Jg0lIiI2NjlkIJ",
+  "createdAt": {
+    "$date": "2021-06-15T16:03:52.708Z"
+  },
+  "updatedAt": {
+    "$date": "2021-06-15T16:06:25.895Z"
+  }
+}]

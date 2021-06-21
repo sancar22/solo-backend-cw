@@ -8,7 +8,7 @@ export interface Topic {
   name: string;
   description: string;
   videoURL: string;
-  questions: any[];
+  questions: any[]; //TODO interface the objects in here
 }
 
 const TopicSchema = new Schema<Topic>(

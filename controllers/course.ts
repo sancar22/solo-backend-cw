@@ -9,16 +9,8 @@ import uploadFile from '../lib/uploadFile';
 import {Request, Response} from 'express';
 import { UpdateQuery } from 'mongoose';
 
-//TODO
-const { secretAPITestStripe } = process.env;
-const secret = `${secretAPITestStripe}`;
 
-interface ArgumentToFind {
-  enabled: boolean;
-}
-interface ArgumentToFindOne extends ArgumentToFind {
-  _id: string;
-}
+const secret = String(process.env.secretAPITestStripe);
 
 const stripe = new Stripe(secret, {
   apiVersion: '2020-08-27',
@@ -38,11 +30,11 @@ interface ClientUserCourse extends UserCourse {
   ratioFinished: number;
 }
 
+//ADMIN
 // This will give information in a way that can be read by the tables in the admin page
 export const getAllCourses = async (req: Request, res: Response) => {
   try {
-    const arg: ArgumentToFind = { enabled: true };
-    const courses = await CourseModel.find({arg});
+    const courses = await CourseModel.find({ enabled: true });
     if (!courses) return res.send('No courses are available!');
     const filteredKeys = [
       {
@@ -92,11 +84,10 @@ export const getAllCourses = async (req: Request, res: Response) => {
 
 export const getCoursesById = async (req: Request, res: Response) => {
   try {
-    const arg: ArgumentToFindOne = {
+    const course = await CourseModel.findOne({
       _id: req.params.id,
       enabled: true,
-    }
-    const course = await CourseModel.findOne({arg}).lean();
+    }).lean();
 
     if (!course) return res.send('Course does not exist!');
     course.price = parseFloat(course.price.toString());
@@ -147,6 +138,8 @@ export const addCourse = async (req: Request, res: Response) => {
       return res.status(400).send('You have to insert a cover image!');
     if (!price) price = '0';
 
+    //TODO
+    // what is happening here, update the docs
     const { data, mime } = coverImageURL;
     const URLfromS3 = await uploadFile(data, mime);
     const product = await stripe.products.create({
@@ -165,7 +158,7 @@ export const addCourse = async (req: Request, res: Response) => {
       priceStripeID: priceStripe.id,
     });
     await course.save();
-    res.status(200).send('Course added successfully!');
+    res.status(201).send('Course added successfully!');
   } catch (e) {
     console.log(e);
     res.status(500).send('Internal Server Error!');
@@ -177,11 +170,11 @@ export const editCourse = async (req: Request, res: Response) => {
     let { price } = req.body;
     const { coverImageURL, name, description } = req.body;
 
-    const arg: ArgumentToFindOne = {
+    const course = await CourseModel.findOne({
       _id: req.params.id,
       enabled: true,
-    }
-    const course = await CourseModel.findOne({arg}).lean();
+    }).lean();
+
     if (course) {
       if (!price) price = 0;
       let URLfromS3;
@@ -247,6 +240,8 @@ export const deleteCourse = async (req: Request, res: Response) => {
   }
 };
 
+
+// CLIENT
 export const enrollFreeCourse = async (req: Request, res: Response) => {
   try {
     const { course } = req.body;

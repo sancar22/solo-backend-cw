@@ -1,5 +1,5 @@
 import { Decimal128 } from 'bson';
-import { Model, Schema, model, ObjectId } from 'mongoose';
+import { Model, Schema, model } from 'mongoose';
 
 export interface Course {
   _id: string;
@@ -44,5 +44,5 @@ const CourseSchema = new Schema<Course>(
   }
 );
 
-const Course: Model<Course> = model('course', CourseSchema);
+const Course: Model<Course> = model('Course', CourseSchema);
 export default Course;

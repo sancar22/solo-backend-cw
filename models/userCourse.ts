@@ -36,5 +36,5 @@ const UserCourseSchema = new Schema<UserCourse>(
   }
 );
 
-const UserCourse: Model<UserCourse> = model('usercourse', UserCourseSchema);
+const UserCourse: Model<UserCourse> = model('UserCourse', UserCourseSchema);
 export default UserCourse;
