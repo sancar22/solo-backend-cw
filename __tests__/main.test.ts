@@ -5,7 +5,6 @@ import bootServer from '../server';
 import bootDB from '../db/db';
 import { seedDb } from '../__seed__/index';
 import { User } from '../models/user';
-import { UserCourse } from '../models/userCourse';
 
 const port = Number(process.env.TEST_PORT);
 const connectionString = String(process.env.TEST_DB_CONN);
@@ -14,7 +13,6 @@ let server: Server;
 let db: Mongoose | undefined;
 
 let seedUsers: User[];
-let seedUserCourses: UserCourse[];
 
 export const random = (max: number): number => Math.floor(Math.random() * max);
 
@@ -23,13 +21,12 @@ beforeAll(async () => {
   if (db) {
     const seedData = await seedDb(db);
     seedUsers = seedData.User;
-    seedUserCourses = seedData.UserCourse;
   }
   server = bootServer(port);
 });
 
 test('Mock users and mock products must be present', () => {
-  expect(seedUsers).toHaveLength(2);
+  expect(seedUsers).toHaveLength(4);
 });
 
 describe('POST /auth/login', () => {
@@ -38,9 +35,6 @@ describe('POST /auth/login', () => {
   beforeEach(() => {
     endpoint = request(server).post('/auth/login');
   });
-
-  // TODO
-  // if successful, return 200
 
   test('rejects if user not in mocks', async () => {
     const response = await endpoint.send({
@@ -78,8 +72,7 @@ describe('POST /auth/login', () => {
     const response = await endpoint.send({
       email: 'kip@test.com',
       password: 'password'
-    }
-    );
+    });
     expect(response.status).toBe(200);
   });
 
@@ -183,11 +176,6 @@ describe('POST /auth/verifyEmailCode', () => {
     endpoint = request(server).post('/auth/verifyEmailCode');
   });
 
-  // TODO
-  // (Uses verifyPWCodeChange)
-  // if email verified successfully, send 200 - How?
-  // if token expires before reset, send 401 - How?
-
   test('rejects if user does not exist', async () => {
     const response = await endpoint.send({
       email: seedUsers[random(seedUsers.length)].email,
@@ -200,12 +188,21 @@ describe('POST /auth/verifyEmailCode', () => {
 
 describe('POST /auth/changePW', () => {
   let endpoint: Test;
+  let token: string;
+
   beforeEach(() => {
     endpoint = request(server).post('/auth/changePW');
   });
 
-  // TODO
-  // if successful, send 200
+  test('pre-test login', async () => {
+    const response = await request(server).post('/auth/login').send({
+      email: 'kip@test.com',
+      password: 'password'
+    });
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('token');
+    token = response.body.token;
+  })
 
   test('rejects if password not long enough', async () => {
     const response = await endpoint.send({
@@ -217,16 +214,14 @@ describe('POST /auth/changePW', () => {
 
   test('rejects if passwordRepeat does not match password', async () => {
     const response = await endpoint.send({
-      name: 'Bob',
-      email: 'bob@example.com',
-      password: 'password123',
+      password: 'password1234',
       passwordRepeat: 'password',
     });
     expect(response.status).toBe(401);
   });
 
   test('successful if password changed', async () => {
-    const response = await endpoint.send({
+    const response = await endpoint.set('Authorization', `bearer ${token}`).send({
       password: 'password1234',
       passwordRepeat: 'password1234',
     });
@@ -240,14 +235,19 @@ describe('POST /auth/changePWInApp', () => {
     endpoint = request(server).post('/auth/changePWInApp');
   });
 
+  test.skip('pre-test login', async () => {
+    const response = await request(server).post('/auth/login').send({
+      email: 'kip@test.com',
+      password: 'password'
+    });
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('token');
+    const token = response.body.token;
+    console.log(token);
+  })
+
   // TODO
-  // if password is not correct, send 401
-  // if password isn't long enough, send 400
-  // if passwordRepeat doesn't match password, send 401
-  // if password is same as current one, send 401 - NEED PW
   // if successful, send 204
-
-
 
   test('rejects if password is not correct', async () => {
     const response = await endpoint.send({
@@ -286,12 +286,18 @@ describe('POST /auth/changePWInApp', () => {
   });
 
   test('successful if password changed', async () => {
-    const response = await endpoint.send({
+    const loginResponse = await request(server).post('/auth/login').send({
+      email: 'kip@test.com',
+      password: 'password'
+    });
+    const {token} = loginResponse.body;
+    console.log('changePWInApp token ', token)
+    const response = await endpoint.set('Authorization', `bearer ${token}`).send({
       oldPassword: 'password',
       password: 'newpassword',
       passwordRepeat: 'newpassword'
     });
-    expect(response.status).toBe(401);
+    expect(response.status).toBe(204);
   });
 })
 

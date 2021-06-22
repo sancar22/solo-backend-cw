@@ -28,7 +28,7 @@ beforeAll(async () => {
 });
 
 
-describe('POST /enroll/free', () => {
+describe.skip('POST /enroll/free', () => {
   let endpoint: Test;
   let token: string;
   beforeEach(async () => {
@@ -79,7 +79,7 @@ describe('POST /enroll/free', () => {
 })
 
 
-describe('GET /myCourses', () => {
+describe.skip('GET /myCourses', () => {
   let endpoint: Test;
   let token: string;
 

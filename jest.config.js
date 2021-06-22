@@ -3,5 +3,5 @@ module.exports = {
   testEnvironment: 'node',
   setupFiles: ['dotenv/config'],
   setupFilesAfterEnv: ['./jest.setup.js'],
-  testPathIgnorePatterns: ['/node_modules/', '/course.test/', '/topic.test/'],
+  testPathIgnorePatterns: ['/node_modules/'],
 };
