@@ -209,8 +209,6 @@ describe('POST /auth/changePW', () => {
 
   test('rejects if password not long enough', async () => {
     const response = await endpoint.send({
-      name: 'Bob',
-      email: 'bob@example.com',
       password: 'passw',
       passwordRepeat: 'passw',
     });

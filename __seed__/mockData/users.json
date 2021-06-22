@@ -9,10 +9,10 @@
   "password": "$2a$10$falk1FUsUl0rbNgu8oeS5u9N56woQEE4pFGtoFLPdRot42fsEh7eO",
   "stripeID": "cus_JfGfWlz3WhxfYE",
   "createdAt": {
-    "$date": "2021-06-13T16:26:10.557Z"
+    "$date": "2021-06-21T22:52:44.432Z"
   },
   "updatedAt": {
-    "$date": "2021-06-13T16:39:16.449Z"
+    "$date": "2021-06-21T22:52:44.432Z"
   }
 },{
   "_id": {
@@ -25,9 +25,41 @@
   "password": "$2a$10$Hb3cHsFmmvERRbr/SHMm5eA6TdVx53PfTD26dSgSwG/SW.N.GgQiO",
   "stripeID": "cus_Jg0lIiI2NjlkIJ",
   "createdAt": {
-    "$date": "2021-06-15T16:03:52.708Z"
+    "$date": "2021-06-21T22:52:44.432Z"
   },
   "updatedAt": {
-    "$date": "2021-06-15T16:06:25.895Z"
+    "$date": "2021-06-21T22:52:44.432Z"
+  }
+},{
+  "_id": {
+    "$oid": "60d11e7d5cf0e90cc64c68f0"
+  },
+  "verified": true,
+  "forgotPWToken": "",
+  "name": "kip",
+  "email": "kip@test.com",
+  "password": "$2a$10$blJll208Fw/LWnW.gygHUeP80DQaLXxyB4XQEP4/Xc6RD5hRpz6ly",
+  "stripeID": "cus_JiN91HblvovssY",
+  "createdAt": {
+    "$date": "2021-06-21T23:19:25.334Z"
+  },
+  "updatedAt": {
+    "$date": "2021-06-21T23:19:25.334Z"
+  }
+},{
+  "_id": {
+    "$oid": "60d11e8a5cf0e90cc64c68f1"
+  },
+  "verified": true,
+  "forgotPWToken": "",
+  "name": "charley",
+  "email": "charley@test.com",
+  "password": "$2a$10$gV5g1WCIoJbdD.wxJA2vEuxMXDSE2jiBfUgD7wke41gE3UM4CJRMa",
+  "stripeID": "cus_JiN9AzM9EjEupf",
+  "createdAt": {
+    "$date": "2021-06-21T23:19:38.126Z"
+  },
+  "updatedAt": {
+    "$date": "2021-06-21T23:19:38.126Z"
   }
 }]
