@@ -22,6 +22,45 @@ interface ClientUserCourse extends UserCourse {
 }
 
 
+
+const calculateCourseProgress  = async (userCourses: UserCourse[], userID: string) => {
+  const result: ClientUserCourse[] = [];
+
+  for (let i = 0; i < userCourses.length; i++) {
+
+    const currentCourse = userCourses[i];
+
+    const topicsFromCourse = await Topic.find({
+      courseID: currentCourse.courseID,
+      enabled: true,
+    });
+
+    const topicsCompleted = await UserTopic.find({
+      courseID: currentCourse.courseID,
+      enabled: true,
+      userID,
+    });
+
+    const course = await CourseModel.findById(currentCourse.courseID);
+    if (course) {
+      const currentUserCourse: ClientUserCourse = { ...currentCourse,
+        topicsCompleted: topicsCompleted.length,
+        numberOfTopics:topicsFromCourse.length,
+        name: course.name,
+        coverImageURL: course.coverImageURL,
+        ratioFinished: parseFloat(
+          (topicsCompleted.length / topicsFromCourse.length).toFixed(2)
+        )
+      }
+      result.push(currentUserCourse);
+    }
+  }
+  return result;
+}
+
+
+
+
 const getActivitiesClientSide = async (req: Request, res: Response) => {
   try {
     const userID = res.locals.user.id;
@@ -69,33 +108,12 @@ const getMyCourses = async (req: Request, res: Response) => {
       enabled: true,
     }).lean();
 
-    const ClientUserCourseArray: ClientUserCourse[] = [];
-    for (let i = 0; i < userActiveCourses.length; i++) {
-      const currentCourse = userActiveCourses[i];
-      const topicsFromCourse = await Topic.find({
-        courseID: currentCourse.courseID,
-        enabled: true,
-      });
-      const topicsCompleted = await UserTopic.find({
-        courseID: currentCourse.courseID,
-        enabled: true,
-        userID,
-      });
-      const course = await CourseModel.findById(currentCourse.courseID);
-      if (course) {
-        const currentUserCourse: ClientUserCourse = { ...currentCourse,
-          topicsCompleted: topicsCompleted.length,
-          numberOfTopics:topicsFromCourse.length,
-          name: course.name,
-          coverImageURL: course.coverImageURL,
-          ratioFinished: parseFloat(
-            (topicsCompleted.length / topicsFromCourse.length).toFixed(2)
-          )
-        }
-        ClientUserCourseArray.push(currentUserCourse);
-      }
-    }
-    res.status(200).send(ClientUserCourseArray);
+    const userCoursesWithStats = await calculateCourseProgress(
+      userActiveCourses,
+      userID
+    );
+
+    res.status(200).send(userCoursesWithStats);
   } catch (e) {
     console.log(e);
     res.status(500).send('Internal Server Error!');
@@ -118,27 +136,15 @@ const enrollFreeCourse = async (req: Request, res: Response) => {
   }
 };
 
-// TODO
-// should this not have the course price or is this to circumvent payment
-// this is maybe just for demos
-const enrollPremiumCourse = async (req: Request, res: Response) => {
-  try {
-    const { course } = req.body;
-    const userID = res.locals.user.id;
-    await UserCourseModel.create({
-      userID,
-      courseID: course._id,
-      coursePricePaid: 0,
-    });
-    res.status(200).send('Enrolled succesfully!');
-  } catch (e) {
-    console.log(e);
-    res.status(500).send('Internal Server Error!');
-  }
-};
+
+
+
+
+
+
 
 export default {
-  getActivitiesClientSide, getMyCourses, enrollFreeCourse, enrollPremiumCourse
+  getActivitiesClientSide, getMyCourses, enrollFreeCourse
 }
 
 

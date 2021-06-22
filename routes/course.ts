@@ -3,6 +3,7 @@ import authMiddleware from '../middleware/auth';
 import authAdminMiddleware from '../middleware/admin';
 import adminController from '../controllers/admin/course';
 import clientController from '../controllers/client/course';
+import clientPaymentController from '../controllers/client/payment'
 
 
 const router = Router();
@@ -67,7 +68,7 @@ router.post(
 router.post(
   '/enroll/premium',
   authMiddleware,
-  clientController.enrollPremiumCourse
+  clientPaymentController.payPremiumCourse
 );
 
 export default router;

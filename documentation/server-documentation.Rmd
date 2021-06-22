@@ -4,7 +4,6 @@ output: html_document
 
 
 
-
 <br/>
 
 ## Server Documentation
@@ -86,14 +85,14 @@ The following have been outlined for each endpoint,
 `/confirmation/:token` mark a users email as verified
 
 * GET
-* Response: **204**
+* Response: **200**
 
 <br/>
 `/forgotPW` user forgot password, send link to reset
 
 * POST
 * Headers: `Content-Type:application/json`
-* Response: **204**
+* Response: **200**
 * Body:
 
 ```
@@ -124,7 +123,7 @@ The following have been outlined for each endpoint,
 * Headers: <br/>
 `Content-Type:application/json` <br/>
 `Authorization: bearer token`
-* Response: **204**
+* Response: **200**
 * Body: 
 ```
 { 
@@ -141,7 +140,7 @@ The following have been outlined for each endpoint,
 * Headers: <br/>
 `Content-Type:application/json` <br/>
 `Authorization: bearer token`
-* Response: **204**
+* Response: **200**
 * Body: 
 ```
 { 
@@ -188,7 +187,7 @@ The following have been outlined for each endpoint,
 * Headers:  <br/>
 `Content-Type:application/json` <br/>
 `Authorization: bearer token` 
-* Response: **204**
+* Response: **200**
 * Body: 
 ```
 { 
@@ -259,7 +258,7 @@ The following have been outlined for each endpoint,
 * Headers:  <br/>
 `Content-Type:application/json` <br/>
 `Authorization: bearer token` 
-* Response: **204**
+* Response: **200**
 * Body:
 ```
 {
@@ -275,7 +274,7 @@ The following have been outlined for each endpoint,
 
 * DELETE
 * Headers:`Authorization: bearer token` 
-* Response: **204**
+* Response: **200**
 
 
 <br/>
@@ -380,7 +379,7 @@ The following have been outlined for each endpoint,
 
 * DELETE
 * Headers:`Authorization: bearer token`
-* Response: **204**
+* Response: **200**
 
 <br/>
 `/client-side/allCourses` client view of all courses
@@ -391,8 +390,7 @@ The following have been outlined for each endpoint,
 
 
 <br/>
-`/client-side/myCourses` client view courses that user is enrolled in
-
+`/client-side/myCourses` client view courses a user is enrolled in
 * GET
 * Headers:`Authorization: bearer token`
 * Response: **200**, courses
@@ -404,7 +402,7 @@ The following have been outlined for each endpoint,
 * Headers: <br/>
 `Content-Type:application/json` <br/>
 `Authorization: bearer token` 
-* Response: **204**
+* Response: **200**
 * Body: 
 ```
 {
@@ -421,7 +419,7 @@ The following have been outlined for each endpoint,
 * Headers: <br/>
 `Content-Type:application/json` <br/>
 `Authorization: bearer token` 
-* Response: **204**
+* Response: **200**
 * Body: 
 ```
 {

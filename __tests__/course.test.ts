@@ -27,10 +27,10 @@ beforeAll(async () => {
   server = bootServer(port);
 });
 
+
 describe('POST /enroll/free', () => {
   let endpoint: Test;
   let token: string;
-
   beforeEach(async () => {
     endpoint = request(server).post('/course/enroll/free');
   });
@@ -54,7 +54,17 @@ describe('POST /enroll/free', () => {
     expect(response.status).toBe(401);
   });
 
-  test('enrolls in free course if authenticated', async () => {
+
+  test('should check if tokens are valid', async () => {
+    const courseID = mockCourses[1]._id;
+    const response = await endpoint
+        .send({course: {_id: courseID}})
+        .set('Authorization', 'bearer ' + "i'mnotatoken");
+    expect(response.status).toBe(401);
+    });
+
+
+  test('should enroll in free course if authenticated', async () => {
     const userID = mockUsers[3]._id;
     const courseID = mockCourses[1]._id;
     const response = await endpoint
@@ -69,12 +79,12 @@ describe('POST /enroll/free', () => {
 })
 
 
-describe('POST /enroll/premium', () => {
+describe('GET /myCourses', () => {
   let endpoint: Test;
   let token: string;
 
   beforeEach(async () => {
-    endpoint = request(server).post('/course/enroll/premium');
+    endpoint = request(server).get('/course/client-side/myCourses');
   });
 
   test('pre-test login', async () => {
@@ -88,25 +98,21 @@ describe('POST /enroll/premium', () => {
   });
 
   test('should require authentication', async () => {
-    const response = await endpoint.send({
-      course: {
-        _id: mockCourses[2]._id
-      }
-    });
+    const response = await endpoint.send();
     expect(response.status).toBe(401);
   });
 
-  test('enrolls in premium course if authenticated', async () => {
-    const userID = mockUsers[3]._id;
-    const courseID = mockCourses[2]._id;
+  test('should return an array of the users courses', async () => {
+    const userID = mockUsers[3]._id
     const response = await endpoint
-      .send({course: {_id: courseID}})
+      .send()
       .set('Authorization', 'bearer ' + token);
-
     expect(response.status).toBe(200);
-    const registered = await UserCourse.find({userID, courseID});
-    expect(registered).toBeTruthy;
+    expect(Array.isArray(response.body)).toBe(true);
 
+    const userCourses = await UserCourse.find({userID});
+    expect(userCourses.length).toBe(response.body.length);
+    expect(userCourses.length).toBe(1);
   });
 
 });
