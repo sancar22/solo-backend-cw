@@ -5,20 +5,21 @@ import { Server } from 'http';
 import bootServer from '../server';
 import bootDB from '../db/db';
 import { seedDb } from '../__seed__/index';
-
 import { User } from '../models/user';
-import CourseModel, { Course } from '../models/course';
-import UserCourse from '../models/userCourse';
+import { Course } from '../models/course';
+import TopicModel, { Topic } from '../models/topic';
 
 
-const port = Number(process.env.COURSE_PORT);
-const connectionString = String(process.env.COURSE_TEST_DB_CONN);
+const port = Number(process.env.TOPIC_PORT);
+const connectionString = String(process.env.TOPIC_TEST_DB_CONN);
 
 let server: Server;
 let db: Mongoose | undefined;
 let mockUsers: User[];
 let mockCourses: Course[];
+let mockTopics: Topic[];
 
+const random = (max: number): number => Math.floor(Math.random() * max);
 
 beforeAll(async () => {
   db = await bootDB(connectionString);
@@ -27,68 +28,22 @@ beforeAll(async () => {
     const seedData = await seedDb(db);
     mockUsers = seedData.User;
     mockCourses = seedData.Course;
+    mockTopics = seedData.Topic;
   }
   server = bootServer(port);
 });
 
 
-describe.skip('POST /enroll/free', () => {
+describe('GET /allTopics', () => {
   let endpoint: Test;
   let token: string;
-  beforeEach(async () => {
-    endpoint = request(server).post('/course/enroll/free');
-  });
-
-  test('pre-test login', async () => {
-    const response = await request(server).post('/auth/login').send({
-      email: "charley@test.com",
-      password: "password"
-    });
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty('token');
-    token = response.body.token;
-  });
-
-  test('should require authentication', async () => {
-    const response = await endpoint.send({
-      course: {
-        _id: mockCourses[1]._id
-      }
-    });
-    expect(response.status).toBe(401);
-  });
-
-
-  test('should check if tokens are valid', async () => {
-    const courseID = mockCourses[1]._id;
-    const response = await endpoint
-        .send({course: {_id: courseID}})
-        .set('Authorization', 'bearer ' + "i'mnotatoken");
-    expect(response.status).toBe(401);
-    });
-
-
-  test('should enroll in free course if authenticated', async () => {
-    const userID = mockUsers[3]._id;
-    const courseID = mockCourses[1]._id;
-    const response = await endpoint
-      .send({course: {_id: courseID}})
-      .set('Authorization', 'bearer ' + token);
-
-    expect(response.status).toBe(200);
-    const registered = await UserCourse.find({userID, courseID});
-    expect(registered).toBeTruthy;
-
-  });
-})
-
-
-describe.skip('GET /myCourses', () => {
-  let endpoint: Test;
-  let token: string;
+  let courseID: string;
 
   beforeEach(async () => {
-    endpoint = request(server).get('/course/client-side/myCourses');
+    let courseCount = mockCourses.length-1;
+    const i = random(courseCount);
+    courseID = mockCourses[i]._id;
+    endpoint = request(server).get(`/topic/client-side/allTopics/${courseID}`);
   });
 
   test('pre-test login', async () => {
@@ -106,28 +61,28 @@ describe.skip('GET /myCourses', () => {
     expect(response.status).toBe(401);
   });
 
-  test('should return an array of the users courses', async () => {
-    const userID = mockUsers[3]._id
+  test('should respond with topic list for course', async () => {
     const response = await endpoint
       .send()
       .set('Authorization', 'bearer ' + token);
     expect(response.status).toBe(200);
     expect(Array.isArray(response.body)).toBe(true);
-
-    const userCourses = await UserCourse.find({userID});
-    expect(userCourses.length).toBe(response.body.length);
-    expect(userCourses.length).toBe(1);
+    const topics = await TopicModel.find({courseID});
+    expect(response.body.length).toBe(topics.length);
   });
 
 });
 
-
-describe('GET /allCourses', () => {
+describe('GET /getTopicById', () => {
   let endpoint: Test;
   let token: string;
+  let topicID: string;
 
   beforeEach(async () => {
-    endpoint = request(server).get('/course/client-side/allCourses');
+    let topicCount = mockTopics.length-1;
+    const j = random(topicCount);
+    topicID = mockTopics[j]._id;
+    endpoint = request(server).get(`/topic/client-side/getTopicById/${topicID}`);
   });
 
   test('pre-test login', async () => {
@@ -145,18 +100,48 @@ describe('GET /allCourses', () => {
     expect(response.status).toBe(401);
   });
 
-
-  test('should respond with a list of all courses', async () => {
+  test('should respond with a topic', async () => {
     const response = await endpoint
-    .send()
-    .set('Authorization', 'bearer ' + token);
+      .send()
+      .set('Authorization', 'bearer ' + token);
     expect(response.status).toBe(200);
-    expect(Array.isArray(response.body)).toBe(true);
-    const courses = await CourseModel.find();
-    expect(courses.length).toBe(response.body.length);
+    expect(response.body).toHaveProperty('videoURL');
+    expect(response.body).toHaveProperty('description');
+    const randomTopic = await TopicModel.findById(topicID);
+    expect(response.body.description).toBe(randomTopic?.description);
   });
 
 });
+
+
+describe('GET /completedTopics', () => {
+  let endpoint: Test;
+  let token: string;
+  let courseID: string;
+
+  beforeEach(async () => {
+    let courseCount = mockCourses.length-1;
+    const i = random(courseCount);
+    courseID = mockCourses[i]._id;
+    endpoint = request(server).get(`/topic/client-side/allTopics/${courseID}`);
+  });
+
+  test('pre-test login', async () => {
+    const response = await request(server).post('/auth/login').send({
+      email: "charley@test.com",
+      password: "password"
+    });
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('token');
+    token = response.body.token;
+  });
+
+  test('should require authentication', async () => {
+    const response = await endpoint.send();
+    expect(response.status).toBe(401);
+  });
+
+})
 
 
 afterAll(async () => {

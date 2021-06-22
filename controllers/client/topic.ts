@@ -21,6 +21,7 @@ const getTopicsClientSide = async (req: Request, res: Response) => {
     const { courseID } = req.params;
     const allTopics = await TopicModel.find({ courseID, enabled: true }).lean();
 
+    const topicsWithStatus: TopicStatus[] = [];
     for (let i = 0; i < allTopics.length; i++) {
       const currentTopic: TopicStatus = {...allTopics[i],
         completed: false
@@ -33,8 +34,9 @@ const getTopicsClientSide = async (req: Request, res: Response) => {
       if (userTopic) {
         currentTopic.completed = true;
       }
+      topicsWithStatus.push(currentTopic);
     }
-    res.status(200).send(allTopics);
+    res.status(200).send(topicsWithStatus);
   } catch (e) {
     console.log(e);
     res.status(500).send('Internal Server Error!');
@@ -47,8 +49,6 @@ const getTopicById = async (req: Request, res: Response) => {
     const topic = await TopicModel.findOne({ _id: topicID, enabled: true }).lean();
 
     if (topic) {
-      //TODO
-      // any[], make an interface for questions
       for (let i = 0; i < topic.questions.length; i++) {
         topic.questions[i].userAnswer = 0;
         topic.questions[i].userRespondedCorrectly = false;

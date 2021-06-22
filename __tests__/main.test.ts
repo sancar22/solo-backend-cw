@@ -1,18 +1,21 @@
 import { Mongoose } from 'mongoose';
 import request, { Test } from 'supertest';
 import { Server } from 'http';
+
 import bootServer from '../server';
 import bootDB from '../db/db';
 import { seedDb } from '../__seed__/index';
+
 import { User } from '../models/user';
+
 
 const port = Number(process.env.TEST_PORT);
 const connectionString = String(process.env.TEST_DB_CONN);
 
 let server: Server;
 let db: Mongoose | undefined;
-
 let seedUsers: User[];
+
 
 export const random = (max: number): number => Math.floor(Math.random() * max);
 
@@ -183,7 +186,7 @@ describe('POST /auth/verifyEmailCode', () => {
     });
     expect(response.status).toBe(401);
   });
-  
+
 })
 
 describe('POST /auth/changePW', () => {

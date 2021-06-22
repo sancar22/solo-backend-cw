@@ -213,8 +213,8 @@ summary {
 <ul>
 <li>POST</li>
 <li>Headers <code>Content-Type:application/json</code></li>
-<li>Response: <strong>200</strong>, jwt-token</li>
-<li>Body:</li>
+<li>Response: <strong>200</strong>, auth-token</li>
+<li>Req Body:</li>
 </ul>
 <pre><code>{ 
     &quot;email&quot;: &quot;email@example.com&quot;,
@@ -224,8 +224,8 @@ summary {
 <ul>
 <li>POST</li>
 <li>Headers <code>Content-Type:application/json</code></li>
-<li>Response: <strong>200</strong>, jwt-token</li>
-<li>Body:</li>
+<li>Response: <strong>200</strong>, auth-token</li>
+<li>Req Body:</li>
 </ul>
 <pre><code>{ 
     &quot;email&quot;: &quot;email@example.com&quot;,
@@ -236,7 +236,7 @@ summary {
 <li>POST</li>
 <li>Headers <code>Content-Type:application/json</code></li>
 <li>Response: <strong>201</strong></li>
-<li>Body:</li>
+<li>Req Body:</li>
 </ul>
 <pre><code>{ 
     &quot;name&quot; : &quot;name&quot;,
@@ -254,7 +254,7 @@ summary {
 <li>POST</li>
 <li>Headers: <code>Content-Type:application/json</code></li>
 <li>Response: <strong>200</strong></li>
-<li>Body:</li>
+<li>Req Body:</li>
 </ul>
 <pre><code>{ 
     &quot;email&quot;: &quot;email@example.com&quot;,
@@ -264,7 +264,7 @@ summary {
 <li>POST</li>
 <li>Headers: <code>Content-Type:application/json</code></li>
 <li>Response: <strong>200</strong>, jwt-token</li>
-<li>Body:</li>
+<li>Req Body:</li>
 </ul>
 <pre><code>{ 
     &quot;email&quot;: &quot;email@example.com&quot;,
@@ -275,7 +275,7 @@ summary {
 <li>POST</li>
 <li>Headers: <br /> <code>Content-Type:application/json</code> <br /> <code>Authorization: bearer token</code></li>
 <li>Response: <strong>200</strong></li>
-<li>Body:</li>
+<li>Req Body:</li>
 </ul>
 <pre><code>{ 
     &quot;password&quot;: &quot;newpassword&quot;,
@@ -286,7 +286,7 @@ summary {
 <li>POST</li>
 <li>Headers: <br /> <code>Content-Type:application/json</code> <br /> <code>Authorization: bearer token</code></li>
 <li>Response: <strong>200</strong></li>
-<li>Body:</li>
+<li>Req Body:</li>
 </ul>
 <pre><code>{ 
     &quot;oldPassword&quot;: &quot;password&quot;,
@@ -322,7 +322,7 @@ summary {
 <li>POST</li>
 <li>Headers: <br /> <code>Content-Type:application/json</code> <br /> <code>Authorization: bearer token</code></li>
 <li>Response: <strong>200</strong></li>
-<li>Body:</li>
+<li>Req Body:</li>
 </ul>
 <pre><code>{ 
     &quot;course&quot;: {
@@ -368,17 +368,17 @@ summary {
 <li>POST</li>
 <li>Headers: <br /> <code>Content-Type:application/json</code> <br /> <code>Authorization: bearer token</code></li>
 <li>Response: <strong>201</strong></li>
-<li>Body:</li>
+<li>Req Body:</li>
 </ul>
 <pre><code>{
-
+ ---
 }</code></pre>
 <p><br /> <code>/admin/edit/:id&#39;</code> admin edit a topic</p>
 <ul>
 <li>PUT</li>
 <li>Headers: <br /> <code>Content-Type:application/json</code> <br /> <code>Authorization: bearer token</code></li>
 <li>Response: <strong>200</strong></li>
-<li>Body:</li>
+<li>Req Body:</li>
 </ul>
 <pre><code>{
   &quot;questions&quot;: [ --- ]
@@ -415,7 +415,7 @@ summary {
 <li>POST</li>
 <li>Headers: <br /> <code>Content-Type:application/json</code> <br /> <code>Authorization: bearer token</code></li>
 <li>Response: <strong>200</strong>, test-results</li>
-<li>Body:</li>
+<li>Req Body:</li>
 </ul>
 <pre><code>{
   &quot;responses&quot;: [ --- ],
@@ -442,7 +442,7 @@ summary {
 <li>POST</li>
 <li>Headers: <br /> <code>Content-Type:application/json</code> <br /> <code>Authorization: bearer token</code></li>
 <li>Response: <strong>201</strong></li>
-<li>Body:</li>
+<li>Req Body:</li>
 </ul>
 <pre><code>{
   &quot;coverImageURL&quot;: &quot;https://iamanimage.com/image&quot;,
@@ -455,7 +455,7 @@ summary {
 <li>PUT</li>
 <li>Headers: <br /> <code>Content-Type:application/json</code> <br /> <code>Authorization: bearer token</code></li>
 <li>Response: <strong>200</strong></li>
-<li>Body:</li>
+<li>Req Body:</li>
 </ul>
 <pre><code>{
   &quot;coverImageURL&quot;: &quot;https://iamanimage.com/image2&quot;,
@@ -469,36 +469,24 @@ summary {
 <li>Headers:<code>Authorization: bearer token</code></li>
 <li>Response: <strong>200</strong></li>
 </ul>
-<p><br /> <code>/client-side/allCourses</code> client view of all courses</p>
+<p><br /> <code>/client-side/allCourses</code> request all courses</p>
 <ul>
 <li>GET</li>
 <li>Headers:<code>Authorization: bearer token</code></li>
 <li>Response: <strong>200</strong>, courses</li>
 </ul>
-<p><br /> <code>/client-side/myCourses</code> client view courses that user is enrolled in</p>
+<p><br /> <code>/client-side/myCourses</code> request courses a user is enrolled in + their progress</p>
 <ul>
 <li>GET</li>
 <li>Headers:<code>Authorization: bearer token</code></li>
 <li>Response: <strong>200</strong>, courses</li>
 </ul>
-<p><br /> <code>/enroll/free</code> enroll a client in a free course</p>
+<p><br /> <code>/enroll/free</code> enroll a user in a free course</p>
 <ul>
 <li>POST</li>
 <li>Headers: <br /> <code>Content-Type:application/json</code> <br /> <code>Authorization: bearer token</code></li>
 <li>Response: <strong>200</strong></li>
-<li>Body:</li>
-</ul>
-<pre><code>{
-  &quot;course&quot;: {
-   &quot;_id&quot;: &quot;929xvfdsf9d89sd08f9sf80&quot;
-  }
-}</code></pre>
-<p><br /> <code>/enroll/premium</code> enroll a user in a premium course</p>
-<ul>
-<li>POST</li>
-<li>Headers: <br /> <code>Content-Type:application/json</code> <br /> <code>Authorization: bearer token</code></li>
-<li>Response: <strong>200</strong></li>
-<li>Body:</li>
+<li>Req Body:</li>
 </ul>
 <pre><code>{
   &quot;course&quot;: {

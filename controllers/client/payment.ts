@@ -12,7 +12,7 @@ const stripe = new Stripe(secret, {
   apiVersion: '2020-08-27',
 });
 
-
+// TODO, refactor
 const payPremiumCourse = async (req: Request, res: Response) => {
   try {
     const userID = res.locals.user.id;

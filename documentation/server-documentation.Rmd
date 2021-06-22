@@ -35,8 +35,8 @@ The following have been outlined for each endpoint,
 
 * POST
 * Headers `Content-Type:application/json`
-* Response: **200**, jwt-token
-* Body: 
+* Response: **200**, auth-token
+* Req Body: 
 
 ```
 { 
@@ -51,8 +51,8 @@ The following have been outlined for each endpoint,
 
 * POST
 * Headers `Content-Type:application/json`
-* Response: **200**, jwt-token
-* Body: 
+* Response: **200**, auth-token
+* Req Body: 
 
 ```
 { 
@@ -69,7 +69,7 @@ The following have been outlined for each endpoint,
 * POST
 * Headers `Content-Type:application/json`
 * Response: **201**
-* Body: 
+* Req Body: 
 
 ```
 { 
@@ -93,7 +93,7 @@ The following have been outlined for each endpoint,
 * POST
 * Headers: `Content-Type:application/json`
 * Response: **200**
-* Body:
+* Req Body:
 
 ```
 { 
@@ -108,7 +108,7 @@ The following have been outlined for each endpoint,
 * POST
 * Headers: `Content-Type:application/json`
 * Response: **200**, jwt-token
-* Body: 
+* Req Body: 
 ```
 { 
     "email": "email@example.com",
@@ -124,7 +124,7 @@ The following have been outlined for each endpoint,
 `Content-Type:application/json` <br/>
 `Authorization: bearer token`
 * Response: **200**
-* Body: 
+* Req Body: 
 ```
 { 
     "password": "newpassword",
@@ -141,7 +141,7 @@ The following have been outlined for each endpoint,
 `Content-Type:application/json` <br/>
 `Authorization: bearer token`
 * Response: **200**
-* Body: 
+* Req Body: 
 ```
 { 
     "oldPassword": "password",
@@ -188,7 +188,7 @@ The following have been outlined for each endpoint,
 `Content-Type:application/json` <br/>
 `Authorization: bearer token` 
 * Response: **200**
-* Body: 
+* Req Body: 
 ```
 { 
     "course": {
@@ -244,10 +244,10 @@ The following have been outlined for each endpoint,
 `Content-Type:application/json` <br/>
 `Authorization: bearer token` 
 * Response: **201**
-* Body: 
+* Req Body: 
 ```
 {
-
+ ---
 }
 ```
 
@@ -259,7 +259,7 @@ The following have been outlined for each endpoint,
 `Content-Type:application/json` <br/>
 `Authorization: bearer token` 
 * Response: **200**
-* Body:
+* Req Body:
 ```
 {
   "questions": [ --- ]
@@ -308,7 +308,7 @@ The following have been outlined for each endpoint,
 `Content-Type:application/json` <br/>
 `Authorization: bearer token` 
 * Response: **200**, test-results
-* Body: 
+* Req Body: 
 ```
 {
   "responses": [ --- ],
@@ -345,7 +345,7 @@ The following have been outlined for each endpoint,
 `Content-Type:application/json` <br/>
 `Authorization: bearer token` 
 * Response: **201**
-* Body: 
+* Req Body: 
 ```
 {
   "coverImageURL": "https://iamanimage.com/image",
@@ -364,7 +364,7 @@ The following have been outlined for each endpoint,
 `Content-Type:application/json` <br/>
 `Authorization: bearer token` 
 * Response: **200**
-* Body: 
+* Req Body: 
 ```
 {
   "coverImageURL": "https://iamanimage.com/image2",
@@ -382,7 +382,7 @@ The following have been outlined for each endpoint,
 * Response: **200**
 
 <br/>
-`/client-side/allCourses` client view of all courses
+`/client-side/allCourses` request all courses
 
 * GET
 * Headers:`Authorization: bearer token`
@@ -390,37 +390,21 @@ The following have been outlined for each endpoint,
 
 
 <br/>
-`/client-side/myCourses` client view courses a user is enrolled in
+`/client-side/myCourses` request courses a user is enrolled in + their progress
+
 * GET
 * Headers:`Authorization: bearer token`
 * Response: **200**, courses
 
 <br/>
-`/enroll/free` enroll a client in a free course
+`/enroll/free` enroll a user in a free course
 
 * POST
 * Headers: <br/>
 `Content-Type:application/json` <br/>
 `Authorization: bearer token` 
 * Response: **200**
-* Body: 
-```
-{
-  "course": {
-   "_id": "929xvfdsf9d89sd08f9sf80"
-  }
-}
-```
-
-<br/>
-`/enroll/premium` enroll a user in a premium course
-
-* POST
-* Headers: <br/>
-`Content-Type:application/json` <br/>
-`Authorization: bearer token` 
-* Response: **200**
-* Body: 
+* Req Body: 
 ```
 {
   "course": {
