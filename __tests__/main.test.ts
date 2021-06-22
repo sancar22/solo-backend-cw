@@ -10,7 +10,6 @@ import { User } from '../models/user';
 import { UserCourse } from '../models/userCourse';
 
 
-
 const port = Number(process.env.TEST_PORT);
 const connectionString = String(process.env.TEST_DB_CONN);
 
@@ -229,13 +228,13 @@ describe('POST /auth/changePW', () => {
     expect(response.status).toBe(401);
   });
 
-  test('successful if password changed', async () => {
-    const response = await endpoint.send({
-      password: 'password1234',
-      passwordRepeat: 'password1234',
-    });
-    expect(response.status).toBe(200);
-  });
+  // test('successful if password changed', async () => {
+  //   const response = await endpoint.send({
+  //     password: 'password1234',
+  //     passwordRepeat: 'password1234',
+  //   });
+  //   expect(response.status).toBe(200);
+  // });
 })
 
 describe('POST /auth/changePWInApp', () => {

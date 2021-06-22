@@ -161,7 +161,6 @@ describe('GET /allCourses', () => {
 
 
 
-
 afterAll(async () => {
   await db?.connection.close();
   await server.close();

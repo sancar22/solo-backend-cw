@@ -57,6 +57,7 @@ const calculateCourseProgress  = async (userCourses: UserCourse[], userID: strin
   return result;
 }
 
+//TODO, refactor
 const getActivitiesClientSide = async (req: Request, res: Response) => {
   try {
     const userID = res.locals.user.id;
@@ -131,10 +132,6 @@ const enrollFreeCourse = async (req: Request, res: Response) => {
     res.status(500).send('Internal Server Error!');
   }
 };
-
-
-
-
 
 
 
