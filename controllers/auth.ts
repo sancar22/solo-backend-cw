@@ -1,18 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import {Request, Response} from 'express';
+import { Request, Response } from 'express';
 import nodemailer from 'nodemailer';
 import Stripe from 'stripe';
 
-import UserModel from '../models/user';
-import {User} from '../models/user';
+import UserModel, { User } from '../models/user';
 import AdminModel from '../models/admin';
 import validateEmail from '../utils/index';
 
-
 const { secretAPITestStripe: secret } = process.env;
 const { jwtSecret } = process.env;
-
 
 interface MyToken {
   name: string;
@@ -38,9 +36,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-
-
-
 const loginFunction = async (email: string, password: string, res: Response, admin: boolean) => {
   const user = !admin
     ? await UserModel.findOne({ email })
@@ -50,32 +45,30 @@ const loginFunction = async (email: string, password: string, res: Response, adm
   const isMatch = await bcrypt.compare(password, hashedUserPW);
   if (!isMatch) return res.status(401).send('Invalid username or password!');
   const isUser = (input: any): input is User => 'verified' in input;
-  if (isUser(user) && !user.verified)
-    return res.status(401).send('You need to verify your account!');
+  if (isUser(user) && !user.verified) return res.status(401).send('You need to verify your account!');
 
   jwt.sign(
-    { user: {id: user._id}},
+    { user: { id: user._id } },
     jwtSecret as string,
     { expiresIn: 3600 },
     (err, token) => {
       if (err) throw err;
       res.status(200).json({ token });
-    }
+    },
   );
 };
 
-
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
   try {
     await loginFunction(email, password, res, false);
   } catch (e) {
-    console.log(e)
+    console.log(e);
     res.status(500).send('Internal Server Error!');
   }
 };
 
-export const loginAdmin = async (req: Request, res: Response) => {
+export const loginAdmin = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
   try {
     await loginFunction(email, password, res, true);
@@ -84,9 +77,11 @@ export const loginAdmin = async (req: Request, res: Response) => {
   }
 };
 
-export const register = async (req: Request, res: Response) => {
+export const register = async (req: Request, res: Response): Promise<void|Response> => {
   try {
-    const { name, email, password, passwordRepeat } = req.body;
+    const {
+      name, email, password, passwordRepeat,
+    } = req.body;
     // Backend validation just in case
     if (name.length === 0) {
       return res.status(401).send('You should insert a name!');
@@ -117,9 +112,8 @@ export const register = async (req: Request, res: Response) => {
       stripeID: customer.id,
     });
 
-
     jwt.sign(
-      {user: {id: newUser._id}},
+      { user: { id: newUser._id } },
       jwtSecret as string,
       { expiresIn: '9999 years' },
       async (err, token) => {
@@ -134,7 +128,7 @@ export const register = async (req: Request, res: Response) => {
           subject: 'Account Verfication - Devcademy',
           html: output,
         });
-      }
+      },
     );
   } catch (e) {
     console.log(e);
@@ -142,12 +136,12 @@ export const register = async (req: Request, res: Response) => {
   }
 };
 
-export const verifyEmail = async (req: Request, res: Response) => {
+export const verifyEmail = async (req: Request, res: Response): Promise<Response|undefined> => {
   try {
     const decodedJWT = jwt.verify(req.params.token, jwtSecret as string);
     const userID = (decodedJWT as MyToken).user.id;
     const user = await UserModel.findById(userID);
-    //TODO
+    // TODO
     // why are we doing this, we shoudl just be able to say if user
     const isUser = (input: any): input is User => 'verified' in input;
     if (isUser(user) && !user.verified) {
@@ -155,7 +149,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
         { _id: userID },
         {
           $set: { verified: true },
-        }
+        },
       );
       return res.status(200).send('Verified successfully!');
     }
@@ -165,7 +159,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
   }
 };
 
-export const forgotPW = async (req: Request, res: Response) => {
+export const forgotPW = async (req: Request, res: Response): Promise<Response|undefined> => {
   try {
     const { email } = req.body;
     const user = await UserModel.findOne({ email: email.toLowerCase() });
@@ -178,7 +172,7 @@ export const forgotPW = async (req: Request, res: Response) => {
         code: randomNumber,
       },
     };
-    //TODO
+    // TODO
     // why save this as a token? why not just save the code?
     // if it's a security thing why not just hash it?
     jwt.sign(
@@ -191,7 +185,7 @@ export const forgotPW = async (req: Request, res: Response) => {
           { _id: user._id },
           {
             $set: { forgotPWToken: token },
-          }
+          },
         );
         res.send('Email was sent (if it exists) with a code!');
         const output = `
@@ -203,7 +197,7 @@ export const forgotPW = async (req: Request, res: Response) => {
           subject: 'Change password code - Devcademy',
           html: output,
         });
-      }
+      },
     );
   } catch (e) {
     console.log(e);
@@ -211,28 +205,26 @@ export const forgotPW = async (req: Request, res: Response) => {
   }
 };
 
-export const verifyPWCodeChange = async (req: Request, res: Response) => {
+export const verifyPWCodeChange = async (req: Request, res: Response): Promise<Response|undefined> => {
   try {
     const { email, code } = req.body;
     const user = await UserModel.findOne({ email: email.toLowerCase() });
     if (!user) return res.status(401).send('Invalid code!');
     const decodedJWTCode = jwt.verify(
       user.forgotPWToken,
-      jwtSecret as string
+      jwtSecret as string,
     );
-    if ((decodedJWTCode as MyIForgotToken).user.code !== code)
-      return res.status(401).send('Invalid code!');
-
+    if ((decodedJWTCode as MyIForgotToken).user.code !== code) return res.status(401).send('Invalid code!');
 
     // 2 minutes to change pw
     jwt.sign(
-      {user: {id: user._id}},
+      { user: { id: user._id } },
       jwtSecret as string,
       { expiresIn: 120 },
       async (err, token) => {
         if (err) throw err;
         res.status(200).send({ token });
-      }
+      },
     );
   } catch (e) {
     if (e.name) {
@@ -243,7 +235,7 @@ export const verifyPWCodeChange = async (req: Request, res: Response) => {
   }
 };
 
-export const changePassword = async (req: Request, res: Response) => {
+export const changePassword = async (req: Request, res: Response): Promise<Response|undefined> => {
   try {
     const { password, passwordRepeat } = req.body;
     if (password.length < 6) {
@@ -261,7 +253,7 @@ export const changePassword = async (req: Request, res: Response) => {
       { _id: userID },
       {
         $set: { password: newPassword },
-      }
+      },
     );
     return res.status(200).send('Password changed succesfully!');
   } catch (e) {
@@ -269,7 +261,7 @@ export const changePassword = async (req: Request, res: Response) => {
   }
 };
 
-export const changePasswordInApp = async (req: Request, res: Response) => {
+export const changePasswordInApp = async (req: Request, res: Response): Promise<Response|undefined> => {
   try {
     const userID = res.locals.user.id;
     const user = await UserModel.findById(userID);
@@ -299,7 +291,7 @@ export const changePasswordInApp = async (req: Request, res: Response) => {
         { _id: userID },
         {
           $set: { password: newPassword },
-        }
+        },
       );
       return res.status(204).send('Password changed succesfully!');
     }
@@ -309,4 +301,3 @@ export const changePasswordInApp = async (req: Request, res: Response) => {
     res.status(500).send({ msg: 'Internal server error!', statusCode: 500 });
   }
 };
-

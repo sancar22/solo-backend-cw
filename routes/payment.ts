@@ -4,27 +4,26 @@ import authAdminMiddleware from '../middleware/admin';
 import adminController from '../controllers/admin/payment';
 import clientController from '../controllers/client/payment';
 
-
 const router = Router();
 
 router.post(
   '/course/premium',
   authMiddleware,
-  clientController.payPremiumCourse
+  clientController.payPremiumCourse,
 );
 
 router.get(
   '/admin/purchases',
   authMiddleware,
   authAdminMiddleware,
-  adminController.getPurchases
+  adminController.getPurchases,
 );
 
 router.get(
   '/admin/getPurchaseById/:id',
   authMiddleware,
   authAdminMiddleware,
-  adminController.getPurchaseById
+  adminController.getPurchaseById,
 );
 
 export default router;

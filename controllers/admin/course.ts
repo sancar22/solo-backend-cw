@@ -1,13 +1,12 @@
 import Stripe from 'stripe';
-import CourseModel from '../../models/course';
-import { Course } from '../../models/course';
-import Topic from '../../models/topic';
-import UserCourseModel from '../../models/userCourse';
-import UserTopic from '../../models/userTopic';
-import uploadFile from '../../lib/uploadFile';
-import {Request, Response} from 'express';
+import { Request, Response } from 'express';
 import { UpdateQuery } from 'mongoose';
+import CourseModel, { Course } from '../../models/course';
 
+import TopicModel from '../../models/topic';
+import UserCourseModel from '../../models/userCourse';
+import UserTopicModel from '../../models/userTopic';
+import uploadFile from '../../lib/uploadFile';
 
 const secret = String(process.env.secretAPITestStripe);
 
@@ -15,8 +14,7 @@ const stripe = new Stripe(secret, {
   apiVersion: '2020-08-27',
 });
 
-
-const getAllCourses = async (req: Request, res: Response) => {
+const getAllCourses = async (req: Request, res: Response): Promise<void|Response> => {
   try {
     const courses = await CourseModel.find({ enabled: true });
     if (!courses) return res.send('No courses are available!');
@@ -33,7 +31,9 @@ const getAllCourses = async (req: Request, res: Response) => {
         type: 'string',
         required: true,
       },
-      { field: 'price', headerName: 'Price', type: 'currency', required: true },
+      {
+        field: 'price', headerName: 'Price', type: 'currency', required: true,
+      },
       {
         field: 'coverImageURL',
         headerName: 'Cover Image',
@@ -66,7 +66,7 @@ const getAllCourses = async (req: Request, res: Response) => {
   }
 };
 
-const getCoursesById = async (req: Request, res: Response) => {
+const getCoursesById = async (req: Request, res: Response): Promise<void|Response> => {
   try {
     const course = await CourseModel.findOne({
       _id: req.params.id,
@@ -88,7 +88,9 @@ const getCoursesById = async (req: Request, res: Response) => {
         type: 'string',
         required: true,
       },
-      { field: 'price', headerName: 'Price', type: 'currency', required: true },
+      {
+        field: 'price', headerName: 'Price', type: 'currency', required: true,
+      },
       {
         field: 'coverImageURL',
         headerName: 'Cover Image',
@@ -114,15 +116,14 @@ const getCoursesById = async (req: Request, res: Response) => {
   }
 };
 
-const addCourse = async (req: Request, res: Response) => {
+const addCourse = async (req: Request, res: Response): Promise<void|Response> => {
   try {
-    let price: string = req.body.price;
+    let { price } = req.body;
     const { coverImageURL, name, description } = req.body;
-    if (!coverImageURL)
-      return res.status(400).send('You have to insert a cover image!');
+    if (!coverImageURL) return res.status(400).send('You have to insert a cover image!');
     if (!price) price = '0';
 
-    //TODO
+    // TODO
     // what is happening here, update the docs
     const { data, mime } = coverImageURL;
     const URLfromS3 = await uploadFile(data, mime);
@@ -149,7 +150,7 @@ const addCourse = async (req: Request, res: Response) => {
   }
 };
 
-const editCourse = async (req: Request, res: Response) => {
+const editCourse = async (req: Request, res: Response): Promise<void> => {
   try {
     let { price } = req.body;
     const { coverImageURL, name, description } = req.body;
@@ -164,8 +165,8 @@ const editCourse = async (req: Request, res: Response) => {
       let URLfromS3;
       if (coverImageURL && coverImageURL !== course.coverImageURL) {
         const { data, mime } = coverImageURL;
-        const url = await uploadFile(data, mime)
-        URLfromS3 =  url ? url : '';
+        const url = await uploadFile(data, mime);
+        URLfromS3 = url || '';
       }
 
       let priceID = course.priceStripeID;
@@ -190,7 +191,7 @@ const editCourse = async (req: Request, res: Response) => {
             price,
             priceStripeID: priceID,
           },
-        }
+        },
       );
 
       res.status(200).send('Course edited successfully!');
@@ -203,9 +204,9 @@ const editCourse = async (req: Request, res: Response) => {
   }
 };
 
-const deleteCourse = async (req: Request, res: Response) => {
+const deleteCourse = async (req: Request, res: Response): Promise<void> => {
   const courseID = req.params.id;
-  const update: UpdateQuery<Course> = {enabled: false};
+  const update: UpdateQuery<Course> = { enabled: false };
 
   try {
     await CourseModel.updateOne(
@@ -213,9 +214,9 @@ const deleteCourse = async (req: Request, res: Response) => {
       update,
     );
     // deleting topics related to course
-    await Topic.updateMany({ courseID }, { enabled: false });
+    await TopicModel.updateMany({ courseID }, { enabled: false });
     await UserCourseModel.updateMany({ courseID }, { enabled: false });
-    await UserTopic.updateMany({ courseID }, { enabled: false });
+    await UserTopicModel.updateMany({ courseID }, { enabled: false });
     res.status(200).send('Course deleted succesfully!');
   } catch (e) {
     console.log(e);
@@ -224,5 +225,5 @@ const deleteCourse = async (req: Request, res: Response) => {
 };
 
 export default {
-  getAllCourses, getCoursesById, addCourse, editCourse, deleteCourse
-}
+  getAllCourses, getCoursesById, addCourse, editCourse, deleteCourse,
+};

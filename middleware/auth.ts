@@ -1,8 +1,16 @@
-import { Request, Response, NextFunction } from "express";
-const jwt = require('jsonwebtoken');
+import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
 
+const jwtSecret = String(process.env.jwtSecret);
 
-export default function (req: Request, res: Response, next: NextFunction) {
+interface MyToken {
+  name: string;
+  user: {
+    id: string;
+  };
+}
+
+export default (req: Request, res: Response, next: NextFunction): void | Response => {
   // Get token from header (protected route)
   const authHeader = req.header('Authorization');
 
@@ -14,8 +22,8 @@ export default function (req: Request, res: Response, next: NextFunction) {
   // Verify token
   try {
     const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, process.env.jwtSecret);
-    res.locals.user = decoded.user;
+    const decoded = jwt.verify(token, jwtSecret);
+    res.locals.user = (decoded as MyToken).user;
     next();
   } catch (err) {
     if (err.name) {

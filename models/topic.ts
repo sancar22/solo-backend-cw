@@ -3,12 +3,13 @@ import { Model, Schema, model } from 'mongoose';
 
 export interface Topic {
   _id: string,
-  enabled: Boolean,
+  enabled: boolean,
   courseID: string;
   name: string;
   description: string;
   videoURL: string;
-  questions: any[]; //TODO interface the objects in here
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  questions: any[]; // TODO interface the objects in here
 }
 
 const TopicSchema = new Schema<Topic>(
@@ -41,7 +42,7 @@ const TopicSchema = new Schema<Topic>(
   {
     versionKey: false,
     timestamps: true,
-  }
+  },
 );
 
 const Topic: Model<Topic> = model('Topic', TopicSchema);

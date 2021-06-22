@@ -1,22 +1,23 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import AWS from 'aws-sdk';
 import shortid from 'shortid';
 import moment from 'moment';
 
 declare const Buffer: any;
 
-const {AWS_S3_BUCKET_NAME} = process.env;
-const bucket_name = `${AWS_S3_BUCKET_NAME}`
+const bucket_name = String(process.env.AWS_S3_BUCKET_NAME);
 
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_S3_ID,
   secretAccessKey: process.env.AWS_S3_SECRET,
 });
 
-export default async function uploadFile(file: any, type: string) {
+export default async function uploadFile(file: any, type: string): Promise<string|undefined> {
   // Setting up S3 upload parameters
   const base64Data = new Buffer.from(
     file.replace(/^data:image\/\w+;base64,/, ''),
-    'base64'
+    'base64',
   );
   const key = shortid.generate() + moment().valueOf();
 
@@ -36,4 +37,4 @@ export default async function uploadFile(file: any, type: string) {
   } catch (error) {
     console.log(error);
   }
-};
+}

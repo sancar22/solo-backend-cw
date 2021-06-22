@@ -1,17 +1,14 @@
-import {Request, Response} from 'express';
-import Course from '../../models/course';
-import {Topic} from '../../models/topic';
-import TopicModel from '../../models/topic';
-import UserTopicModel from '../../models/userTopic';
-import {UserTopic} from '../../models/userTopic';
+import { Request, Response } from 'express';
+import CourseModel from '../../models/course';
+import TopicModel, { Topic } from '../../models/topic';
 
+import UserTopicModel from '../../models/userTopic';
 
 interface ClientTopic extends Topic {
   courseName: string;
 }
 
-
-const getAllTopics = async (req: Request, res: Response) => {
+const getAllTopics = async (req: Request, res: Response): Promise<void|Response> => {
   try {
     const topics = await TopicModel.aggregate([
       {
@@ -96,18 +93,17 @@ const getAllTopics = async (req: Request, res: Response) => {
   }
 };
 
-const getTopicsById = async (req: Request, res: Response) => {
+const getTopicsById = async (req: Request, res: Response): Promise<void> => {
   try {
     const topic = await TopicModel.findOne({
       _id: req.params.id,
       enabled: true,
     }).lean();
 
-
     if (topic) {
-      const course = await Course.findById(topic.courseID);
+      const course = await CourseModel.findById(topic.courseID);
       if (course) {
-        const clientTopic: ClientTopic = {...topic, courseName: course.name};
+        const clientTopic: ClientTopic = { ...topic, courseName: course.name };
 
         const filteredKeys = [
           {
@@ -155,14 +151,13 @@ const getTopicsById = async (req: Request, res: Response) => {
         });
       } else res.status(404).send('course not found');
     } else res.status(404).send('topic not found');
-
   } catch (e) {
     console.log(e);
     res.status(500).send('Internal Server Error!');
   }
 };
 
-const addTopic = async (req: Request, res: Response) => {
+const addTopic = async (req: Request, res: Response): Promise<void> => {
   try {
     await TopicModel.create(req.body);
     res.status(201).send('Topic added succesfully!');
@@ -172,9 +167,11 @@ const addTopic = async (req: Request, res: Response) => {
   }
 };
 
-const editTopic = async (req: Request, res: Response) => {
+const editTopic = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { questions, videoURL, name, description } = req.body;
+    const {
+      questions, videoURL, name, description,
+    } = req.body;
     await TopicModel.updateOne(
       { _id: req.params.id },
       {
@@ -184,7 +181,7 @@ const editTopic = async (req: Request, res: Response) => {
           name,
           description,
         },
-      }
+      },
     );
     res.status(200).send('Topic edited successfully!');
   } catch (e) {
@@ -193,7 +190,7 @@ const editTopic = async (req: Request, res: Response) => {
   }
 };
 
-const deleteTopic = async (req: Request, res: Response) => {
+const deleteTopic = async (req: Request, res: Response): Promise<void> => {
   const topicID = req.params.id;
   try {
     await TopicModel.updateOne(
@@ -202,7 +199,7 @@ const deleteTopic = async (req: Request, res: Response) => {
         $set: {
           enabled: false,
         },
-      }
+      },
     );
     await UserTopicModel.updateMany({ topicID }, { enabled: false });
     res.status(200).send('Topic deleted succesfully!');
@@ -213,7 +210,5 @@ const deleteTopic = async (req: Request, res: Response) => {
 };
 
 export default {
-  getAllTopics, getTopicsById, addTopic, editTopic, deleteTopic
-}
-
-
+  getAllTopics, getTopicsById, addTopic, editTopic, deleteTopic,
+};

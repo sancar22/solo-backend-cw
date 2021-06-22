@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import moment from 'moment';
 
-export const generateHeader = (doc: any, name: string) => {
+export const generateHeader = (doc: any, name: string): void => {
   doc
     .image('assets/images/DEVcademy.png', 50, 45, { width: 200 })
     .fillColor('#444444')
@@ -8,50 +10,52 @@ export const generateHeader = (doc: any, name: string) => {
     .text(name, 250, 120)
     .fontSize(10)
     .moveDown();
-}
+};
 
-export const generateHr = (doc: any, y: number) => {
-  doc.strokeColor('#aaaaaa').lineWidth(1).moveTo(50, y).lineTo(570, y).stroke();
-}
+export const generateHr = (doc: any, y: number): void => {
+  doc.strokeColor('#aaaaaa').lineWidth(1).moveTo(50, y).lineTo(570, y)
+    .stroke();
+};
 
-export const generateTableRow = (doc: any, y: number, c1: string, c2: string, c3: string) => {
+export const generateTableRow = (doc: any, y: number, c1: string, c2: string, c3: string): void => {
   doc
     .fontSize(10)
     .text(c1, 50, y)
     .text(c2, 220, y)
-    .text(c3, 270, y, { width: 90, align: 'right' })
-    // .text(c4, 330, y, { width: 90, align: 'right' })
-    // .text(c5, 500, y);
+    .text(c3, 270, y, { width: 90, align: 'right' });
+  // .text(c4, 330, y, { width: 90, align: 'right' })
+  // .text(c5, 500, y);
   generateHr(doc, y + 20);
-}
+};
 
-export const generateTableRowTitles = (doc: any, y: number, c1: string, c2: string, c3: string) => {
+export const generateTableRowTitles = (doc: any, y: number, c1: string, c2: string,
+  c3: string): void => {
   doc
     .fontSize(10)
     .text(c1, 50, y)
     .text(c2, 180, y)
-    .text(c3, 290, y, { width: 90, align: 'right' })
-    // .text(c4, 350, y, { width: 90, align: 'right' })
-    // .text(c5, 0, y, { align: 'right' });
+    .text(c3, 290, y, { width: 90, align: 'right' });
+  // .text(c4, 350, y, { width: 90, align: 'right' })
+  // .text(c5, 0, y, { align: 'right' });
   generateHr(doc, y + 20);
-}
+};
 
-export const generateFooter = (doc: any, startDate: Date, endDate: Date) => {
+export const generateFooter = (doc: any, startDate: Date, endDate: Date): void => {
   doc
     .fontSize(10)
     .text(
       `This report was generated for the following dates: From ${moment(
-        startDate
+        startDate,
       ).format('MMMM Do YYYY, h:mm:ss a')} to  ${moment(endDate).format(
-        'MMMM Do YYYY, h:mm:ss a'
+        'MMMM Do YYYY, h:mm:ss a',
       )}.`,
       50,
       710,
-      { align: 'center', width: 500 }
+      { align: 'center', width: 500 },
     );
-}
+};
 
-export const generateInvoiceTable = (doc: any, invoice: any) => {
+export const generateInvoiceTable = (doc: any, invoice: any): number => {
   let i;
   const invoiceTableTop = 230;
   doc.font('Helvetica-Bold');
@@ -60,7 +64,7 @@ export const generateInvoiceTable = (doc: any, invoice: any) => {
     invoiceTableTop,
     'Course',
     'People enrolled',
-    'Income (USD)'
+    'Income (USD)',
   );
   doc.font('Helvetica');
   generateHr(doc, invoiceTableTop + 20);
@@ -73,12 +77,12 @@ export const generateInvoiceTable = (doc: any, invoice: any) => {
       position,
       item.name,
       item.peopleEnrolled,
-      item.moneyGenerated
+      item.moneyGenerated,
     );
     positionTracker = position;
   }
   return positionTracker;
-}
+};
 
 export default {
   generateFooter,

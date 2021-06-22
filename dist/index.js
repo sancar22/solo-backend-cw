@@ -1,7 +1,7 @@
-"use strict";
 const cors = require('cors');
 const express = require('express');
 const connectDB = require('./db/db');
+
 const port = process.env.PORT || 5000;
 const app = express();
 app.use(cors());
@@ -14,5 +14,6 @@ app.use('/course', require('./routes/course'));
 app.use('/topic', require('./routes/topic'));
 app.use('/payment', require('./routes/payment'));
 app.use('/stats', require('./routes/stats'));
+
 connectDB();
 app.listen(port, () => console.log('Server running!'));

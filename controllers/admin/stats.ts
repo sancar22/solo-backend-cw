@@ -1,17 +1,17 @@
-import PDFDocument from'pdfkit';
-import {Request, Response} from 'express';
-import moment from'moment';
-import Course from'../../models/course';
-import UserTopic from'../../models/userTopic';
+import PDFDocument from 'pdfkit';
+import { Request, Response } from 'express';
+import moment from 'moment';
+import CourseModel from '../../models/course';
+import UserTopicModel from '../../models/userTopic';
 import {
   generateFooter,
   generateHeader,
   generateInvoiceTable,
 } from '../../lib/pdf';
 
-const getGlobalStats = async (req: Request, res: Response) => {
+const getGlobalStats = async (req: Request, res: Response): Promise<void> => {
   try {
-    //TODO
+    // TODO
     // what is request.query?
     const startDateQuery = String(req.query.startDateQuery);
     const endDateQuery = String(req.query.endDateQuery);
@@ -19,7 +19,7 @@ const getGlobalStats = async (req: Request, res: Response) => {
     // this may be a problem we're not sure what effect this will have
     const startDate = new Date(startDateQuery);
     const endDate = new Date(endDateQuery);
-    const globalMoneyQuery = await Course.aggregate([
+    const globalMoneyQuery = await CourseModel.aggregate([
       {
         $match: {
           enabled: true,
@@ -92,12 +92,12 @@ const getGlobalStats = async (req: Request, res: Response) => {
       .fontSize(10)
       .text(
         `The profit generated  from ${moment(startDate).format(
-          'MMMM Do YYYY, h:mm:ss a'
+          'MMMM Do YYYY, h:mm:ss a',
         )} to  ${moment(endDate).format(
-          'MMMM Do YYYY, h:mm:ss a'
+          'MMMM Do YYYY, h:mm:ss a',
         )} was ${totalMoneyGenerated} USD. `,
         50,
-        currentHeight + 30
+        currentHeight + 30,
       )
       .moveDown();
     doc
@@ -105,7 +105,7 @@ const getGlobalStats = async (req: Request, res: Response) => {
       .text(
         `Total number of people enrolled in courses during these dates: ${totalPeopleEnrolled}.`,
         50,
-        currentHeight + 50
+        currentHeight + 50,
       )
       .moveDown();
     generateFooter(doc, startDate, endDate);
@@ -117,9 +117,9 @@ const getGlobalStats = async (req: Request, res: Response) => {
   }
 };
 
-const getAllTestResults = async (req: Request, res: Response) => {
+const getAllTestResults = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userTests = await UserTopic.aggregate([
+    const userTests = await UserTopicModel.aggregate([
       {
         $match: {
           enabled: true,
@@ -279,9 +279,9 @@ const getAllTestResults = async (req: Request, res: Response) => {
   }
 };
 
-const getTestResultById = async (req: Request, res: Response) => {
+const getTestResultById = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userTests = await UserTopic.aggregate([
+    const userTests = await UserTopicModel.aggregate([
       {
         $match: {
           enabled: true,
@@ -450,5 +450,5 @@ const getTestResultById = async (req: Request, res: Response) => {
 };
 
 export default {
-  getGlobalStats, getAllTestResults, getTestResultById
-}
+  getGlobalStats, getAllTestResults, getTestResultById,
+};

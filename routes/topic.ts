@@ -11,55 +11,54 @@ router.get(
   '/admin/getAllTopics',
   authMiddleware,
   authAdminMiddleware,
-  adminController.getAllTopics
+  adminController.getAllTopics,
 );
 
 router.get(
   '/admin/getTopicById/:id',
   authMiddleware,
   authAdminMiddleware,
-  adminController.getTopicsById
+  adminController.getTopicsById,
 );
 
 router.post(
   '/admin/add',
   authMiddleware,
   authAdminMiddleware,
-  adminController.addTopic
+  adminController.addTopic,
 );
 
 router.put(
   '/admin/edit/:id',
   authMiddleware,
   authAdminMiddleware,
-  adminController.editTopic
+  adminController.editTopic,
 );
 
 router.delete(
   '/admin/delete/:id',
   authMiddleware,
   authAdminMiddleware,
-  adminController.deleteTopic
+  adminController.deleteTopic,
 );
-
 
 // client
 router.get(
   '/client-side/allTopics/:courseID',
   authMiddleware,
-  clientController.getTopicsClientSide
+  clientController.getTopicsClientSide,
 );
 
 router.get(
   '/client-side/getTopicById/:topicID',
   authMiddleware,
-  clientController.getTopicById
+  clientController.getTopicById,
 );
 
 router.get(
   '/client-side/completedTopics/:courseID',
   authMiddleware,
-  clientController.getCompletedTopicsForCourse
+  clientController.getCompletedTopicsForCourse,
 );
 
 router.post('/submitTest', authMiddleware, clientController.submitTest);

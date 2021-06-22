@@ -1,9 +1,7 @@
 import { Request, Response } from 'express';
-import TopicModel from '../../models/topic';
-import { Topic } from '../../models/topic';
-import UserTopicModel from '../../models/userTopic';
-import { UserTopic } from '../../models/userTopic';
+import TopicModel, { Topic } from '../../models/topic';
 
+import UserTopicModel, { UserTopic } from '../../models/userTopic';
 
 interface TopicStatus extends Topic {
   completed: boolean;
@@ -14,8 +12,7 @@ interface ClientUserTopic extends UserTopic {
   description: string;
 }
 
-
-const getTopicsClientSide = async (req: Request, res: Response) => {
+const getTopicsClientSide = async (req: Request, res: Response): Promise<void> => {
   try {
     const userID = res.locals.user.id;
     const { courseID } = req.params;
@@ -23,8 +20,9 @@ const getTopicsClientSide = async (req: Request, res: Response) => {
 
     const topicsWithStatus: TopicStatus[] = [];
     for (let i = 0; i < allTopics.length; i++) {
-      const currentTopic: TopicStatus = {...allTopics[i],
-        completed: false
+      const currentTopic: TopicStatus = {
+        ...allTopics[i],
+        completed: false,
       };
       const userTopic = await UserTopicModel.findOne({
         topicID: currentTopic._id,
@@ -43,7 +41,7 @@ const getTopicsClientSide = async (req: Request, res: Response) => {
   }
 };
 
-const getTopicById = async (req: Request, res: Response) => {
+const getTopicById = async (req: Request, res: Response): Promise<void> => {
   try {
     const { topicID } = req.params;
     const topic = await TopicModel.findOne({ _id: topicID, enabled: true }).lean();
@@ -66,7 +64,7 @@ const getTopicById = async (req: Request, res: Response) => {
   }
 };
 
-const getCompletedTopicsForCourse = async (req: Request, res: Response) => {
+const getCompletedTopicsForCourse = async (req: Request, res: Response): Promise<void> => {
   try {
     const userID = res.locals.user.id;
     const { courseID } = req.params;
@@ -78,17 +76,18 @@ const getCompletedTopicsForCourse = async (req: Request, res: Response) => {
 
     const clientTopicsForCourse: ClientUserTopic[] = [];
     for (let i = 0; i < completedTopicsForCourse.length; i++) {
-      let currentUserTopic = completedTopicsForCourse[i];
+      const currentUserTopic = completedTopicsForCourse[i];
       const topic = await TopicModel.findOne({
         _id: currentUserTopic.topicID,
         enabled: true,
       });
 
       if (topic) {
-        const clientUserTopic: ClientUserTopic = {...currentUserTopic,
+        const clientUserTopic: ClientUserTopic = {
+          ...currentUserTopic,
           name: topic.name,
-          description: topic.description
-        }
+          description: topic.description,
+        };
         clientTopicsForCourse.push(clientUserTopic);
       }
     }
@@ -99,7 +98,7 @@ const getCompletedTopicsForCourse = async (req: Request, res: Response) => {
   }
 };
 
-const submitTest = async (req: Request, res: Response) => {
+const submitTest = async (req: Request, res: Response): Promise<void> => {
   try {
     const userID = res.locals.user.id;
     const { responses, courseID, topicID } = req.body;
@@ -111,7 +110,7 @@ const submitTest = async (req: Request, res: Response) => {
       }
     }
     const score = parseFloat(
-      ((numberOfCorrectQuestions / totalQuestions) * 100).toFixed(2)
+      ((numberOfCorrectQuestions / totalQuestions) * 100).toFixed(2),
     );
     await UserTopicModel.create({
       userID,
@@ -131,8 +130,7 @@ const submitTest = async (req: Request, res: Response) => {
       message = 'Congratulations, you passed the test!';
       passed = true;
     } else if (score < 50) {
-      message =
-        'Too bad, you failed the test. You can see what you answered wrong in the course progress!';
+      message = 'Too bad, you failed the test. You can see what you answered wrong in the course progress!';
     }
     res.send({
       score,
@@ -147,7 +145,6 @@ const submitTest = async (req: Request, res: Response) => {
   }
 };
 
-
 export default {
-  getTopicsClientSide, getTopicById, getCompletedTopicsForCourse, submitTest
-}
+  getTopicsClientSide, getTopicById, getCompletedTopicsForCourse, submitTest,
+};

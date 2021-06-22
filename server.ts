@@ -8,8 +8,6 @@ import topicRouter from './routes/topic';
 import paymentRouter from './routes/payment';
 import statsRouter from './routes/stats';
 
-const port = process.env.PORT || 5000;
-
 const bootServer = (port: number): http.Server => {
   const app = express();
   app.use(cors());
@@ -32,6 +30,6 @@ const bootServer = (port: number): http.Server => {
   });
 
   return server;
-}
+};
 
 export default bootServer;
