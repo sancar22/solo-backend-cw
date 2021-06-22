@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import CourseModel from '../../models/course';
-import { Course } from '../../models/course';
-import UserCourseModel from '../../models/userCourse';
-import { UserCourse } from '../../models/userCourse';
+
+import CourseModel, { Course } from '../../models/course';
+import UserCourseModel,{ UserCourse } from '../../models/userCourse';
 import UserTopic from '../../models/userTopic';
 import Topic from '../../models/topic';
+
 
 
 interface ClientCourse extends Course {
@@ -27,7 +27,6 @@ const calculateCourseProgress  = async (userCourses: UserCourse[], userID: strin
   const result: ClientUserCourse[] = [];
 
   for (let i = 0; i < userCourses.length; i++) {
-
     const currentCourse = userCourses[i];
 
     const topicsFromCourse = await Topic.find({
@@ -57,7 +56,6 @@ const calculateCourseProgress  = async (userCourses: UserCourse[], userID: strin
   }
   return result;
 }
-
 
 const getActivitiesClientSide = async (req: Request, res: Response) => {
   try {

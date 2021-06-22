@@ -20,7 +20,6 @@ let mockUsers: User[];
 let mockCourses: Course[];
 
 
-
 beforeAll(async () => {
   db = await bootDB(connectionString);
   if (db) {

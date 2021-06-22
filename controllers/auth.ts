@@ -70,6 +70,7 @@ export const login = async (req: Request, res: Response) => {
   try {
     await loginFunction(email, password, res, false);
   } catch (e) {
+    console.log(e)
     res.status(500).send('Internal Server Error!');
   }
 };

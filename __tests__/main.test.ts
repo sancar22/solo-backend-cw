@@ -1,25 +1,30 @@
 import { Mongoose } from 'mongoose';
 import request, { Test } from 'supertest';
 import { Server } from 'http';
+
 import bootServer from '../server';
 import bootDB from '../db/db';
 import { seedDb } from '../__seed__/index';
+
 import { User } from '../models/user';
 import { UserCourse } from '../models/userCourse';
+
+
 
 const port = Number(process.env.TEST_PORT);
 const connectionString = String(process.env.TEST_DB_CONN);
 
 let server: Server;
 let db: Mongoose | undefined;
-
 let seedUsers: User[];
 let seedUserCourses: UserCourse[];
+
+
+export const random = (max: number): number => Math.floor(Math.random() * max);
 
 beforeAll(async () => {
   db = await bootDB(connectionString);
   if (db) {
-    await db?.connection.db.dropDatabase();
     const seedData = await seedDb(db);
     seedUsers = seedData.User;
     seedUserCourses = seedData.UserCourse;
@@ -39,61 +44,48 @@ describe('POST /auth/login', () => {
   });
 
   // TODO
-  // if user not in mocks, return 401
-  // if invalid username, return 401
-  // if invalid password, return 401
-  // if user account not verified, return 401
   // if successful, return 200
 
   test('rejects if user not in mocks', async () => {
-    // console.log('SEED USERS ARE: ', seedUsers);
     const response = await endpoint.send({
-      name: 'Sally',
-      email: 'sally@example.com',
+      email: 'bob@example.com',
       password: 'password123',
-      admin: false,
     });
     expect(response.status).toBe(401);
   });
 
   test('rejects if username not valid', async () => {
     const response = await endpoint.send({
-      name: 'Bob',
       email: 'bob@example.com',
       password: 'password123',
-      admin: false,
     });
     expect(response.status).toBe(401);
   });
 
   test('rejects if password not valid', async () => {
     const response = await endpoint.send({
-      name: 'Bob',
       email: 'bob@example.com',
       password: 'password123',
-      admin: false,
     });
     expect(response.status).toBe(401);
   });
 
   test('rejects if user account not verified', async () => {
     const response = await endpoint.send({
-      name: 'Bob',
       email: 'bob@example.com',
       password: 'password123',
-      admin: false,
     });
     expect(response.status).toBe(401);
   });
 
-  // test('200 if successful', async () => {
-  //   const response = await endpoint.send({
-  //     email: seedUsers[0].email,
-  //     password: seedUsers[0].password
-  //   }
-  //   );
-  //   expect(response.status).toBe(200);
-  // });
+  test('200 if successful', async () => {
+    const response = await endpoint.send({
+      email: 'kip@test.com',
+      password: 'password'
+    }
+    );
+    expect(response.status).toBe(200);
+  });
 
 })
 
@@ -102,14 +94,6 @@ describe('POST /auth/register', () => {
   beforeEach(() => {
     endpoint = request(server).post('/auth/register');
   });
-
-  // TODO
-  // rejects if no name provided
-  // rejects if email not valid
-  // rejects if user already exists
-  // rejects if password not long enough
-  // rejects if password is incorrect
-  // if successul, return 201
 
   test('rejects if no name provided', async () => {
     const response = await endpoint.send({
@@ -176,10 +160,6 @@ describe('POST /auth/forgotPW', () => {
     endpoint = request(server).post('/auth/forgotPW');
   });
 
-  // TODO
-  // if user doesn't exist, send 200
-  // if user exists, send 200
-
   test('sends 200 if user not in db', async () => {
     const response = await endpoint.send({
       name: 'Bob',
@@ -208,20 +188,18 @@ describe('POST /auth/verifyEmailCode', () => {
   });
 
   // TODO
-  // if user doesn't exist, send 401
-  // if user exists but code is incorrect, send 401
-  // if password updated successfully, send 200
-  // if token expires before reset, send 401
+  // (Uses verifyPWCodeChange)
+  // if email verified successfully, send 200 - How?
+  // if token expires before reset, send 401 - How?
 
   test('rejects if user does not exist', async () => {
     const response = await endpoint.send({
-      name: 'Bob',
-      email: 'bob@example.com',
-      password: 'password123',
-      passwordRepeat: 'password123',
+      email: seedUsers[random(seedUsers.length)].email,
+      code: Math.random() * 10000
     });
     expect(response.status).toBe(401);
   });
+
 })
 
 describe('POST /auth/changePW', () => {
@@ -231,14 +209,10 @@ describe('POST /auth/changePW', () => {
   });
 
   // TODO
-  // if password isn't long enough, send 400
-  // if passwords don't match, send 401
   // if successful, send 200
 
   test('rejects if password not long enough', async () => {
     const response = await endpoint.send({
-      name: 'Bob',
-      email: 'bob@example.com',
       password: 'passw',
       passwordRepeat: 'passw',
     });
@@ -254,6 +228,14 @@ describe('POST /auth/changePW', () => {
     });
     expect(response.status).toBe(401);
   });
+
+  test('successful if password changed', async () => {
+    const response = await endpoint.send({
+      password: 'password1234',
+      passwordRepeat: 'password1234',
+    });
+    expect(response.status).toBe(200);
+  });
 })
 
 describe('POST /auth/changePWInApp', () => {
@@ -263,28 +245,55 @@ describe('POST /auth/changePWInApp', () => {
   });
 
   // TODO
-  // if passwords is not correct, send 401
+  // if password is not correct, send 401
   // if password isn't long enough, send 400
-  // if passwords don't match, send 401
-  // if password has already been used, send 401
+  // if passwordRepeat doesn't match password, send 401
+  // if password is same as current one, send 401 - NEED PW
   // if successful, send 204
+
+
 
   test('rejects if password is not correct', async () => {
     const response = await endpoint.send({
-      name: 'Bob',
-      email: 'bob@example.com',
-      password: 'password',
-      passwordRepeat: 'password',
+      oldPassword: 'password',
+      password: 'newpassword',
+      passwordRepeat: 'newpassword'
     });
     expect(response.status).toBe(401);
   });
 
   test('rejects if password not long enough', async () => {
     const response = await endpoint.send({
-      name: 'Bob',
-      email: 'bob@example.com',
-      password: 'passw',
-      passwordRepeat: 'passw',
+      oldPassword: 'password',
+      password: 'newpassword',
+      passwordRepeat: 'newpassword'
+    });
+    expect(response.status).toBe(401);
+  });
+
+  test('rejects if passwordRepeat does not match password', async () => {
+    const response = await endpoint.send({
+      oldPassword: 'password',
+      password: 'newpassword',
+      passwordRepeat: 'newpassword'
+    });
+    expect(response.status).toBe(401);
+  });
+
+  test('rejects if password same as current one', async () => {
+    const response = await endpoint.send({
+      oldPassword: 'password',
+      password: 'newpassword',
+      passwordRepeat: 'newpassword'
+    });
+    expect(response.status).toBe(401);
+  });
+
+  test('successful if password changed', async () => {
+    const response = await endpoint.send({
+      oldPassword: 'password',
+      password: 'newpassword',
+      passwordRepeat: 'newpassword'
     });
     expect(response.status).toBe(401);
   });
@@ -292,6 +301,7 @@ describe('POST /auth/changePWInApp', () => {
 
 
 afterAll(async () => {
+  await db?.connection.db.dropDatabase();
   await db?.connection.close();
   await server.close();
 });

@@ -18,10 +18,10 @@ import userTopics from './mockData/usertopics.json';
 
 export interface DbSeedData {
   Admin: Admin[],
+  User: User[],
   Course: Course[],
   Topic: Topic[],
   Transaction: Transaction[],
-  User: User[],
   UserCourse: UserCourse[],
   UserTopic: UserTopic[]
 }
