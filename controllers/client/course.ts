@@ -59,8 +59,6 @@ const calculateCourseProgress  = async (userCourses: UserCourse[], userID: strin
 }
 
 
-
-
 const getActivitiesClientSide = async (req: Request, res: Response) => {
   try {
     const userID = res.locals.user.id;

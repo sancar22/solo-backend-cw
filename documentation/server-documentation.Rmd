@@ -390,7 +390,7 @@ The following have been outlined for each endpoint,
 
 
 <br/>
-`/client-side/myCourses` client view courses a user is enrolled in
+`/client-side/myCourses` client view courses a user is enrolled in + their progress
 * GET
 * Headers:`Authorization: bearer token`
 * Response: **200**, courses
