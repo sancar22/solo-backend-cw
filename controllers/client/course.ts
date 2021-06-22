@@ -22,7 +22,6 @@ interface ClientUserCourse extends UserCourse {
 }
 
 
-
 const calculateCourseProgress  = async (userCourses: UserCourse[], userID: string) => {
   const result: ClientUserCourse[] = [];
 
