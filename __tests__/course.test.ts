@@ -11,14 +11,10 @@ import UserCourse from '../models/userCourse';
 const port = Number(process.env.COURSE_PORT);
 const connectionString = String(process.env.COURSE_TEST_DB_CONN);
 
-interface tokenResponse {
-  token: string;
-};
-
 let server: Server;
 let db: Mongoose | undefined;
 let mockUsers: User[];
-let mockCourses: Course[]
+let mockCourses: Course[];
 
 beforeAll(async () => {
   db = await bootDB(connectionString);
@@ -43,20 +39,20 @@ describe('POST /enroll/free', () => {
     const response = await request(server).post('/auth/login').send({
       email: "charley@test.com",
       password: "password"
-    })
+    });
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('token');
     token = response.body.token;
-  })
+  });
 
   test('should require authentication', async () => {
     const response = await endpoint.send({
       course: {
         _id: mockCourses[1]._id
       }
-    })
+    });
     expect(response.status).toBe(401);
-  })
+  });
 
   test('enrolls in free course if authenticated', async () => {
     const userID = mockUsers[3]._id;
@@ -69,10 +65,54 @@ describe('POST /enroll/free', () => {
     const registered = await UserCourse.find({userID, courseID});
     expect(registered).toBeTruthy;
 
-  })
-
-
+  });
 })
+
+
+describe('POST /enroll/premium', () => {
+  let endpoint: Test;
+  let token: string;
+
+  beforeEach(async () => {
+    endpoint = request(server).post('/course/enroll/premium');
+  });
+
+  test('pre-test login', async () => {
+    const response = await request(server).post('/auth/login').send({
+      email: "charley@test.com",
+      password: "password"
+    });
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('token');
+    token = response.body.token;
+  });
+
+  test('should require authentication', async () => {
+    const response = await endpoint.send({
+      course: {
+        _id: mockCourses[2]._id
+      }
+    });
+    expect(response.status).toBe(401);
+  });
+
+  test('enrolls in premium course if authenticated', async () => {
+    const userID = mockUsers[3]._id;
+    const courseID = mockCourses[2]._id;
+    const response = await endpoint
+      .send({course: {_id: courseID}})
+      .set('Authorization', 'bearer ' + token);
+
+    expect(response.status).toBe(200);
+    const registered = await UserCourse.find({userID, courseID});
+    expect(registered).toBeTruthy;
+
+  });
+
+});
+
+
+
 
 
 

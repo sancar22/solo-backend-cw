@@ -118,6 +118,9 @@ const enrollFreeCourse = async (req: Request, res: Response) => {
   }
 };
 
+// TODO
+// should this not have the course price or is this to circumvent payment
+// this is maybe just for demos
 const enrollPremiumCourse = async (req: Request, res: Response) => {
   try {
     const { course } = req.body;
