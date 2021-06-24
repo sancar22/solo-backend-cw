@@ -2,8 +2,8 @@ import { ObjectId } from 'mongodb';
 import { Model, Schema, model } from 'mongoose';
 
 export interface Topic {
-  _id: string,
-  enabled: Boolean,
+  _id: string;
+  enabled: Boolean;
   courseID: string;
   name: string;
   description: string;

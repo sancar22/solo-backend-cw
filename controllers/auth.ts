@@ -10,8 +10,8 @@ import AdminModel from '../models/admin';
 import validateEmail from '../utils/index';
 
 
-const { secretAPITestStripe: secret } = process.env;
-const { jwtSecret } = process.env;
+const { SECRET_API_TEST_STRIPE: secret } = process.env;
+const { JWT_SECRET } = process.env;
 
 
 interface MyToken {
@@ -33,8 +33,8 @@ const stripe = new Stripe(secret as string, {
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.emailProvider,
-    pass: process.env.emailPW,
+    user: process.env.EMAIL_PROVIDER,
+    pass: process.env.EMAIL_PW,
   },
 });
 
@@ -55,7 +55,7 @@ const loginFunction = async (email: string, password: string, res: Response, adm
 
   jwt.sign(
     { user: {id: user._id}},
-    jwtSecret as string,
+    JWT_SECRET as string,
     { expiresIn: 3600 },
     (err, token) => {
       if (err) throw err;
@@ -120,14 +120,14 @@ export const register = async (req: Request, res: Response) => {
 
     jwt.sign(
       {user: {id: newUser._id}},
-      jwtSecret as string,
+      JWT_SECRET as string,
       { expiresIn: '9999 years' },
       async (err, token) => {
         if (err) throw err;
         res.status(201).send('User created successfully!');
         const output = `
         <h2>Please click on the following link to verify your account!</h2>
-        <p>${process.env.serverURL}/auth/confirmation/${token}</p>
+        <p>${process.env.SERVER_URL}/auth/confirmation/${token}</p>
         `;
         await transporter.sendMail({
           to: email,
@@ -144,7 +144,7 @@ export const register = async (req: Request, res: Response) => {
 
 export const verifyEmail = async (req: Request, res: Response) => {
   try {
-    const decodedJWT = jwt.verify(req.params.token, jwtSecret as string);
+    const decodedJWT = jwt.verify(req.params.token, JWT_SECRET as string);
     const userID = (decodedJWT as MyToken).user.id;
     const user = await UserModel.findById(userID);
     //TODO
@@ -183,7 +183,7 @@ export const forgotPW = async (req: Request, res: Response) => {
     // if it's a security thing why not just hash it?
     jwt.sign(
       payload,
-      jwtSecret as string,
+      JWT_SECRET as string,
       { expiresIn: 60 },
       async (err, token) => {
         if (err) throw err;
@@ -218,7 +218,7 @@ export const verifyPWCodeChange = async (req: Request, res: Response) => {
     if (!user) return res.status(401).send('Invalid code!');
     const decodedJWTCode = jwt.verify(
       user.forgotPWToken,
-      jwtSecret as string
+      JWT_SECRET as string
     );
     if ((decodedJWTCode as MyIForgotToken).user.code !== code)
       return res.status(401).send('Invalid code!');
@@ -227,7 +227,7 @@ export const verifyPWCodeChange = async (req: Request, res: Response) => {
     // 2 minutes to change pw
     jwt.sign(
       {user: {id: user._id}},
-      jwtSecret as string,
+      JWT_SECRET as string,
       { expiresIn: 120 },
       async (err, token) => {
         if (err) throw err;

@@ -5,8 +5,8 @@ import TransactionModel from '../../models/transaction';
 import UserCourse from '../../models/userCourse';
 
 
-const { secretAPITestStripe } = process.env;
-const secret = `${secretAPITestStripe}`;
+const { SECRET_API_TEST_STRIPE } = process.env;
+const secret = `${SECRET_API_TEST_STRIPE}`;
 
 const stripe = new Stripe(secret, {
   apiVersion: '2020-08-27',

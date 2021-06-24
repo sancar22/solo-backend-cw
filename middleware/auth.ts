@@ -14,7 +14,7 @@ export default function (req: Request, res: Response, next: NextFunction) {
   // Verify token
   try {
     const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, process.env.jwtSecret);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     res.locals.user = decoded.user;
     next();
   } catch (err) {

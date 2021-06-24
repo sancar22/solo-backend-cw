@@ -9,7 +9,7 @@ import {Request, Response} from 'express';
 import { UpdateQuery } from 'mongoose';
 
 
-const secret = String(process.env.secretAPITestStripe);
+const secret = String(process.env.SECRET_API_TEST_STRIPE);
 
 const stripe = new Stripe(secret, {
   apiVersion: '2020-08-27',
