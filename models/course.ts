@@ -41,7 +41,7 @@ const CourseSchema = new Schema<Course>(
   {
     versionKey: false,
     timestamps: true,
-  }
+  },
 );
 
 const Course: Model<Course> = model('Course', CourseSchema);

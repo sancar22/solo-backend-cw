@@ -8,14 +8,12 @@ import { seedDb } from '../__seed__/index';
 
 import { User } from '../models/user';
 
-
 const port = Number(process.env.TEST_PORT);
 const connectionString = String(process.env.TEST_DB_CONN);
 
 let server: Server;
 let db: Mongoose | undefined;
 let seedUsers: User[];
-
 
 export const random = (max: number): number => Math.floor(Math.random() * max);
 
@@ -74,12 +72,11 @@ describe('POST /auth/login', () => {
   test('200 if successful', async () => {
     const response = await endpoint.send({
       email: 'kip@test.com',
-      password: 'password'
+      password: 'password',
     });
     expect(response.status).toBe(200);
   });
-
-})
+});
 
 describe('POST /auth/register', () => {
   let endpoint: Test;
@@ -109,7 +106,7 @@ describe('POST /auth/register', () => {
 
   test('rejects if user already exists', async () => {
     const response = await endpoint.send(
-      seedUsers[0]
+      seedUsers[0],
     );
     expect(response.status).toBe(409);
   });
@@ -143,8 +140,7 @@ describe('POST /auth/register', () => {
     });
     expect(response.status).toBe(201);
   });
-
-})
+});
 
 describe('POST /auth/forgotPW', () => {
   let endpoint: Test;
@@ -171,7 +167,7 @@ describe('POST /auth/forgotPW', () => {
     });
     expect(response.status).toBe(200);
   });
-})
+});
 
 describe('POST /auth/verifyEmailCode', () => {
   let endpoint: Test;
@@ -182,12 +178,11 @@ describe('POST /auth/verifyEmailCode', () => {
   test('rejects if user does not exist', async () => {
     const response = await endpoint.send({
       email: seedUsers[random(seedUsers.length)].email,
-      code: Math.random() * 10000
+      code: Math.random() * 10000,
     });
     expect(response.status).toBe(401);
   });
-
-})
+});
 
 describe('POST /auth/changePW', () => {
   let endpoint: Test;
@@ -200,12 +195,12 @@ describe('POST /auth/changePW', () => {
   test('pre-test login', async () => {
     const response = await request(server).post('/auth/login').send({
       email: 'kip@test.com',
-      password: 'password'
+      password: 'password',
     });
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('token');
     token = response.body.token;
-  })
+  });
 
   test('rejects if password not long enough', async () => {
     const response = await endpoint.send({
@@ -230,7 +225,7 @@ describe('POST /auth/changePW', () => {
     });
     expect(response.status).toBe(200);
   });
-})
+});
 
 describe('POST /auth/changePWInApp', () => {
   let endpoint: Test;
@@ -241,13 +236,13 @@ describe('POST /auth/changePWInApp', () => {
   test.skip('pre-test login', async () => {
     const response = await request(server).post('/auth/login').send({
       email: 'kip@test.com',
-      password: 'password'
+      password: 'password',
     });
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('token');
-    const token = response.body.token;
+    const { token } = response.body;
     console.log(token);
-  })
+  });
 
   // TODO
   // if successful, send 204
@@ -256,7 +251,7 @@ describe('POST /auth/changePWInApp', () => {
     const response = await endpoint.send({
       oldPassword: 'password',
       password: 'newpassword',
-      passwordRepeat: 'newpassword'
+      passwordRepeat: 'newpassword',
     });
     expect(response.status).toBe(401);
   });
@@ -265,7 +260,7 @@ describe('POST /auth/changePWInApp', () => {
     const response = await endpoint.send({
       oldPassword: 'password',
       password: 'newpassword',
-      passwordRepeat: 'newpassword'
+      passwordRepeat: 'newpassword',
     });
     expect(response.status).toBe(401);
   });
@@ -274,7 +269,7 @@ describe('POST /auth/changePWInApp', () => {
     const response = await endpoint.send({
       oldPassword: 'password',
       password: 'newpassword',
-      passwordRepeat: 'newpassword'
+      passwordRepeat: 'newpassword',
     });
     expect(response.status).toBe(401);
   });
@@ -283,7 +278,7 @@ describe('POST /auth/changePWInApp', () => {
     const response = await endpoint.send({
       oldPassword: 'password',
       password: 'newpassword',
-      passwordRepeat: 'newpassword'
+      passwordRepeat: 'newpassword',
     });
     expect(response.status).toBe(401);
   });
@@ -291,19 +286,18 @@ describe('POST /auth/changePWInApp', () => {
   test('successful if password changed', async () => {
     const loginResponse = await request(server).post('/auth/login').send({
       email: 'kip@test.com',
-      password: 'password'
+      password: 'password',
     });
-    const {token} = loginResponse.body;
-    console.log('changePWInApp token ', token)
+    const { token } = loginResponse.body;
+    console.log('changePWInApp token ', token);
     const response = await endpoint.set('Authorization', `bearer ${token}`).send({
       oldPassword: 'password',
       password: 'newpassword',
-      passwordRepeat: 'newpassword'
+      passwordRepeat: 'newpassword',
     });
     expect(response.status).toBe(204);
   });
-})
-
+});
 
 afterAll(async () => {
   await db?.connection.db.dropDatabase();

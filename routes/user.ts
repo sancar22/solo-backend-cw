@@ -9,21 +9,21 @@ const router = Router();
 router.get(
   '/getInfo',
   authMiddleware,
-  clientController.getInfo
+  clientController.getInfo,
 );
 
 router.get(
   '/admin/getAllUsers',
   authMiddleware,
   authAdminMiddleware,
-  adminController.getAllUsers
+  adminController.getAllUsers,
 );
 
 router.get(
   '/admin/getUserById/:id',
   authMiddleware,
   authAdminMiddleware,
-  adminController.getUserById
+  adminController.getUserById,
 );
 
 export default router;

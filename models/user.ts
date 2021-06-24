@@ -1,4 +1,4 @@
-import { Model, Schema, model, ObjectId } from 'mongoose';
+import { Model, Schema, model } from 'mongoose';
 
 export interface User {
   _id: string;
@@ -39,7 +39,7 @@ const UserSchema = new Schema<User>(
   {
     versionKey: false,
     timestamps: true,
-  }
+  },
 );
 
 const User: Model<User> = model('User', UserSchema);

@@ -33,7 +33,7 @@ const UserCourseSchema = new Schema<UserCourse>(
   {
     versionKey: false,
     timestamps: true,
-  }
+  },
 );
 
 const UserCourse: Model<UserCourse> = model('UserCourse', UserCourseSchema);

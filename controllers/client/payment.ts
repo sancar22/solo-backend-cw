@@ -1,23 +1,28 @@
 import Stripe from 'stripe';
 import { Request, Response } from 'express';
-import User from '../../models/user';
+import UserModel from '../../models/user';
 import TransactionModel from '../../models/transaction';
+<<<<<<< HEAD
 import UserCourse from '../../models/userCourse';
 
 
 const { SECRET_API_TEST_STRIPE } = process.env;
 const secret = `${SECRET_API_TEST_STRIPE}`;
+=======
+import UserCourseModel from '../../models/userCourse';
+>>>>>>> bf880b00288dc95ed845fb743ac82e1902c8e273
 
+const secret = String(process.env.secretAPITestStripe);
 const stripe = new Stripe(secret, {
   apiVersion: '2020-08-27',
 });
 
 // TODO, refactor
-const payPremiumCourse = async (req: Request, res: Response) => {
+const payPremiumCourse = async (req: Request, res: Response): Promise<void> => {
   try {
     const userID = res.locals.user.id;
     const { course, creditCardDetails } = req.body;
-    const user = await User.findById(userID);
+    const user = await UserModel.findById(userID);
 
     if (user) {
       const userStripeID = user.stripeID;
@@ -49,7 +54,7 @@ const payPremiumCourse = async (req: Request, res: Response) => {
         price: course.priceStripeID,
       });
 
-      await UserCourse.create({
+      await UserCourseModel.create({
         userID,
         courseID: course._id,
         coursePricePaid: course.formattedPrice,
@@ -72,5 +77,5 @@ const payPremiumCourse = async (req: Request, res: Response) => {
 };
 
 export default {
-  payPremiumCourse
-}
+  payPremiumCourse,
+};

@@ -1,24 +1,22 @@
 import { Request, Response } from 'express';
-import TransactionModel from '../../models/transaction';
-import { Transaction } from '../../models/transaction';
-import Course from '../../models/course';
+import TransactionModel, { Transaction } from '../../models/transaction';
 
+import CourseModel from '../../models/course';
 
 interface ClientTransaction extends Transaction {
   courseName: string;
 }
 
-
-const getPurchases = async (req: Request, res: Response) => {
+const getPurchases = async (req: Request, res: Response): Promise<void|Response> => {
   try {
     const transactions = await TransactionModel.find().lean();
     if (!transactions) return res.send('No transactions are available!');
 
-    const clientTransactions: ClientTransaction[] = []
+    const clientTransactions: ClientTransaction[] = [];
     for (let i = 0; i < transactions.length; i++) {
-      const course = await Course.findById(transactions[i].courseID);
+      const course = await CourseModel.findById(transactions[i].courseID);
       if (course) {
-        const currentTransaction = {...transactions[i], courseName: course.name};
+        const currentTransaction = { ...transactions[i], courseName: course.name };
         clientTransactions.push(currentTransaction);
       }
     }
@@ -59,15 +57,16 @@ const getPurchases = async (req: Request, res: Response) => {
   }
 };
 
-const getPurchaseById = async (req: Request, res: Response) => {
+const getPurchaseById = async (req: Request, res: Response): Promise<void|Response> => {
   try {
     const transaction = await TransactionModel.findById(req.params.id).lean();
     if (!transaction) return res.send('Transaction not available.');
-    const course = await Course.findById(transaction.courseID);
+    const course = await CourseModel.findById(transaction.courseID);
     if (course) {
-      const clientTransaction: ClientTransaction = {...transaction,
+      const clientTransaction: ClientTransaction = {
+        ...transaction,
         courseName: course.name,
-        price: parseFloat(transaction.price.toString())
+        price: parseFloat(transaction.price.toString()),
       };
 
       const filteredKeys = [
@@ -111,5 +110,5 @@ const getPurchaseById = async (req: Request, res: Response) => {
 };
 
 export default {
-  getPurchases, getPurchaseById
-}
+  getPurchases, getPurchaseById,
+};

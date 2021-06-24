@@ -1,10 +1,9 @@
-import {Request, Response} from 'express';
-import User from '../../models/user';
+import { Request, Response } from 'express';
+import UserModel from '../../models/user';
 
-
-const getAllUsers = async (req: Request, res: Response) => {
+const getAllUsers = async (req: Request, res: Response): Promise<void|Response> => {
   try {
-    const users = await User.find();
+    const users = await UserModel.find();
     if (!users) return res.send('No users are available!');
     const filteredKeys = [
       {
@@ -13,7 +12,9 @@ const getAllUsers = async (req: Request, res: Response) => {
         type: 'string',
         required: true,
       },
-      { field: 'name', headerName: 'Name', type: 'string', required: true },
+      {
+        field: 'name', headerName: 'Name', type: 'string', required: true,
+      },
       { field: 'options', headerName: 'Options' },
     ];
     const tableOptions = { show: true, edit: false, delete: false };
@@ -33,9 +34,9 @@ const getAllUsers = async (req: Request, res: Response) => {
   }
 };
 
-const getUserById = async (req: Request, res: Response) => {
+const getUserById = async (req: Request, res: Response): Promise<void|Response> => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await UserModel.findById(req.params.id);
     if (!user) return res.send('User does not exist!');
     const filteredKeys = [
       {
@@ -44,7 +45,9 @@ const getUserById = async (req: Request, res: Response) => {
         type: 'string',
         required: true,
       },
-      { field: 'name', headerName: 'Name', type: 'string', required: true },
+      {
+        field: 'name', headerName: 'Name', type: 'string', required: true,
+      },
       { field: 'options', headerName: 'Options' },
     ];
     const tableOptions = { show: true, edit: false, delete: false };
@@ -64,7 +67,6 @@ const getUserById = async (req: Request, res: Response) => {
   }
 };
 
-
 export default {
-  getAllUsers, getUserById
-}
+  getAllUsers, getUserById,
+};

@@ -7,7 +7,8 @@ import {
   changePassword,
   loginAdmin,
   changePasswordInApp,
-  forgotPW } from '../controllers/auth';
+  forgotPW,
+} from '../controllers/auth';
 import authMiddleware from '../middleware/auth';
 
 const router = Router();
@@ -19,6 +20,6 @@ router.get('/confirmation/:token', verifyEmail);
 router.post('/forgotPW', forgotPW);
 router.post('/verifyEmailCode', verifyPWCodeChange);
 router.post('/changePW', authMiddleware, changePassword);
-router.post('/changePWInApp',authMiddleware,changePasswordInApp);
+router.post('/changePWInApp', authMiddleware, changePasswordInApp);
 
 export default router;

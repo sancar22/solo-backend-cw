@@ -10,7 +10,8 @@ export interface UserTopic {
   courseID: string;
   topicID: string;
   score: number;
-  responses: any[]; //TODO interface the objects in here
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  responses: any[]; // TODO interface the objects in here
   totalQuestions: number;
   correctQuestions: number;
 }
@@ -53,11 +54,8 @@ const UserTopicSchema = new Schema<UserTopic>(
   {
     versionKey: false,
     timestamps: true,
-  }
+  },
 );
-
-
 
 const UserTopic: Model<UserTopic> = model('UserTopic', UserTopicSchema);
 export default UserTopic;
-

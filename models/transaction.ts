@@ -32,7 +32,7 @@ const TransactionSchema = new Schema<Transaction>(
   {
     versionKey: false,
     timestamps: true,
-  }
+  },
 );
 
 const Transaction: Model<Transaction> = model('Transaction', TransactionSchema);

@@ -9,21 +9,21 @@ router.get(
   '/admin/global',
   authMiddleware,
   authAdminMiddleware,
-  adminController.getGlobalStats
+  adminController.getGlobalStats,
 );
 
 router.get(
   '/admin/getAllTestResults',
   authMiddleware,
   authAdminMiddleware,
-  adminController.getAllTestResults
+  adminController.getAllTestResults,
 );
 
 router.get(
   '/admin/getTestResults/:id',
   authMiddleware,
   authAdminMiddleware,
-  adminController.getTestResultById
+  adminController.getTestResultById,
 );
 
 export default router;
