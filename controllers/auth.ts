@@ -9,7 +9,6 @@ import UserModel, { User } from '../models/user';
 import AdminModel from '../models/admin';
 import validateEmail from '../utils/index';
 
-
 const { SECRET_API_TEST_STRIPE: secret } = process.env;
 const { JWT_SECRET } = process.env;
 
@@ -49,7 +48,7 @@ const loginFunction = async (email: string, password: string, res: Response, adm
   if (isUser(user) && !user.verified) return res.status(401).send('You need to verify your account!');
 
   jwt.sign(
-    { user: {id: user._id}},
+    { user: { id: user._id } },
     JWT_SECRET as string,
     { expiresIn: 3600 },
     (err, token) => {
@@ -114,7 +113,7 @@ export const register = async (req: Request, res: Response): Promise<void|Respon
     });
 
     jwt.sign(
-      {user: {id: newUser._id}},
+      { user: { id: newUser._id } },
       JWT_SECRET as string,
       { expiresIn: '9999 years' },
       async (err, token) => {
@@ -213,13 +212,13 @@ export const verifyPWCodeChange = async (req: Request, res: Response): Promise<R
     if (!user) return res.status(401).send('Invalid code!');
     const decodedJWTCode = jwt.verify(
       user.forgotPWToken,
-      JWT_SECRET as string
+      JWT_SECRET as string,
     );
     if ((decodedJWTCode as MyIForgotToken).user.code !== code) return res.status(401).send('Invalid code!');
 
     // 2 minutes to change pw
     jwt.sign(
-      {user: {id: user._id}},
+      { user: { id: user._id } },
       JWT_SECRET as string,
       { expiresIn: 120 },
       async (err, token) => {

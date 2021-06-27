@@ -2,17 +2,9 @@ import Stripe from 'stripe';
 import { Request, Response } from 'express';
 import UserModel from '../../models/user';
 import TransactionModel from '../../models/transaction';
-<<<<<<< HEAD
-import UserCourse from '../../models/userCourse';
-
-
-const { SECRET_API_TEST_STRIPE } = process.env;
-const secret = `${SECRET_API_TEST_STRIPE}`;
-=======
 import UserCourseModel from '../../models/userCourse';
->>>>>>> bf880b00288dc95ed845fb743ac82e1902c8e273
 
-const secret = String(process.env.secretAPITestStripe);
+const secret = String(process.env.SECRET_API_TEST_STRIPE);
 const stripe = new Stripe(secret, {
   apiVersion: '2020-08-27',
 });
