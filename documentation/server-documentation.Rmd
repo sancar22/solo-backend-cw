@@ -1,0 +1,443 @@
+---
+output: html_document
+---
+
+
+
+<br/>
+
+## Server Documentation
+
+some text
+<br/>
+<br/>
+
+### Endpoints {.tabset}
+
+The tabs below indicate the first route parameter and are followed by those documented below. <br/>
+ex: `base_url/auth/login` <br/>
+
+The following have been outlined for each endpoint,
+
+* brief description
+* method
+* headers
+* expected response
+* sample request body
+
+
+<br/>
+
+#### auth
+
+<br/>
+`/login` user login
+
+* POST
+* Headers `Content-Type:application/json`
+* Response: **200**, auth-token
+* Req Body: 
+
+```
+{ 
+    "email": "email@example.com",
+    "password": "password" 
+} 
+```
+
+
+<br/>
+`/admin/login` administrator login
+
+* POST
+* Headers `Content-Type:application/json`
+* Response: **200**, auth-token
+* Req Body: 
+
+```
+{ 
+    "email": "email@example.com",
+    "password": "password" 
+} 
+```
+
+
+
+<br/>
+`/register` register a user 
+
+* POST
+* Headers `Content-Type:application/json`
+* Response: **201**
+* Req Body: 
+
+```
+{ 
+    "name" : "name",
+    "email": "email@example.com",
+    "password": "password",
+    "passwordRepeat": "password"
+} 
+```
+
+
+<br/>
+`/confirmation/:token` mark a users email as verified
+
+* GET
+* Response: **200**
+
+<br/>
+`/forgotPW` user forgot password, send link to reset
+
+* POST
+* Headers: `Content-Type:application/json`
+* Response: **200**
+* Req Body:
+
+```
+{ 
+    "email": "email@example.com",
+} 
+```
+
+
+<br/>
+`/verifyEmailCode` check if email validation for password reset is valid
+
+* POST
+* Headers: `Content-Type:application/json`
+* Response: **200**, jwt-token
+* Req Body: 
+```
+{ 
+    "email": "email@example.com",
+    "code": "38384900929"
+} 
+```
+
+<br/>
+`/changePassword`: user forgot password, confirmed via email, and is ready to change passwords
+
+* POST
+* Headers: <br/>
+`Content-Type:application/json` <br/>
+`Authorization: bearer token`
+* Response: **200**
+* Req Body: 
+```
+{ 
+    "password": "newpassword",
+    "passwordRepeat": "newpassword"
+} 
+```
+
+
+<br/>
+`/changePWInApp`: user would like to change their password
+
+* POST
+* Headers: <br/>
+`Content-Type:application/json` <br/>
+`Authorization: bearer token`
+* Response: **200**
+* Req Body: 
+```
+{ 
+    "oldPassword": "password",
+    "password": "newpassword",
+    "passwordRepeat": "newpassword"
+} 
+```
+
+
+
+
+#### user
+
+<br/>
+`/getInfo` get user information
+
+* GET
+* Headers: `Authorization: bearer token` 
+* Response: **200**, user data
+
+<br/>
+`/admin/getAllUsers` admin preview of all users
+
+* GET
+* Headers: `Authorization: bearer token` 
+* Response: **200**, user data aggregate
+
+<br/>
+`/admin/getUserById/:id` admin view user and user details
+
+* GET
+* Headers: `Authorization: bearer token` 
+* Response: **200**, user data
+
+
+
+#### payment
+
+<br/>
+`/course/premium` enroll a user in a premium course, process the payment
+
+* POST
+* Headers:  <br/>
+`Content-Type:application/json` <br/>
+`Authorization: bearer token` 
+* Response: **200**
+* Req Body: 
+```
+{ 
+    "course": {
+      "_id": "sdk92k20elked202doe2doge"
+      "priceStripeID": "sad87fd89fd2dosdiiuifk"
+      "formattedPrice":
+    }
+    "creditCardDetails":  {
+      "number": "3938402938472819"
+      "expiry": "03/30"
+      "cvc": "889"
+    }
+} 
+```
+
+
+<br/>
+`/admin/purchases` admin view of all client transactions
+
+* GET
+* Headers: `Authorization: bearer token` 
+* Response: **200**, all client transactions
+
+<br/>
+`/admin/getPurchaseById/:id` admin view of a specific transaction 
+
+* GET
+* Headers: `Authorization: bearer token` 
+* Response: **200**, transaction details
+
+
+#### topic
+
+<br/>
+`/admin/getAllTopics` admin view of all topics
+
+* GET
+* Headers:`Authorization: bearer token` 
+* Response: **200**, topics
+
+<br/>
+`/admin/getTopicById/:id'` admin view of a specific topic
+
+* GET
+* Headers:`Authorization: bearer token` 
+* Response: **200**, topic-details
+
+<br/>
+`/admin/add'` admin create a new topic
+
+* POST
+* Headers:  <br/>
+`Content-Type:application/json` <br/>
+`Authorization: bearer token` 
+* Response: **201**
+* Req Body: 
+```
+{
+ ---
+}
+```
+
+<br/>
+`/admin/edit/:id'` admin edit a topic
+
+* PUT
+* Headers:  <br/>
+`Content-Type:application/json` <br/>
+`Authorization: bearer token` 
+* Response: **200**
+* Req Body:
+```
+{
+  "questions": [ --- ]
+  "videoURL": "https://myurl.com"
+  "name": "topic name"
+  "description": "a description"
+}
+```
+
+<br/>
+`/admin/delete/:id'` admin delete a topic 
+
+* DELETE
+* Headers:`Authorization: bearer token` 
+* Response: **200**
+
+
+<br/>
+`/client-side/allTopics/:courseID'`  client view of all topics for a specific course
+
+* GET
+* Headers:`Authorization: bearer token` 
+* Response: **200**, topics
+
+
+<br/>
+`/client-side/getTopicById/:topicID'` client view of a specific topic
+
+* GET
+* Headers:`Authorization: bearer token` 
+* Response: **200** topic-details
+
+
+<br/>
+`/client-side/completedTopics/:courseID'` client view of completed topics for a given course
+
+* GET
+* Headers:`Authorization: bearer token` 
+* Response: **200** completed-topics 
+
+<br/>
+`/submitTest` user has submit a test
+
+* POST
+* Headers: <br/>
+`Content-Type:application/json` <br/>
+`Authorization: bearer token` 
+* Response: **200**, test-results
+* Req Body: 
+```
+{
+  "responses": [ --- ],
+  "courseID": "987dfsasddf908fd0f",
+  "topicID": "xlkjl3339s90d9f9f9",
+}
+```
+
+
+#### course 
+
+
+<br/>
+`/admin/getAllCourses` admin get all courses
+
+* GET
+* Headers:`Authorization: bearer token`
+* Response: **200**, courses
+
+
+<br/>
+`/admin/getCourseById/:id` admin get details for a specific course
+
+* GET
+* Headers:`Authorization: bearer token`
+* Response: **200**, course-details
+
+
+<br/>
+`/admin/add` admin create a course
+
+* POST
+* Headers: <br/>
+`Content-Type:application/json` <br/>
+`Authorization: bearer token` 
+* Response: **201**
+* Req Body: 
+```
+{
+  "coverImageURL": "https://iamanimage.com/image",
+  "name": "course name",
+  "description": "things you might learn",
+  "price": "56.00"
+}
+```
+
+
+<br/>
+`/admin/edit/:id` admin edit a course
+
+* PUT
+* Headers: <br/>
+`Content-Type:application/json` <br/>
+`Authorization: bearer token` 
+* Response: **200**
+* Req Body: 
+```
+{
+  "coverImageURL": "https://iamanimage.com/image2",
+  "name": "course name 2",
+  "description": "new things you might learn",
+  "price": "56.01"
+}
+```
+
+<br/>
+`/admin/delete/:id` admin delete a course
+
+* DELETE
+* Headers:`Authorization: bearer token`
+* Response: **200**
+
+<br/>
+`/client-side/allCourses` request all courses
+
+* GET
+* Headers:`Authorization: bearer token`
+* Response: **200**, courses
+
+
+<br/>
+`/client-side/myCourses` request courses a user is enrolled in + their progress
+
+* GET
+* Headers:`Authorization: bearer token`
+* Response: **200**, courses
+
+<br/>
+`/enroll/free` enroll a user in a free course
+
+* POST
+* Headers: <br/>
+`Content-Type:application/json` <br/>
+`Authorization: bearer token` 
+* Response: **200**
+* Req Body: 
+```
+{
+  "course": {
+   "_id": "929xvfdsf9d89sd08f9sf80"
+  }
+}
+```
+
+
+
+
+#### stats
+
+<br/>
+`/admin/global` request a document with the global stats
+
+* GET
+* Headers:`Authorization: bearer token` 
+* Response: **200**, document
+
+<br/>
+`/admin/getAllTestResults` admin view of all test results
+
+* GET
+* Headers:`Authorization: bearer token` 
+* Response: **200**, test-results
+
+<br/>
+`/admin/getTestResults/:id`  admin view of test results from a specific test
+
+* GET
+* Headers:`Authorization: bearer token` 
+* Response: **200**, test-results
+
+
+###

@@ -1,3 +1,6 @@
 db/default.json
 node_modules
 .env
+.DS_Store
+documentation/.Rhistory
+documentation/.Rproj.user/
